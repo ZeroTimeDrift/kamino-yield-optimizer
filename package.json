@@ -1,0 +1,24 @@
+{
+  "name": "@clawd/kamino-yield",
+  "version": "0.1.0",
+  "description": "Agentic DeFi yield optimizer for Kamino Finance",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "scan": "ts-node src/scanner.ts",
+    "optimize": "ts-node src/optimizer.ts",
+    "status": "ts-node src/status.ts"
+  },
+  "dependencies": {
+    "@kamino-finance/klend-sdk": "^7.4.0-beta.14",
+    "@kamino-finance/kliquidity-sdk": "^8.5.9",
+    "@solana/web3.js": "^1.95.0",
+    "decimal.js": "^10.4.3",
+    "bs58": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0"
+  }
+}

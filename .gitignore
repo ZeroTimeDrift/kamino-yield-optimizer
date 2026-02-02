@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Secrets - NEVER commit these
+config/wallet.json
+config/performance.jsonl
+
+# Build
+dist/
+*.js
+*.js.map
+*.d.ts
+
+# Misc
+.DS_Store
+*.log
