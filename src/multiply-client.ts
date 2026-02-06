@@ -23,6 +23,7 @@ import {
   TOKEN_MINTS,
   KAMINO_MARKETS,
 } from './types';
+import { fetchLiveJitoStakingApy } from './scanner';
 
 // Retry helper
 async function retry<T>(fn: () => Promise<T>, maxRetries = 3, delayMs = 2000): Promise<T> {
@@ -130,12 +131,19 @@ export class MultiplyClient {
       }
     }
 
-    // JitoSOL staking yield is roughly the supply APY on the collateral side
-    // plus the underlying staking reward (~7-8% annual for JitoSOL)
-    // For Multiply, the "supply APY" already includes staking yield in Kamino's calc
-    const jitoStakingYield = jitosolSupplyApy.gt(0)
-      ? jitosolSupplyApy
-      : new Decimal(7.5); // fallback estimate
+    // Fetch LIVE JitoSOL staking yield from Jito API instead of hardcoding
+    let jitoStakingYield: Decimal;
+    try {
+      const liveApy = await fetchLiveJitoStakingApy();
+      jitoStakingYield = new Decimal(liveApy.apy);
+      console.log(`   📊 Live JitoSOL staking APY: ${jitoStakingYield.toFixed(2)}% (${liveApy.source})`);
+    } catch {
+      // Fallback to supply APY or conservative estimate
+      jitoStakingYield = jitosolSupplyApy.gt(0)
+        ? jitosolSupplyApy
+        : new Decimal(5.57); // fallback based on recent data
+      console.log(`   ⚠️  Using fallback JitoSOL APY: ${jitoStakingYield.toFixed(2)}%`);
+    }
 
     const spread = jitoStakingYield.minus(solBorrowApy);
 
