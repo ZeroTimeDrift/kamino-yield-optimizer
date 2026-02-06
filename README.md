@@ -1,14 +1,46 @@
 # Kamino Yield Optimizer
 
-Autonomous DeFi yield farming on Solana. Deploys capital to Kamino Finance lending vaults and automatically rebalances to maximize returns.
+Autonomous multi-strategy DeFi yield optimizer on Solana. Manages capital across Kamino K-Lend, Multiply vaults, and token swaps via Jupiter to maximize risk-adjusted returns.
 
 ## What It Does
 
-- **Scans** all Kamino lending vaults for current APYs
-- **Auto-deposits** idle wallet funds to highest-yield vaults
-- **Rebalances** positions when better yields become available
-- **Tracks** performance over time
+- **Multi-market scanning** — Scans K-Lend rates across Main, Jito, and Altcoins markets (80+ reserves)
+- **Multiply monitoring** — Tracks JitoSOL<>SOL leveraged staking spreads and manages positions
+- **Jupiter swaps** — SOL↔USDC, SOL→JitoSOL with slippage protection
+- **Portfolio management** — Target allocation tracking with automatic drift detection
+- **Auto-rebalancing** — Moves funds to higher-yield strategies when thresholds are met
+- **Safety guards** — Gas buffer, min spread checks, LTV alerts, dry-run mode
+- **Performance tracking** — Logs every action to `config/performance.jsonl`
 - **Runs autonomously** via cron (every 2 hours)
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  MULTI-STRATEGY OPTIMIZER                │
+├─────────────────────────────────────────────────────────┤
+│                                                          │
+│  optimize-v2.ts  ←── Main entry point                    │
+│    ├── scanner.ts        Rate scanning across markets    │
+│    ├── portfolio.ts      Allocation tracking & drift     │
+│    ├── kamino-client.ts  K-Lend deposits/withdrawals     │
+│    ├── multiply-client.ts  Leveraged position mgmt       │
+│    └── jupiter-client.ts   Token swaps (SOL↔USDC)       │
+│                                                          │
+│  Target Portfolio:                                       │
+│    60% USDC (K-Lend, highest rate market)                │
+│    30% JitoSOL<>SOL Multiply (5x leverage)               │
+│    10% SOL gas reserve                                   │
+│                                                          │
+│  Safety:                                                 │
+│    • Gas buffer: 0.01 SOL minimum                        │
+│    • Multiply min spread: 1% (staking - borrow)          │
+│    • LTV alert threshold: 85%                            │
+│    • Rebalance min gain: 0.5% APY improvement            │
+│    • Dry-run mode for testing                            │
+│                                                          │
+└─────────────────────────────────────────────────────────┘
+```
 
 ## Quick Start
 
@@ -19,81 +51,37 @@ cd skills/kamino-yield
 npm install
 ```
 
-### 2. Generate Wallet
+### 2. Generate Wallet (if new)
 
 ```bash
 npx ts-node src/generate-wallet.ts
 ```
 
-This creates `config/wallet.json` with a new Solana keypair. Save the public key — you'll need to fund it.
+Creates `config/wallet.json`. Fund the generated address with SOL + USDC.
 
-### 3. Fund the Wallet
+### 3. Scan Current Rates
 
-Send SOL to the generated address. Minimum recommended: 0.05 SOL (for gas + initial deposit).
-
-### 4. Configure (Optional)
-
-Edit `config/settings.json`:
-
-```json
-{
-  "rpcUrl": "https://api.mainnet-beta.solana.com",
-  "dryRun": false
-}
+```bash
+npx ts-node src/scanner.ts
 ```
 
-Set `dryRun: true` to test without executing transactions.
+Shows live APYs across all Kamino markets, Multiply opportunities, and top picks.
 
-### 5. Run Manually
+### 4. Run Full Optimizer
+
+```bash
+npx ts-node src/optimize-v2.ts
+```
+
+Runs the complete multi-strategy optimization cycle. Respects `dryRun` setting.
+
+### 5. Run Legacy Optimizer (K-Lend only)
 
 ```bash
 npx ts-node src/optimize-cron.ts
 ```
 
-### 6. Set Up Cron (Clawdbot)
-
-```bash
-clawdbot cron add \
-  --name "Kamino yield optimizer" \
-  --schedule "30 */2 * * *" \
-  --message "Run: cd /path/to/skills/kamino-yield && npx ts-node src/optimize-cron.ts"
-```
-
-## How It Works
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    OPTIMIZER FLOW                        │
-├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  1. CONNECT                                              │
-│     └─→ Load wallet from config/wallet.json              │
-│     └─→ Connect to Kamino via SDK                        │
-│                                                          │
-│  2. SCAN VAULTS                                          │
-│     └─→ Fetch all lending reserves                       │
-│     └─→ Get current supply APY for each                  │
-│     └─→ Sort by yield (highest first)                    │
-│                                                          │
-│  3. CHECK POSITIONS                                      │
-│     └─→ Query user's current deposits                    │
-│     └─→ Calculate current weighted APY                   │
-│                                                          │
-│  4. REBALANCE (if profitable)                            │
-│     └─→ For each position, check if better vault exists  │
-│     └─→ If APY gain > 0.25%, withdraw and redeposit      │
-│     └─→ Account for gas costs                            │
-│                                                          │
-│  5. DEPLOY IDLE FUNDS                                    │
-│     └─→ Check wallet SOL balance                         │
-│     └─→ Keep 0.005 SOL for gas buffer                    │
-│     └─→ Deposit remainder to best SOL vault              │
-│                                                          │
-│  6. LOG PERFORMANCE                                      │
-│     └─→ Append to config/performance.jsonl               │
-│                                                          │
-└─────────────────────────────────────────────────────────┘
-```
+Original single-strategy optimizer — still works, untouched.
 
 ## File Structure
 
@@ -101,124 +89,125 @@ clawdbot cron add \
 kamino-yield/
 ├── config/
 │   ├── wallet.json           # Solana keypair (KEEP SECRET)
-│   ├── settings.json         # Configuration
+│   ├── settings.json         # Full configuration
 │   └── performance.jsonl     # Performance tracking log
 ├── src/
-│   ├── kamino-client.ts      # Kamino SDK wrapper
-│   ├── optimize-cron.ts      # Main optimizer script
+│   ├── optimize-v2.ts        # Multi-strategy optimizer (main)
+│   ├── optimize-cron.ts      # Legacy single-strategy optimizer
+│   ├── scanner.ts            # Rate scanner across all markets
+│   ├── portfolio.ts          # Portfolio allocation manager
+│   ├── kamino-client.ts      # Kamino K-Lend SDK wrapper
+│   ├── multiply-client.ts    # Kamino Multiply position manager
+│   ├── jupiter-client.ts     # Jupiter V6 swap integration
 │   ├── generate-wallet.ts    # Wallet generation utility
-│   └── types.ts              # TypeScript types
+│   └── types.ts              # TypeScript types & constants
 ├── scripts/
-│   └── optimize.sh           # Shell wrapper for cron
+│   ├── optimize.sh           # Shell wrapper
+│   ├── scan.sh               # Quick scan wrapper
+│   └── status.sh             # Status check wrapper
 ├── package.json
 ├── tsconfig.json
-├── SKILL.md                  # Skill metadata
-└── README.md                 # This file
+├── SKILL.md
+└── README.md
 ```
 
-## Configuration Options
+## Configuration
 
 `config/settings.json`:
 
-| Field | Description | Default |
-|-------|-------------|---------|
-| `rpcUrl` | Solana RPC endpoint | mainnet-beta |
-| `dryRun` | Simulate without executing | `false` |
-| `riskTolerance` | conservative/balanced/aggressive | `balanced` |
-| `minYieldImprovement` | Min APY gain to trigger rebalance | `0.5` |
+| Section | Field | Description | Default |
+|---------|-------|-------------|---------|
+| root | `rpcUrl` | Solana RPC endpoint | mainnet-beta |
+| root | `dryRun` | Simulate without executing | `true` |
+| root | `riskTolerance` | conservative/balanced/aggressive | `balanced` |
+| portfolio | `targets` | Allocation targets by strategy | 60/30/10 |
+| portfolio | `rebalanceThreshold` | Max drift before rebalancing | `0.10` (10%) |
+| multiply | `maxLeverage` | Maximum leverage for Multiply | `5` |
+| multiply | `minSpread` | Min staking-borrow spread | `0.01` (1%) |
+| multiply | `maxLTV` | LTV alert threshold | `0.85` (85%) |
+| jupiter | `slippageBps` | Max slippage in basis points | `50` (0.5%) |
 
-## Example Output
+## Strategies
+
+### K-Lend (Simple Lending)
+Deposits tokens into Kamino lending reserves. Scans Main, Jito, and Altcoins markets for the best rate per token. Auto-rebalances between markets when a better rate appears.
+
+### Multiply (Leveraged Staking)
+Opens JitoSOL<>SOL leveraged positions on Kamino's Jito isolated market. Earns amplified staking yield minus borrow costs. Only opens when spread is favorable (staking APY - borrow APY > min spread). Zero historical liquidations on LST<>SOL pairs due to stake-rate pricing.
+
+### Jupiter Swaps
+Converts between tokens to match target portfolio allocation. Uses Jupiter V6 API for best routing and price. Supports SOL↔USDC and SOL→JitoSOL.
+
+## Safety Features
+
+- **Gas buffer**: Always maintains 0.01 SOL for transaction fees
+- **Min spread check**: Won't open Multiply positions if spread < 1%
+- **LTV monitoring**: Logs warnings if Multiply LTV exceeds 85%
+- **Dry-run mode**: Full simulation without real transactions (default: ON)
+- **Rebalance threshold**: Only moves funds for >0.5% APY improvement
+- **Retry logic**: Exponential backoff for RPC rate limits
+- **Local signing**: Private keys never leave your server
+
+## Example Scanner Output
 
 ```
-═══════════════════════════════════════════════════════════
-     🚀 KAMINO YIELD OPTIMIZER - AGGRESSIVE MODE
-     2026-02-02T07:47:46.288Z
-═══════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════
+  📊 KAMINO RATE SCANNER
+══════════════════════════════════════════════════════
 
-💳 Wallet: 7u5ovFNms7oE232TTyMU5TxDfyZTJctihH4YqP2n1EUz
-   SOL: 0.022071 (~$2.24) @ $102/SOL
+Market: Main (84 reserves)
+  🔥 SOL        Supply: 6.74%  Borrow: 8.46%
+  ✨ USDC       Supply: 3.80%  Borrow: 5.52%
+  ✨ USDT       Supply: 0.49%  Borrow: 2.31%
 
-🔍 Scanning all vaults...
+Market: Altcoins
+  🔥 USDC       Supply: 5.04%  Borrow: 7.21%
 
-   🔥 FDUSD Earn       67.03% APY
-   ✨ SOL Earn          3.34% APY
-   ✨ USDC Earn         3.31% APY
+Multiply Opportunities:
+  JitoSOL<>SOL  Staking: 5.94%  Borrow: 7.66%
+                Spread: -1.72% ❌ (min 1.00%)
 
-📊 Current positions...
-   SOL Earn: 0.010000 SOL (~$1.02) @ 3.34% APY
+Top Picks:
+  1. SOL K-Lend (Main): 6.74% APY
+  2. USDC K-Lend (Altcoins): 5.04% APY
+  3. USDC K-Lend (Main): 3.80% APY
+══════════════════════════════════════════════════════
+```
 
-💰 Idle SOL detected: 0.017071 SOL
-⚡ Auto-depositing...
-   ✅ Deposited 0.017071 SOL
+## Cron Setup (Clawdbot)
 
-═══════════════════════════════════════════════════════════
-                      📈 SUMMARY
-═══════════════════════════════════════════════════════════
-   Total Value: $3.26
-   Actions:     Deposited 0.0171 SOL to SOL Earn
-═══════════════════════════════════════════════════════════
+Already configured as a cron job running every 2 hours:
+```
+Kamino yield optimizer (every 2h) — 30 */2 * * * Asia/Dubai
 ```
 
 ## Supported Tokens
 
-Currently optimizes for tokens you hold:
-- SOL
-- USDC
-- USDT
-- JitoSOL, mSOL, bSOL (liquid staking tokens)
-
-## Safety Features
-
-- **Gas buffer**: Always keeps 0.005 SOL for transaction fees
-- **Min rebalance threshold**: Only moves funds if APY gain > 0.25%
-- **Dry run mode**: Test without executing real transactions
-- **Retry logic**: Handles RPC rate limits gracefully
-- **Local signing**: Private key never leaves your server
-
-## Extending
-
-### Add Jupiter Swaps
-
-To chase yields across different tokens (e.g., swap SOL → FDUSD for higher APY), you'd need to:
-
-1. Add Jupiter SDK: `npm install @jup-ag/api`
-2. Implement swap logic in `kamino-client.ts`
-3. Add cross-token yield comparison in optimizer
-
-### Add More Protocols
-
-The architecture supports adding other Solana DeFi protocols:
-- Marinade (mSOL staking)
-- Jito (JitoSOL staking)
-- Solend (lending)
-- Drift (perpetuals yield)
+- **SOL** — native Solana
+- **USDC** — Circle USD stablecoin
+- **USDT** — Tether USD
+- **JitoSOL** — Jito liquid staking token
+- **mSOL** — Marinade staked SOL
 
 ## Troubleshooting
 
 ### RPC Rate Limits
+Public RPC rate limits aggressively. Use a private RPC (Helius, Triton) for reliability. Set in `config/settings.json`.
 
-If you see "429 Too Many Requests", the public RPC is rate limiting. Solutions:
-- Wait and retry (built-in)
-- Use a private RPC (Helius, Triton, QuickNode)
+### Multiply Spread Negative
+This is normal — borrow costs sometimes exceed staking yield. The optimizer correctly refuses to open positions. Wait for favorable conditions.
 
-### Transaction Failures
-
-Common causes:
-- Insufficient SOL for gas
-- Stale blockhash (retry usually fixes)
-- Slippage on large amounts
-
-### No Positions Found
-
-The SDK's `getUserVanillaObligation` may fail silently if rate limited. Check logs for warnings.
+### Scanner Shows 0% APY
+Some reserves have zero utilization. This is expected for less-popular tokens.
 
 ## License
 
-MIT — use freely, no warranty.
+MIT
 
 ## Credits
 
-Built for Clawdbot agents. Uses:
+Built for autonomous agent capital management. Uses:
 - [@kamino-finance/klend-sdk](https://github.com/Kamino-Finance/klend-sdk)
+- [@kamino-finance/kliquidity-sdk](https://github.com/Kamino-Finance/kliquidity-sdk)
 - [@solana/web3.js](https://github.com/solana-labs/solana-web3.js)
-- [@solana/kit](https://github.com/solana-labs/solana-web3.js)
+- [Jupiter V6 API](https://station.jup.ag/docs/apis/swap-api)
