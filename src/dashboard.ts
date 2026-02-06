@@ -268,11 +268,14 @@ tr:hover { background: var(--bg3); }
 
 <div class="header">
   <div>
-    <h1>🏊 Kamino Yield Dashboard</h1>
+    <h1>🔥 Kamino Yield Optimizer</h1>
     <div class="header-meta">Wallet: <code id="wallet">...</code> | Last update: <span id="lastUpdate">...</span></div>
     <div class="header-meta" id="livePrices" style="margin-top:4px;font-size:0.9rem">Loading prices...</div>
   </div>
-  <div class="header-meta">Auto-refresh: 60s</div>
+  <div style="text-align:right">
+    <div class="header-meta">Auto-refresh: 60s</div>
+    <div id="serviceStatus" class="header-meta" style="margin-top:4px">Checking services...</div>
+  </div>
 </div>
 
 <!-- Portfolio Overview -->
@@ -374,6 +377,22 @@ function fmtTimeShort(ts) {
   return new Date(ts).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:false});
 }
 
+async function loadStatus() {
+  const status = await fetchJson('/api/status');
+  if (status) {
+    const el = document.getElementById('serviceStatus');
+    if (el) {
+      const watcherOk = status.watcher?.status === 'running' && status.watcher?.lastUpdate;
+      const lastWs = status.watcher?.lastUpdate ? new Date(status.watcher.lastUpdate) : null;
+      const stale = lastWs && (Date.now() - lastWs.getTime() > 600000); // >10 min = stale
+      el.innerHTML =
+        '<span style="color:' + (watcherOk && !stale ? '#3fb950' : '#d29922') + '">⚡ Watcher: ' +
+        (watcherOk ? status.watcher.wsUpdates + ' updates' : 'unknown') + '</span>' +
+        ' | <span style="color:#58a6ff">📊 Dashboard: ' + status.dashboard.uptime + '</span>';
+    }
+  }
+}
+
 async function loadPrices() {
   const prices = await fetchJson('/api/prices');
   if (prices) {
@@ -387,7 +406,7 @@ async function loadPrices() {
 }
 
 async function loadDashboard() {
-  await loadPrices();
+  await Promise.all([loadPrices(), loadStatus()]);
   // Portfolio
   const portfolio = await fetchJson('/api/portfolio');
   if (portfolio) {
@@ -807,6 +826,32 @@ app.get('/api/prices', async (_req: Request, res: Response) => {
   } catch (err: any) {
     res.json(priceCache || { sol: 0, jitoSol: 0, updatedAt: null, error: err.message });
   }
+});
+
+// Service status — checks watcher + dashboard uptime
+app.get('/api/status', (_req: Request, res: Response) => {
+  let watcherState: any = null;
+  try {
+    const watcherFile = path.join(CONFIG_DIR, 'watcher-state.json');
+    if (fs.existsSync(watcherFile)) {
+      watcherState = JSON.parse(fs.readFileSync(watcherFile, 'utf-8'));
+    }
+  } catch { /* ignore */ }
+
+  const uptimeSeconds = process.uptime();
+  const uptimeHours = (uptimeSeconds / 3600).toFixed(1);
+
+  res.json({
+    dashboard: { status: 'running', uptime: uptimeHours + 'h' },
+    watcher: watcherState ? {
+      status: 'running',
+      wsUpdates: watcherState.wsUpdates || 0,
+      lastUpdate: watcherState.lastUpdate || null,
+      mode: watcherState.mode || 'unknown',
+      alerts: (watcherState.alerts || []).length,
+    } : { status: 'unknown' },
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // Health check
