@@ -84,12 +84,30 @@
 - Full liquidity — can deploy instantly when conditions improve
 - **Action: HOLD**
 
-### Option D: Kamino Liquidity Vaults (SOL/JitoSOL LP)
-- Would add ~5-15% from market-making fees
-- BUT: requires depositing into Kamino smart contracts
-- Impermanent loss risk is low (correlated assets) but non-zero
-- Would need to implement kliquidity-sdk deposit logic
-- **Action: EVALUATE LATER** — may be worth building for the additional 5-10%
+### Option D: Kamino Liquidity Vaults (SOL/JitoSOL LP) — ✅ IMPLEMENTED
+- Best vault: SOL-JitoSOL on Orca CLMM — **9.64% APY** (TVL: $7.5M)
+- JitoSOL-SOL vault: $3.3M TVL, currently out of range (0% APY)
+- Impermanent loss risk is low (highly correlated assets, tight pegged range)
+- Single-sided deposit supported — can deposit JitoSOL only (SDK swaps internally)
+- **Integration:** `src/liquidity-client.ts` — uses `@kamino-finance/kliquidity-sdk`
+- **Action: READY TO DEPLOY** — depositing JitoSOL into the best vault adds ~4% yield over holding
+- The combined yield would be: 5.57% (staking) + ~4% (LP fees) = ~9.6% total
+
+#### Live Vault Data (2026-02-06)
+| Vault | Address | APY | TVL | Range | Status |
+|-------|---------|-----|-----|-------|--------|
+| SOL-JitoSOL LP | `HCntzqDU...` | 9.64% | $7.5M | 0.7938-0.7956 | IN RANGE ✅ |
+| SOL-JitoSOL LP | `5QgwaBQz...` | 0.00% | $1.6M | — | OUT OF RANGE ⚠️ |
+| JitoSOL-SOL LP | `4Zuhh9SD...` | 0.00% | $3.3M | — | OUT OF RANGE ⚠️ |
+| JitoSOL-SOL LP | `GrsqRMeK...` | 0.00% | $10 | — | OUT OF RANGE ⚠️ |
+| JitoSOL-SOL LP | `EDn9rayn...` | 0.00% | $0 | — | OUT OF RANGE ⚠️ |
+
+#### Key Insights
+- Only 1 of 5 JitoSOL-SOL vaults is currently in range and earning
+- The in-range vault (HCntzqDU...) has the most TVL ($7.5M) — Kamino actively manages its position
+- Out-of-range vaults earn 0% APY until rebalanced
+- Fee APY (9.64%) comes from market-making on concentrated liquidity — no rewards/incentives
+- The vault is on Orca CLMM with a very tight range (0.7938-0.7956), maximizing fee capture
 
 ---
 
@@ -188,7 +206,58 @@ npx ts-node src/scanner.ts
 
 ---
 
-## 8. Technical Notes
+## 8. Liquidity Vault Integration (NEW)
+
+### SDK Used
+`@kamino-finance/kliquidity-sdk` v8.5.9 (already in package.json)
+
+### File: `src/liquidity-client.ts`
+Complete client for Kamino Liquidity vaults with:
+1. **`listJitoSolVaults()`** — Lists 5 known JitoSOL-SOL vaults with APY, TVL, range, share price
+2. **`getVaultDetails(address)`** — Full details for any vault (APY, TVL, range, token composition)
+3. **`getUserPositions(wallet)`** — Checks wallet for active LP positions with value and APY
+4. **`deposit(wallet, strategy, amountA, amountB, dryRun)`** — Dual-sided deposit
+5. **`singleSidedDepositA/B(wallet, strategy, amount, slippage, dryRun)`** — Single-sided deposit with internal swap
+6. **`withdraw(wallet, strategy, shares, dryRun)`** — Withdraw specific amount of shares
+7. **`withdrawAll(wallet, strategy, dryRun)`** — Withdraw all shares
+
+### Integration Points
+- **`src/portfolio.ts`** — Updated to track LP positions alongside K-Lend and Multiply
+  - `PortfolioSnapshot` now includes `liquidityPositions` array
+  - LP value included in total portfolio value and blended APY
+  - New `LP_VAULT` strategy type in allocations
+- **`src/optimize-v2.ts`** — Updated to scan LP vaults during optimization runs
+  - Scans JitoSOL-SOL vaults for APY comparison
+  - Shows active LP positions in monitoring
+  - Includes LP value in performance logging
+
+### Dry-Run Testing Results
+- ✅ Vault listing works — fetches 5 vaults in ~30s
+- ✅ APY/TVL/range data correct for in-range vaults
+- ✅ Single-sided deposit dry-run successful
+- ✅ Withdraw dry-run successful with share value estimation
+- ✅ Position tracking returns empty (correct — no deposits yet)
+- ✅ `dryRun` flag from settings.json is respected
+
+### How Deposits Work
+1. SDK fetches on-chain strategy state (token ratios, pool price, position range)
+2. For single-sided: SDK calculates optimal swap via KSwap/Jupiter
+3. Creates deposit instruction with proper token amounts
+4. Transaction includes ATA creation if needed
+5. Shares (kTokens) minted to depositor's wallet
+
+### Risk Considerations for LP Vaults
+| Risk | Level | Notes |
+|------|-------|-------|
+| Smart contract | Low-Medium | Kamino is audited, $2B+ TVL |
+| Impermanent loss | Very Low | JitoSOL-SOL are highly correlated |
+| Out-of-range | Medium | Vault may go out of range, earning 0% until rebalanced |
+| Withdrawal fees | Low | ~0.1% typical |
+| Concentration risk | Medium | Tight range means high fee capture but higher IL if de-peg |
+
+---
+
+## 9. Technical Notes
 
 ### Jito API Endpoint
 ```

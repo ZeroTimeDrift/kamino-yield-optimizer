@@ -6,6 +6,7 @@ export enum StrategyType {
   KLEND = 'klend',
   MULTIPLY = 'multiply',
   LIQUIDITY = 'liquidity',
+  LP_VAULT = 'lp_vault',
 }
 
 // ─── Existing Interfaces (preserved) ────────────────────────────

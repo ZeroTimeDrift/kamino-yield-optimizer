@@ -16,6 +16,7 @@ import * as path from 'path';
 import { KaminoClient } from './kamino-client';
 import { MultiplyClient } from './multiply-client';
 import { JupiterClient } from './jupiter-client';
+import { LiquidityClient } from './liquidity-client';
 import { PortfolioManager, PortfolioSnapshot, RebalanceAction } from './portfolio';
 import {
   Settings,
@@ -77,11 +78,13 @@ async function main() {
   const kaminoClient = new KaminoClient(settings.rpcUrl);
   const multiplyClient = new MultiplyClient(settings.rpcUrl, settings.multiply);
   const jupiterClient = new JupiterClient(connection, settings.jupiter);
+  const liquidityClient = new LiquidityClient(settings.rpcUrl);
   const portfolioMgr = new PortfolioManager(
     connection,
     kaminoClient,
     multiplyClient,
-    settings.portfolio
+    settings.portfolio,
+    liquidityClient
   );
 
   await kaminoClient.initialize();
@@ -110,6 +113,31 @@ async function main() {
   console.log('\n🔄 Checking Multiply opportunities...');
   const multiplyCheck = await multiplyClient.shouldOpenPosition();
   console.log(`   ${multiplyCheck.profitable ? '✅' : '❌'} ${multiplyCheck.reason}`);
+
+  // ─── Step 3b: Scan LP Vault rates ──────────────────────────
+  console.log('\n🏊 Scanning liquidity vault opportunities...');
+  try {
+    const lpVaults = await liquidityClient.listJitoSolVaults();
+    if (lpVaults.length > 0) {
+      for (const v of lpVaults.slice(0, 3)) {
+        const marker = v.totalApy.gt(10) ? '🔥' : v.totalApy.gt(5) ? '✨' : '  ';
+        const rangeStr = v.outOfRange ? '⚠️ OUT' : 'IN RANGE';
+        console.log(`   ${marker} ${v.name.padEnd(20)} ${v.totalApy.toFixed(2).padStart(6)}% APY  TVL: $${v.tvlUsd.toFixed(0)}  ${rangeStr}`);
+      }
+    } else {
+      console.log('   No JitoSOL-SOL LP vaults found.');
+    }
+  } catch (err: any) {
+    console.log(`   ⚠️  LP vault scan failed: ${err.message}`);
+  }
+
+  // ─── Step 3c: Check LP positions ──────────────────────────
+  if (snapshot.liquidityPositions.length > 0) {
+    console.log('\n💧 Active LP Positions:');
+    for (const pos of snapshot.liquidityPositions) {
+      console.log(`   ${pos.name}: ${pos.sharesAmount.toFixed(6)} shares (~$${pos.valueUsd.toFixed(2)}) @ ${pos.currentApy.toFixed(2)}% APY`);
+    }
+  }
 
   // ─── Step 4: Monitor existing Multiply positions ──────────
   console.log('\n📡 Monitoring Multiply positions...');
@@ -225,6 +253,7 @@ async function main() {
       .toFixed(2),
     multiplyValueUsd: snapshot.multiplyPositions
       .reduce((sum, p) => sum.plus(p.netValueUsd), new Decimal(0))
+      .plus(snapshot.liquidityPositions.reduce((sum, p) => sum.plus(p.valueUsd), new Decimal(0)))
       .toFixed(2),
     totalValueUsd: snapshot.totalValueUsd.toFixed(2),
     blendedApy: snapshot.blendedApy.toFixed(2),
@@ -240,6 +269,7 @@ async function main() {
   console.log(`   Blended APY:   ${snapshot.blendedApy.toFixed(2)}%`);
   console.log(`   K-Lend:        ${snapshot.klendPositions.length} positions`);
   console.log(`   Multiply:      ${snapshot.multiplyPositions.length} positions`);
+  console.log(`   LP Vaults:     ${snapshot.liquidityPositions.length} positions`);
   console.log(`   Actions:       ${actions.length > 0 ? actions.length + ' executed' : 'None needed'}`);
   if (actions.length > 0) {
     for (const a of actions) {

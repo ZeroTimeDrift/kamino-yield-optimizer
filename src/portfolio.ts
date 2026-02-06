@@ -17,6 +17,7 @@ import {
 } from './types';
 import { KaminoClient } from './kamino-client';
 import { MultiplyClient } from './multiply-client';
+import { LiquidityClient, LiquidityPosition } from './liquidity-client';
 
 /** Retry helper */
 async function retry<T>(fn: () => Promise<T>, maxRetries = 3, delayMs = 2000): Promise<T> {
@@ -45,6 +46,7 @@ export interface PortfolioSnapshot {
   balances: TokenBalances;
   klendPositions: Position[];
   multiplyPositions: MultiplyPosition[];
+  liquidityPositions: LiquidityPosition[];
   allocations: PortfolioAllocation[];
   totalValueUsd: Decimal;
   blendedApy: Decimal;
@@ -65,17 +67,20 @@ export class PortfolioManager {
   private connection: Connection;
   private kaminoClient: KaminoClient;
   private multiplyClient: MultiplyClient;
+  private liquidityClient: LiquidityClient | null;
   private settings: PortfolioSettings;
 
   constructor(
     connection: Connection,
     kaminoClient: KaminoClient,
     multiplyClient: MultiplyClient,
-    settings?: PortfolioSettings
+    settings?: PortfolioSettings,
+    liquidityClient?: LiquidityClient
   ) {
     this.connection = connection;
     this.kaminoClient = kaminoClient;
     this.multiplyClient = multiplyClient;
+    this.liquidityClient = liquidityClient || null;
     this.settings = settings ?? {
       allocations: {
         klendUsdc: 0.60,
@@ -115,10 +120,13 @@ export class PortfolioManager {
     const jitoPx = jitosolPrice ?? solPrice.mul(1.07); // rough JitoSOL/SOL premium
 
     // Fetch balances and positions in parallel
-    const [balances, klendPositions, multiplyMonitor] = await Promise.all([
+    const [balances, klendPositions, multiplyMonitor, liquidityPositions] = await Promise.all([
       this.getBalances(walletPubkey),
       this.kaminoClient.getUserPositions(walletPubkey),
       this.multiplyClient.monitorPositions(walletPubkey),
+      this.liquidityClient
+        ? this.liquidityClient.getUserPositions(walletPubkey).catch(() => [] as LiquidityPosition[])
+        : Promise.resolve([] as LiquidityPosition[]),
     ]);
 
     const multiplyPositions = multiplyMonitor.positions;
@@ -164,18 +172,27 @@ export class PortfolioManager {
       multiplyWeightedApy = multiplyWeightedApy.plus(pos.netApy.mul(pos.netValueUsd));
     }
 
+    // Liquidity (LP) position value
+    let liquidityValue = new Decimal(0);
+    let liquidityWeightedApy = new Decimal(0);
+    for (const pos of liquidityPositions) {
+      liquidityValue = liquidityValue.plus(pos.valueUsd);
+      liquidityWeightedApy = liquidityWeightedApy.plus(pos.currentApy.mul(pos.valueUsd));
+    }
+
     const totalKlendValue = klendUsdcValue.plus(klendOtherValue);
     const totalValue = walletSolValue
       .plus(walletUsdcValue)
       .plus(walletJitosolValue)
       .plus(totalKlendValue)
-      .plus(multiplyValue);
+      .plus(multiplyValue)
+      .plus(liquidityValue);
 
     // Calculate blended APY
     let blendedApy = new Decimal(0);
-    const totalInvested = totalKlendValue.plus(multiplyValue);
+    const totalInvested = totalKlendValue.plus(multiplyValue).plus(liquidityValue);
     if (totalInvested.gt(0)) {
-      const totalWeightedApy = klendWeightedApy.plus(multiplyWeightedApy);
+      const totalWeightedApy = klendWeightedApy.plus(multiplyWeightedApy).plus(liquidityWeightedApy);
       blendedApy = totalWeightedApy.div(totalInvested);
     }
 
@@ -211,6 +228,23 @@ export class PortfolioManager {
         drift: multiplyWeight - this.settings.allocations.multiply,
       });
 
+      // LP Vault allocation
+      if (liquidityValue.gt(0)) {
+        const lpWeight = liquidityValue.div(totalValue).toNumber();
+        allocations.push({
+          strategy: StrategyType.LP_VAULT,
+          label: 'LP Vaults',
+          token: 'JitoSOL/SOL',
+          targetWeight: 0, // no target yet — will be set when allocations config supports LP
+          currentWeight: lpWeight,
+          currentValueUsd: liquidityValue,
+          currentApy: liquidityValue.gt(0)
+            ? liquidityWeightedApy.div(liquidityValue)
+            : new Decimal(0),
+          drift: lpWeight, // all drift since no target yet
+        });
+      }
+
       const gasValue = walletSolValue;
       const gasWeight = gasValue.div(totalValue).toNumber();
       allocations.push({
@@ -230,6 +264,7 @@ export class PortfolioManager {
       balances,
       klendPositions,
       multiplyPositions,
+      liquidityPositions,
       allocations,
       totalValueUsd: totalValue,
       blendedApy,
@@ -356,6 +391,14 @@ export class PortfolioManager {
       console.log('│  Multiply Positions:                                 │');
       for (const pos of snapshot.multiplyPositions) {
         console.log(`│    ${pos.collateralToken}/${pos.debtToken} ${pos.leverage.toFixed(1)}x  LTV: ${pos.ltv.mul(100).toFixed(1)}%  APY: ${pos.netApy.toFixed(2)}%  │`);
+      }
+    }
+
+    if (snapshot.liquidityPositions.length > 0) {
+      console.log('├──────────────────────────────────────────────────────┤');
+      console.log('│  LP Positions:                                       │');
+      for (const pos of snapshot.liquidityPositions) {
+        console.log(`│    ${pos.name.padEnd(20)} ${pos.currentApy.toFixed(2)}% APY  $${pos.valueUsd.toFixed(2)}  │`);
       }
     }
 
