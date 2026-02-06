@@ -13,12 +13,13 @@
  * Usage: npx ts-node src/rate-watcher.ts
  */
 
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { createSolanaRpc, address } from '@solana/kit';
 import { KaminoMarket, PROGRAM_ID } from '@kamino-finance/klend-sdk';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
+import { RangeMonitor, RangeAlert } from './range-monitor';
 
 // ─── Config ──────────────────────────────────────────────
 const SETTINGS_PATH = path.join(__dirname, '..', 'config', 'settings.json');
@@ -45,11 +46,16 @@ const JITOSOL_STAKING_YIELD = 5.57;
 const RATE_CHANGE_THRESHOLD = 0.15; // 15% relative change triggers alert
 const DEBOUNCE_MS = 120_000; // Debounce to max 1 rate check every 2 minutes
 const LP_CHECK_INTERVAL_MS = 1800_000; // Check LP yields every 30 minutes
+const RANGE_CHECK_INTERVAL_MS = 600_000; // Check LP range every 10 minutes
+const NEAR_BOUNDARY_THRESHOLD_PCT = 5; // Warn when within 5% of range edge
 const HEALTH_LOG_INTERVAL_MS = 600_000; // Log health every 10 minutes
 const RECONNECT_DELAY_MS = 5_000; // Reconnect after 5s on disconnect
 const OPTIMIZER_CRON_ID = 'b8cd4bb8-bf75-4977-a55d-c0b433f73687';
 const TRIGGER_COOLDOWN_MS = 300_000; // Don't trigger more than once every 5 minutes
 let lastTriggerTime = 0;
+
+// Active vault we're monitoring
+const ACTIVE_VAULT = 'HCntzqDU5wXSWjwgLQP5hqh3kLHRYizKtPErvSCyggXd';
 
 // ─── Types ───────────────────────────────────────────────
 interface RateSnapshot {
@@ -314,6 +320,56 @@ async function subscribeToReserves(connection: Connection, state: WatcherState) 
   }
 }
 
+// ─── Range Check ─────────────────────────────────────────
+async function checkLPRange(state: WatcherState, rangeMonitor: RangeMonitor) {
+  try {
+    console.log(`  🔭 Checking LP range for vault ${ACTIVE_VAULT.slice(0, 8)}...`);
+
+    const rangeInfo = await rangeMonitor.checkPositionRange(ACTIVE_VAULT);
+
+    const distPct = rangeInfo.distanceToBoundaryPercent.toNumber();
+    const statusIcon = rangeInfo.inRange ? '✅' : '❌';
+    console.log(`  ${statusIcon} ${rangeInfo.tokenPair} | Price: ${rangeInfo.poolPrice.toFixed(6)} | ` +
+      `Range: [${rangeInfo.lower.toFixed(6)}, ${rangeInfo.upper.toFixed(6)}] | ` +
+      `Distance: ${distPct.toFixed(2)}%`);
+
+    if (!rangeInfo.inRange) {
+      // OUT OF RANGE — critical alert + trigger optimizer
+      const recent = state.alerts.find(a =>
+        a.type === 'OUT_OF_RANGE' &&
+        Date.now() - new Date(a.timestamp).getTime() < 1800_000 // Don't spam: 30min cooldown
+      );
+      if (!recent) {
+        emitAlert(state, 'OUT_OF_RANGE',
+          `🚨 LP vault ${ACTIVE_VAULT.slice(0, 8)}... is OUT OF RANGE! ` +
+          `${rangeInfo.tokenPair} earning 0%. Pool: ${rangeInfo.poolPrice.toFixed(6)}, ` +
+          `Range: [${rangeInfo.lower.toFixed(6)}, ${rangeInfo.upper.toFixed(6)}]. ` +
+          `Distance: ${distPct.toFixed(2)}%. Immediate action needed.`,
+          true // trigger optimizer
+        );
+      }
+    } else if (distPct < NEAR_BOUNDARY_THRESHOLD_PCT) {
+      // NEAR BOUNDARY — warning
+      const recent = state.alerts.find(a =>
+        a.type === 'NEAR_BOUNDARY' &&
+        Date.now() - new Date(a.timestamp).getTime() < 3600_000 // Don't spam: 1hr cooldown
+      );
+      if (!recent) {
+        emitAlert(state, 'NEAR_BOUNDARY',
+          `⚠️ LP vault ${ACTIVE_VAULT.slice(0, 8)}... approaching boundary! ` +
+          `${rangeInfo.tokenPair} is ${distPct.toFixed(2)}% from edge (threshold: ${NEAR_BOUNDARY_THRESHOLD_PCT}%). ` +
+          `Pool: ${rangeInfo.poolPrice.toFixed(6)}, Range: [${rangeInfo.lower.toFixed(6)}, ${rangeInfo.upper.toFixed(6)}].`,
+          false // warning only, don't trigger optimizer yet
+        );
+      }
+    }
+
+    saveState(state);
+  } catch (err: any) {
+    console.error(`  ❌ Range check failed: ${err.message?.slice(0, 80)}`);
+  }
+}
+
 // ─── Main ────────────────────────────────────────────────
 async function main() {
   console.log('═══════════════════════════════════════════════');
@@ -328,6 +384,12 @@ async function main() {
     wsEndpoint: WS_URL,
     commitment: 'confirmed',
   });
+
+  // Load wallet for range monitoring
+  const walletPath = path.join(__dirname, '..', 'config', 'wallet.json');
+  const secretKey = JSON.parse(fs.readFileSync(walletPath, 'utf8'));
+  const wallet = Keypair.fromSecretKey(Uint8Array.from(secretKey));
+  const rangeMonitor = new RangeMonitor(HTTP_URL, wallet);
 
   const state = loadState();
   state.startedAt = new Date().toISOString();
@@ -351,13 +413,22 @@ async function main() {
   // Initial LP check
   await checkLPYields(state);
 
+  // Initial range check
+  console.log('\n🔭 Checking LP position range...');
+  await checkLPRange(state, rangeMonitor);
+
   saveState(state);
 
-  // Periodic LP yield check (every 10 min)
+  // Periodic LP yield check (every 30 min)
   setInterval(async () => {
     await checkLPYields(state);
     saveState(state);
   }, LP_CHECK_INTERVAL_MS);
+
+  // Periodic range check (every 10 min)
+  setInterval(async () => {
+    await checkLPRange(state, rangeMonitor);
+  }, RANGE_CHECK_INTERVAL_MS);
 
   // Health log (every 5 min)
   setInterval(() => {

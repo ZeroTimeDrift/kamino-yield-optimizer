@@ -27,6 +27,7 @@ import { MultiplyClient } from './multiply-client';
 import { JupiterClient } from './jupiter-client';
 import { LiquidityClient, LiquidityPosition, LiquidityVaultInfo } from './liquidity-client';
 import { fetchLiveJitoStakingApy } from './scanner';
+import { scanAllProtocols, ProtocolYield } from './multi-protocol-scanner';
 import {
   Settings,
   StrategyType,
@@ -229,6 +230,7 @@ interface RateHistoryEntry {
 
 const RATE_HISTORY_PATH = path.join(__dirname, '../config/rate-history.json');
 const REBALANCER_LOG_PATH = path.join(__dirname, '../config/rebalancer-log.jsonl');
+const CROSS_PROTOCOL_LOG_PATH = path.join(__dirname, '../config/cross-protocol-log.jsonl');
 
 function loadRateHistory(): RateHistoryEntry[] {
   try {
@@ -544,6 +546,53 @@ export async function scoreStrategies(
 
   // Record rates for history tracking
   recordRates(strategies);
+
+  // ─── Cross-protocol comparison (read-only) ──────────────
+  // Fetch yields from other protocols (Marginfi, Drift, etc.) for comparison.
+  // We don't move capital cross-protocol yet — just log for awareness.
+  try {
+    const crossProtocolYields = await scanAllProtocols();
+    const relevantYields = crossProtocolYields
+      .filter(y =>
+        (y.tokenIn === 'SOL' || y.tokenIn === 'JITOSOL') &&
+        y.apy > 0 &&
+        y.protocol !== 'kamino' // exclude kamino — we already track that
+      )
+      .slice(0, 15); // top 15
+
+    if (relevantYields.length > 0) {
+      const currentApyNum = currentApy.toNumber();
+      const better = relevantYields.filter(y => y.apy > currentApyNum);
+
+      console.log(`\n   📡 Cross-protocol scan: ${relevantYields.length} opportunities from ${new Set(relevantYields.map(y => y.protocol)).size} protocols`);
+      for (const y of relevantYields.slice(0, 5)) {
+        const marker = y.apy > currentApyNum ? '🔥' : '  ';
+        console.log(`   ${marker} ${y.protocol.padEnd(12)} ${y.pool.padEnd(30).slice(0, 30)} ${y.apy.toFixed(2).padStart(7)}% APY  (${y.risk} risk, $${(y.tvl / 1e6).toFixed(1)}M TVL)`);
+      }
+
+      if (better.length > 0) {
+        console.log(`   💡 ${better.length} protocol(s) beating current ${currentApyNum.toFixed(2)}% APY (cross-protocol moves not yet enabled)`);
+      }
+
+      // Log to cross-protocol log file
+      const logEntry = {
+        timestamp: new Date().toISOString(),
+        currentApy: currentApyNum,
+        currentStrategy: currentStrategyId,
+        crossProtocolOpportunities: relevantYields.map(y => ({
+          protocol: y.protocol,
+          pool: y.pool,
+          apy: y.apy,
+          risk: y.risk,
+          tvl: y.tvl,
+          beating: y.apy > currentApyNum,
+        })),
+      };
+      fs.appendFileSync(CROSS_PROTOCOL_LOG_PATH, JSON.stringify(logEntry) + '\n');
+    }
+  } catch (err: any) {
+    console.log(`   ⚠️  Cross-protocol scan failed: ${err.message?.slice(0, 60)}`);
+  }
 
   // Score each strategy
   const scored: ScoredStrategy[] = [];
@@ -955,6 +1004,30 @@ export async function runRebalancer(
   console.log('     ⚖️  AUTO-REBALANCER — Full Fee Accounting');
   console.log(`     ${new Date().toISOString()}`);
   console.log('═══════════════════════════════════════════════════════════\n');
+
+  // ─── Gas reserve check ──────────────────────────────────
+  const MIN_GAS_SOL = 0.003;
+  const solLamports = await connection.getBalance(wallet.publicKey);
+  const walletSolBalance = new Decimal(solLamports).div(LAMPORTS_PER_SOL);
+
+  if (walletSolBalance.lt(MIN_GAS_SOL)) {
+    console.log(`⚠️  SOL balance ${walletSolBalance.toFixed(6)} < ${MIN_GAS_SOL} minimum gas reserve!`);
+    console.log(`   Skipping rebalancer — insufficient gas for transactions.`);
+    // Return a hold recommendation
+    const emptyRec: RebalanceRecommendation = {
+      shouldRebalance: false,
+      currentStrategy: { id: 'hold_jitosol', name: 'Hold JitoSOL', type: StrategyType.KLEND, grossApy: new Decimal(5.57), available: true, address: '', meta: {} },
+      bestAlternative: null,
+      allStrategies: [],
+      reasoning: [`Gas too low: ${walletSolBalance.toFixed(6)} SOL < ${MIN_GAS_SOL} minimum`],
+      timestamp: new Date(),
+      capitalSol: new Decimal(0),
+      idleCapitalSol: new Decimal(0),
+      idleRecommendation: null,
+    };
+    logDecision(emptyRec);
+    return emptyRec;
+  }
 
   // Initialize clients
   const kaminoClient = new KaminoClient(settings.rpcUrl);
