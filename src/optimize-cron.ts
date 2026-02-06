@@ -237,12 +237,10 @@ async function main() {
   console.log('\n🔍 Running tracking modules...');
   
   try {
-    const connection = new Connection(settings.rpcUrl);
-    
     // Yield tracking
     console.log('   📊 Yield tracker...');
     try {
-      const yieldTracker = await createYieldTracker(connection, wallet, settings);
+      const yieldTracker = createYieldTracker(connection, wallet, settings);
       await yieldTracker.captureSnapshot();
       console.log('   ✅ Portfolio snapshot captured');
     } catch (err: any) {
@@ -252,8 +250,8 @@ async function main() {
     // Range monitoring
     console.log('   📡 Range monitor...');
     try {
-      const rangeMonitor = await createRangeMonitor(connection, wallet, settings);
-      const alerts = await rangeMonitor.monitorPositions(wallet.publicKey.toString());
+      const rangeMonitor = createRangeMonitor(connection, wallet, settings);
+      const alerts = await rangeMonitor.monitorPositions();
       
       if (alerts.length > 0) {
         console.log(`   🚨 ${alerts.length} range alerts generated`);
@@ -272,8 +270,8 @@ async function main() {
     if (hour % 8 === 0) { // Every ~8 hours
       console.log('   🎁 Rewards tracker...');
       try {
-        const rewardsTracker = await createRewardsTracker(connection, wallet, settings);
-        await rewardsTracker.getRewardsSummary();
+        const rewardsTracker = createRewardsTracker(connection, wallet, settings);
+        await rewardsTracker.captureSnapshot();
         console.log('   ✅ Rewards snapshot saved');
       } catch (err: any) {
         console.log(`   ⚠️ Rewards tracker failed: ${err.message}`);

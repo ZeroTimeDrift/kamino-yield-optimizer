@@ -1,8 +1,10 @@
 /**
  * Points/Rewards Tracker
- * 
- * Tracks Kamino points and reward emissions over time.
- * Monitors various reward sources including points programs and vault emissions.
+ *
+ * Tracks Kamino points, reward emissions, and other incentives.
+ * Checks Hubble protocol API for points data and logs over time.
+ *
+ * NO RPC calls — purely HTTP API calls to points endpoints.
  */
 
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
@@ -10,388 +12,283 @@ import Decimal from 'decimal.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Settings } from './types';
-import { PortfolioManager } from './portfolio';
 
-export interface RewardSource {
-  /** Type of reward */
-  type: 'POINTS' | 'TOKEN_EMISSIONS' | 'FEES';
-  /** Source name (e.g. "Kamino Points", "KMNO Emissions") */
-  name: string;
-  /** Amount earned */
-  amount: Decimal;
-  /** Token symbol */
-  token: string;
-  /** USD value estimate */
-  valueUsd: Decimal;
-  /** APY contribution */
-  apyContribution: Decimal;
-  /** Last updated */
-  lastUpdated: Date;
-}
+// ─── Types ──────────────────────────────────────────────────────
 
 export interface RewardsSnapshot {
-  /** Timestamp */
   timestamp: string;
-  /** Wallet address */
   wallet: string;
-  /** All reward sources */
-  rewards: RewardSource[];
-  /** Total estimated value */
-  totalValueUsd: Decimal;
-  /** Total APY from rewards */
-  totalRewardApy: Decimal;
-  /** Cumulative points/rewards since start */
-  cumulativeRewards: {
-    [token: string]: Decimal;
-  };
+  kaminoPoints: KaminoPointsData | null;
+  jitoPoints: JitoPointsData | null;
+  totalEstimatedValueUsd: string;
 }
 
-export class RewardsTracker {
-  private connection: Connection;
-  private wallet: Keypair;
-  private portfolioManager: PortfolioManager;
-  private settings: Settings;
-  private historyFile: string;
+export interface KaminoPointsData {
+  totalPoints: string;
+  rank: number | null;
+  breakdown: {
+    source: string;
+    points: string;
+  }[];
+  rawResponse: any;
+}
 
-  constructor(
-    connection: Connection,
-    wallet: Keypair,
-    portfolioManager: PortfolioManager,
-    settings: Settings
-  ) {
-    this.connection = connection;
-    this.wallet = wallet;
-    this.portfolioManager = portfolioManager;
-    this.settings = settings;
-    this.historyFile = path.join(__dirname, '..', 'config', 'rewards-history.jsonl');
-    
-    // Ensure config directory exists
-    const configDir = path.dirname(this.historyFile);
-    if (!fs.existsSync(configDir)) {
-      fs.mkdirSync(configDir, { recursive: true });
-    }
+export interface JitoPointsData {
+  totalPoints: string;
+  rawResponse: any;
+}
+
+// ─── Config ─────────────────────────────────────────────────────
+
+const REWARDS_FILE = path.join(__dirname, '..', 'config', 'rewards-history.jsonl');
+
+const KAMINO_POINTS_ENDPOINTS = [
+  'https://api.hubbleprotocol.io/v2/users/{wallet}/points',
+  'https://api.hubbleprotocol.io/points/users/{wallet}',
+  'https://api.kamino.finance/v2/users/{wallet}/points',
+];
+
+const JITO_POINTS_ENDPOINTS = [
+  'https://kaminoapi.jito.network/users/{wallet}/points',
+];
+
+// ─── Helpers ────────────────────────────────────────────────────
+
+async function fetchWithTimeout(url: string, timeoutMs = 10000): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: { 'Accept': 'application/json' },
+    });
+    return response;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function loadHistory(): RewardsSnapshot[] {
+  if (!fs.existsSync(REWARDS_FILE)) return [];
+  const content = fs.readFileSync(REWARDS_FILE, 'utf-8').trim();
+  if (!content) return [];
+  return content.split('\n').map(line => {
+    try { return JSON.parse(line); } catch { return null; }
+  }).filter(Boolean) as RewardsSnapshot[];
+}
+
+// ─── Main class ─────────────────────────────────────────────────
+
+export class RewardsTracker {
+  private walletAddress: string;
+
+  constructor(walletAddress: string) {
+    this.walletAddress = walletAddress;
   }
 
   /**
-   * Capture current rewards state
+   * Capture current rewards state from various APIs.
+   * NO RPC calls — purely HTTP.
    */
   async captureSnapshot(): Promise<RewardsSnapshot> {
     console.log('🎁 Capturing rewards snapshot...');
-    
-    const wallet = this.wallet.publicKey.toString();
-    const rewards: RewardSource[] = [];
-    
-    // Check Kamino points
-    const kaminoPoints = await this.getKaminoPoints(wallet);
-    if (kaminoPoints) {
-      rewards.push(kaminoPoints);
-    }
-    
-    // Check vault emissions
-    const vaultRewards = await this.getVaultEmissions(wallet);
-    rewards.push(...vaultRewards);
-    
-    // Calculate totals
-    const totalValueUsd = rewards.reduce((sum, reward) => sum.plus(reward.valueUsd), new Decimal(0));
-    const totalRewardApy = rewards.reduce((sum, reward) => sum.plus(reward.apyContribution), new Decimal(0));
-    
-    // Calculate cumulative rewards
-    const cumulativeRewards = this.calculateCumulativeRewards(rewards);
-    
+
+    const kaminoPoints = await this.fetchKaminoPoints();
+    const jitoPoints = await this.fetchJitoPoints();
+
     const snapshot: RewardsSnapshot = {
       timestamp: new Date().toISOString(),
-      wallet,
-      rewards,
-      totalValueUsd,
-      totalRewardApy,
-      cumulativeRewards
+      wallet: this.walletAddress,
+      kaminoPoints,
+      jitoPoints,
+      totalEstimatedValueUsd: '0', // Points don't have clear USD value yet
     };
-    
-    // Save to history
-    const jsonLine = JSON.stringify(snapshot, (key, value) => {
-      if (value instanceof Decimal) {
-        return value.toString();
-      }
-      return value;
-    }) + '\n';
-    
-    fs.appendFileSync(this.historyFile, jsonLine);
-    
-    console.log(`💾 Saved rewards snapshot: $${totalValueUsd.toFixed(2)} total value, ${totalRewardApy.toFixed(2)}% APY from rewards`);
+
+    // Append to history
+    fs.appendFileSync(REWARDS_FILE, JSON.stringify(snapshot) + '\n');
+
+    const kPts = kaminoPoints?.totalPoints || '0';
+    const jPts = jitoPoints?.totalPoints || '0';
+    console.log(`💾 Rewards: Kamino=${kPts} pts | Jito=${jPts} pts`);
+
     return snapshot;
   }
 
   /**
-   * Get Kamino points from API
+   * Fetch Kamino points from Hubble protocol API
    */
-  private async getKaminoPoints(wallet: string): Promise<RewardSource | null> {
-    try {
-      console.log('🔍 Checking Kamino points API...');
-      
-      // Try multiple potential endpoints
-      const endpoints = [
-        `https://api.hubbleprotocol.io/points/users/${wallet}`,
-        `https://api.kamino.finance/points/users/${wallet}`,
-        `https://points-api.kamino.finance/users/${wallet}`
-      ];
-      
-      for (const endpoint of endpoints) {
-        try {
-          const response = await fetch(endpoint);
-          
-          if (response.ok) {
-            const data = await response.json();
-            
-            // Parse response - structure may vary
-            let points = new Decimal(0);
-            
-            if (data.points) {
-              points = new Decimal(data.points);
-            } else if (data.totalPoints) {
-              points = new Decimal(data.totalPoints);
-            } else if (data.balance) {
-              points = new Decimal(data.balance);
-            }
-            
-            if (points.gt(0)) {
-              console.log(`✅ Found ${points.toFixed(0)} Kamino points`);
-              
-              return {
-                type: 'POINTS',
-                name: 'Kamino Points',
-                amount: points,
-                token: 'KAMINO_POINTS',
-                valueUsd: new Decimal(0), // Points don't have direct USD value yet
-                apyContribution: new Decimal(0), // Estimate based on potential airdrops
-                lastUpdated: new Date()
-              };
-            }
-          }
-        } catch (err) {
-          // Continue to next endpoint
-          console.log(`Tried ${endpoint}, continuing...`);
-        }
-      }
-      
-      console.log('ℹ️ No Kamino points found or API unavailable');
-      return null;
-    } catch (error) {
-      console.warn('Failed to fetch Kamino points:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Get reward emissions from active vault positions
-   */
-  private async getVaultEmissions(wallet: string): Promise<RewardSource[]> {
-    const rewards: RewardSource[] = [];
-    
-    try {
-      console.log('🔍 Checking vault reward emissions...');
-      
-      // Get portfolio snapshot to find active positions
-      const snapshot = await this.portfolioManager.getSnapshot();
-      
-      // Check K-Lend positions for reward emissions
-      for (const position of snapshot.klendPositions) {
-        const emissions = await this.getKLendEmissions(position.vaultAddress);
-        if (emissions) {
-          rewards.push(...emissions);
-        }
-      }
-      
-      // Check Liquidity positions for fee earnings
-      for (const position of snapshot.liquidityPositions) {
-        const feeRewards = await this.getLiquidityFeeEarnings(position.strategyAddress);
-        if (feeRewards) {
-          rewards.push(feeRewards);
-        }
-      }
-      
-      console.log(`📊 Found ${rewards.length} emission sources`);
-      return rewards;
-    } catch (error) {
-      console.warn('Failed to get vault emissions:', error);
-      return [];
-    }
-  }
-
-  /**
-   * Get K-Lend position reward emissions
-   */
-  private async getKLendEmissions(vaultAddress: string): Promise<RewardSource[] | null> {
-    try {
-      // This would typically use the Kamino SDK to get reward info
-      // For now, return null as we don't have specific emission data
-      return null;
-    } catch (error) {
-      console.warn(`Failed to get K-Lend emissions for ${vaultAddress}:`, error);
-      return null;
-    }
-  }
-
-  /**
-   * Get liquidity position fee earnings
-   */
-  private async getLiquidityFeeEarnings(strategyAddress: string): Promise<RewardSource | null> {
-    try {
-      // This would calculate accumulated fees from liquidity provision
-      // For now, estimate based on position size and time
-      return {
-        type: 'FEES',
-        name: 'LP Fees',
-        amount: new Decimal(0.1), // Placeholder
-        token: 'SOL',
-        valueUsd: new Decimal(10), // Placeholder
-        apyContribution: new Decimal(0.5), // Placeholder
-        lastUpdated: new Date()
-      };
-    } catch (error) {
-      console.warn(`Failed to get LP fee earnings for ${strategyAddress}:`, error);
-      return null;
-    }
-  }
-
-  /**
-   * Calculate cumulative rewards since tracking began
-   */
-  private calculateCumulativeRewards(currentRewards: RewardSource[]): { [token: string]: Decimal } {
-    const cumulative: { [token: string]: Decimal } = {};
-    
-    // Load historical data
-    const history = this.loadRewardsHistory();
-    
-    if (history.length === 0) {
-      // First snapshot - everything is cumulative
-      for (const reward of currentRewards) {
-        cumulative[reward.token] = reward.amount;
-      }
-      return cumulative;
-    }
-    
-    // Get baseline from first snapshot
-    const baseline = history[0];
-    
-    for (const reward of currentRewards) {
-      const baselineReward = baseline.rewards.find(r => r.token === reward.token);
-      const baselineAmount = baselineReward ? new Decimal(baselineReward.amount) : new Decimal(0);
-      cumulative[reward.token] = reward.amount.minus(baselineAmount);
-    }
-    
-    return cumulative;
-  }
-
-  /**
-   * Get rewards summary
-   */
-  async getRewardsSummary(): Promise<string> {
-    try {
-      const snapshot = await this.captureSnapshot();
-      
-      if (snapshot.rewards.length === 0) {
-        return '🎁 No active rewards found';
-      }
-      
-      const summary = [
-        '🎁 **Rewards Summary**',
-        `💰 Total Value: $${snapshot.totalValueUsd.toFixed(2)}`,
-        `📈 Reward APY Boost: +${snapshot.totalRewardApy.toFixed(2)}%`,
-        '',
-        '📊 **Active Rewards:**'
-      ];
-      
-      for (const reward of snapshot.rewards) {
-        const line = `${this.getRewardEmoji(reward.type)} ${reward.name}: ${reward.amount.toFixed(2)} ${reward.token}`;
-        summary.push(line);
-      }
-      
-      // Add cumulative section
-      const cumulativeEntries = Object.entries(snapshot.cumulativeRewards);
-      if (cumulativeEntries.length > 0) {
-        summary.push('', '🏆 **Total Earned:**');
-        for (const [token, amount] of cumulativeEntries) {
-          if (amount.gt(0)) {
-            summary.push(`🎯 ${amount.toFixed(2)} ${token}`);
-          }
-        }
-      }
-      
-      return summary.join('\n');
-    } catch (error) {
-      return `❌ Error getting rewards summary: ${error instanceof Error ? error.message : 'Unknown error'}`;
-    }
-  }
-
-  /**
-   * Load rewards history from file
-   */
-  private loadRewardsHistory(): RewardsSnapshot[] {
-    if (!fs.existsSync(this.historyFile)) {
-      return [];
-    }
-    
-    const content = fs.readFileSync(this.historyFile, 'utf-8');
-    const lines = content.trim().split('\n').filter(line => line.trim());
-    
-    return lines.map(line => {
+  private async fetchKaminoPoints(): Promise<KaminoPointsData | null> {
+    for (const template of KAMINO_POINTS_ENDPOINTS) {
+      const url = template.replace('{wallet}', this.walletAddress);
       try {
-        const parsed = JSON.parse(line);
-        // Convert string decimals back to Decimal objects
-        if (parsed.rewards) {
-          parsed.rewards = parsed.rewards.map((r: any) => ({
-            ...r,
-            amount: new Decimal(r.amount),
-            valueUsd: new Decimal(r.valueUsd),
-            apyContribution: new Decimal(r.apyContribution),
-            lastUpdated: new Date(r.lastUpdated)
-          }));
+        const response = await fetchWithTimeout(url);
+        if (!response.ok) continue;
+
+        const data = await response.json() as any;
+
+        // Parse various response formats
+        let totalPoints = '0';
+        let rank: number | null = null;
+        const breakdown: { source: string; points: string }[] = [];
+
+        if (data.totalPoints !== undefined) {
+          totalPoints = String(data.totalPoints);
+        } else if (data.points !== undefined) {
+          totalPoints = String(data.points);
+        } else if (data.balance !== undefined) {
+          totalPoints = String(data.balance);
+        } else if (data.total !== undefined) {
+          totalPoints = String(data.total);
         }
-        if (parsed.totalValueUsd) {
-          parsed.totalValueUsd = new Decimal(parsed.totalValueUsd);
+
+        if (data.rank !== undefined) {
+          rank = Number(data.rank);
         }
-        if (parsed.totalRewardApy) {
-          parsed.totalRewardApy = new Decimal(parsed.totalRewardApy);
-        }
-        if (parsed.cumulativeRewards) {
-          const cumulative: { [token: string]: Decimal } = {};
-          for (const [token, amount] of Object.entries(parsed.cumulativeRewards)) {
-            cumulative[token] = new Decimal(amount as string);
+
+        // Try to parse breakdown
+        if (data.breakdown && Array.isArray(data.breakdown)) {
+          for (const item of data.breakdown) {
+            breakdown.push({
+              source: item.source || item.name || 'Unknown',
+              points: String(item.points || item.amount || 0),
+            });
           }
-          parsed.cumulativeRewards = cumulative;
+        } else if (data.sources && typeof data.sources === 'object') {
+          for (const [source, points] of Object.entries(data.sources)) {
+            breakdown.push({ source, points: String(points) });
+          }
         }
-        return parsed;
-      } catch (error) {
-        console.warn('Failed to parse rewards history line:', line);
-        return null;
+
+        if (totalPoints !== '0' || breakdown.length > 0) {
+          console.log(`   ✅ Kamino points: ${totalPoints} (from ${url})`);
+          return { totalPoints, rank, breakdown, rawResponse: data };
+        }
+      } catch (err) {
+        // Continue to next endpoint
       }
-    }).filter(entry => entry !== null);
+    }
+
+    console.log('   ℹ️ Kamino points API unavailable or no points found');
+    return null;
   }
 
   /**
-   * Get emoji for reward type
+   * Fetch Jito points/rewards
    */
-  private getRewardEmoji(type: RewardSource['type']): string {
-    switch (type) {
-      case 'POINTS': return '⭐';
-      case 'TOKEN_EMISSIONS': return '💎';
-      case 'FEES': return '💰';
-      default: return '🎁';
+  private async fetchJitoPoints(): Promise<JitoPointsData | null> {
+    for (const template of JITO_POINTS_ENDPOINTS) {
+      const url = template.replace('{wallet}', this.walletAddress);
+      try {
+        const response = await fetchWithTimeout(url);
+        if (!response.ok) continue;
+
+        const data = await response.json() as any;
+        const totalPoints = String(data.totalPoints || data.points || data.total || 0);
+
+        if (totalPoints !== '0') {
+          console.log(`   ✅ Jito points: ${totalPoints}`);
+          return { totalPoints, rawResponse: data };
+        }
+      } catch {
+        // Continue
+      }
     }
+
+    // Try Hubble API with a specific Jito-related path
+    try {
+      const url = `https://api.hubbleprotocol.io/v2/users/${this.walletAddress}/rewards`;
+      const response = await fetchWithTimeout(url);
+      if (response.ok) {
+        const data = await response.json() as any;
+        if (data && (data.totalPoints || data.jito)) {
+          const totalPoints = String(data.jito?.points || data.totalPoints || 0);
+          return { totalPoints, rawResponse: data };
+        }
+      }
+    } catch { /* ignore */ }
+
+    console.log('   ℹ️ Jito points API unavailable or no points found');
+    return null;
+  }
+
+  /**
+   * Get rewards summary string
+   */
+  getRewardsSummary(): string {
+    const history = loadHistory();
+    if (history.length === 0) {
+      return '🎁 No rewards data yet.';
+    }
+
+    const latest = history[history.length - 1];
+    const lines = ['🎁 **Rewards Summary**'];
+
+    if (latest.kaminoPoints) {
+      lines.push(`⭐ Kamino Points: ${latest.kaminoPoints.totalPoints}`);
+      if (latest.kaminoPoints.rank) {
+        lines.push(`   Rank: #${latest.kaminoPoints.rank}`);
+      }
+      for (const b of latest.kaminoPoints.breakdown) {
+        lines.push(`   └─ ${b.source}: ${b.points}`);
+      }
+    }
+
+    if (latest.jitoPoints) {
+      lines.push(`💎 Jito Points: ${latest.jitoPoints.totalPoints}`);
+    }
+
+    if (!latest.kaminoPoints && !latest.jitoPoints) {
+      lines.push('ℹ️ No points data available from APIs');
+    }
+
+    // Show growth if we have history
+    if (history.length >= 2) {
+      const first = history[0];
+      const firstKamino = parseFloat(first.kaminoPoints?.totalPoints || '0');
+      const latestKamino = parseFloat(latest.kaminoPoints?.totalPoints || '0');
+      if (firstKamino > 0 && latestKamino > firstKamino) {
+        const growth = latestKamino - firstKamino;
+        lines.push(`📈 Kamino points earned since tracking: +${growth.toFixed(0)}`);
+      }
+    }
+
+    return lines.join('\n');
   }
 }
 
 /**
- * Create RewardsTracker instance from settings
+ * Load rewards history (for dashboard)
  */
-export async function createRewardsTracker(
+export function getRewardsHistory(): RewardsSnapshot[] {
+  return loadHistory();
+}
+
+/**
+ * Factory function
+ */
+export function createRewardsTracker(
   connection: Connection,
   wallet: Keypair,
   settings: Settings
-): Promise<RewardsTracker> {
-  const { PortfolioManager } = await import('./portfolio');
-  
-  const portfolioManager = new PortfolioManager(connection, wallet, settings);
-  
-  return new RewardsTracker(connection, wallet, portfolioManager, settings);
+): RewardsTracker {
+  return new RewardsTracker(wallet.publicKey.toBase58());
+}
+
+// ─── CLI Runner ─────────────────────────────────────────────────
+
+if (require.main === module) {
+  (async () => {
+    const settingsPath = path.join(__dirname, '../config/settings.json');
+    const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+    const walletPath = path.join(__dirname, '../config/wallet.json');
+    const secretKey = JSON.parse(fs.readFileSync(walletPath, 'utf-8'));
+    const wallet = Keypair.fromSecretKey(Uint8Array.from(secretKey));
+
+    const tracker = new RewardsTracker(wallet.publicKey.toBase58());
+    await tracker.captureSnapshot();
+    console.log('\n' + tracker.getRewardsSummary());
+  })().then(() => process.exit(0)).catch(err => {
+    console.error('Fatal:', err.message || err);
+    process.exit(1);
+  });
 }

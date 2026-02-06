@@ -14,8 +14,10 @@
     "@kamino-finance/klend-sdk": "^7.4.0-beta.14",
     "@kamino-finance/kliquidity-sdk": "^8.5.9",
     "@solana/web3.js": "^1.95.0",
+    "@types/express": "^5.0.6",
     "bs58": "^5.0.0",
-    "decimal.js": "^10.4.3"
+    "decimal.js": "^10.4.3",
+    "express": "^5.2.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
