@@ -1,0 +1,51 @@
+{
+  "riskTolerance": "balanced",
+  "minYieldImprovement": 0.5,
+  "maxPositionPercent": 25,
+  "minRebalanceAmountUsd": 10,
+  "timeHorizonDays": 30,
+  "gasBufferSol": 0.01,
+  "maxSlippagePercent": 1,
+  "tokens": ["USDC", "SOL", "USDT", "JitoSOL", "mSOL"],
+  "rpcUrl": "https://api.mainnet-beta.solana.com",
+  "dryRun": true,
+  "riskProfiles": {
+    "conservative": {
+      "maxPositionPercent": 20,
+      "minVaultAgeDays": 90,
+      "minTvlUsd": 1000000,
+      "allowLpVaults": false
+    },
+    "balanced": {
+      "maxPositionPercent": 25,
+      "minVaultAgeDays": 30,
+      "minTvlUsd": 500000,
+      "allowLpVaults": true
+    },
+    "aggressive": {
+      "maxPositionPercent": 40,
+      "minVaultAgeDays": 0,
+      "minTvlUsd": 100000,
+      "allowLpVaults": true
+    }
+  },
+  "portfolio": {
+    "allocations": {
+      "klendUsdc": 0.60,
+      "multiply": 0.30,
+      "gasReserve": 0.10
+    },
+    "rebalanceThreshold": 0.10
+  },
+  "multiply": {
+    "maxLeverage": 5,
+    "minSpread": 1.0,
+    "maxLtv": 0.85,
+    "preferredMarket": "DxXdAyU3kCjnyggvHmY5nAwg5cRbbmdyX3npfDMjjMek"
+  },
+  "jupiter": {
+    "slippageBps": 50,
+    "preferDirect": false,
+    "maxAccounts": 64
+  }
+}
