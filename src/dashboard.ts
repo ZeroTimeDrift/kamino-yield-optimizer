@@ -406,9 +406,54 @@ async function loadDashboard() {
   // Yield chart
   const chartData = await fetchJson('/api/yield-chart');
   if (chartData && chartData.length > 0) {
-    const labels = chartData.map(d => fmtTime(d.timestamp));
-    const values = chartData.map(d => parseFloat(d.valueSol));
-    const yields = chartData.map(d => parseFloat(d.cumulativeYieldSol || '0'));
+    const startTime = new Date(chartData[0].timestamp).getTime();
+    const startVal = parseFloat(chartData[0].valueSol);
+    // Get current APY from latest position data
+    let projectedApy = 10; // default
+    if (portfolio && portfolio.latest && portfolio.latest.positions) {
+      const lp = portfolio.latest.positions.find(p => p.apy && parseFloat(p.apy) > 0);
+      if (lp) projectedApy = parseFloat(lp.apy);
+    }
+    const dailyRate = projectedApy / 100 / 365;
+
+    // Build labels: existing data + 30 days projection
+    const now = Date.now();
+    const projEnd = startTime + 30 * 24 * 60 * 60 * 1000;
+    const endTime = Math.max(now, projEnd);
+
+    // Generate projection points (daily for 30 days from start)
+    const projLabels = [];
+    const projValues = [];
+    const projYields = [];
+    for (let t = startTime; t <= endTime; t += 24 * 60 * 60 * 1000) {
+      const daysSinceStart = (t - startTime) / (24 * 60 * 60 * 1000);
+      const projValue = startVal * Math.pow(1 + dailyRate, daysSinceStart);
+      projLabels.push(new Date(t).toISOString());
+      projValues.push(projValue);
+      projYields.push(projValue - startVal);
+    }
+
+    // Merge: use actual data timestamps + projection timestamps for a unified x-axis
+    const allTimestamps = [...new Set([
+      ...chartData.map(d => d.timestamp),
+      ...projLabels
+    ])].sort();
+    const labels = allTimestamps.map(t => fmtTime(t));
+
+    // Map actual values to the unified timeline
+    const actualMap = {};
+    chartData.forEach(d => { actualMap[d.timestamp] = parseFloat(d.valueSol); });
+    const values = allTimestamps.map(t => actualMap[t] !== undefined ? actualMap[t] : null);
+
+    // Map actual yields
+    const yieldMap = {};
+    chartData.forEach(d => { yieldMap[d.timestamp] = parseFloat(d.cumulativeYieldSol || '0'); });
+    const yields = allTimestamps.map(t => yieldMap[t] !== undefined ? yieldMap[t] : null);
+
+    // Map projected values to the unified timeline
+    const projMap = {};
+    projLabels.forEach((t, i) => { projMap[t] = projValues[i]; });
+    const projected = allTimestamps.map(t => projMap[t] !== undefined ? projMap[t] : null);
 
     const ctx = document.getElementById('yieldChart').getContext('2d');
     if (yieldChart) yieldChart.destroy();
@@ -418,13 +463,25 @@ async function loadDashboard() {
         labels,
         datasets: [
           {
-            label: 'Total Value (SOL)',
+            label: 'Actual Value (SOL)',
             data: values,
             borderColor: '#58a6ff',
             backgroundColor: 'rgba(88,166,255,0.1)',
             fill: true,
             tension: 0.3,
-            pointRadius: 2,
+            pointRadius: 3,
+            spanGaps: false,
+          },
+          {
+            label: 'Projected @ ' + projectedApy.toFixed(1) + '% APY',
+            data: projected,
+            borderColor: '#f0883e',
+            borderDash: [6, 3],
+            backgroundColor: 'rgba(240,136,62,0.05)',
+            fill: false,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
           },
           {
             label: 'Cumulative Yield (SOL)',
@@ -435,6 +492,7 @@ async function loadDashboard() {
             tension: 0.3,
             pointRadius: 2,
             yAxisID: 'y1',
+            spanGaps: false,
           }
         ]
       },
