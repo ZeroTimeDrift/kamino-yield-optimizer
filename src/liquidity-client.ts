@@ -13,7 +13,7 @@
  * - Check user's LP positions and their value
  */
 
-import { Connection, Keypair, PublicKey, Transaction, sendAndConfirmTransaction, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey, Transaction, sendAndConfirmTransaction, LAMPORTS_PER_SOL, VersionedTransaction, TransactionMessage, AddressLookupTableAccount } from '@solana/web3.js';
 import { createSolanaRpc, address, Address, createKeyPairSignerFromBytes } from '@solana/kit';
 import { Kamino, StrategiesFilters, WhirlpoolAprApy, KaminoPosition } from '@kamino-finance/kliquidity-sdk';
 import Decimal from 'decimal.js';
@@ -145,6 +145,51 @@ export class LiquidityClient {
     });
     this.rpc = createSolanaRpc(rpcUrl);
     this.kamino = new Kamino('mainnet-beta', this.rpc as any);
+  }
+
+  // ─── Transaction Helpers ────────────────────────────────────
+
+  /**
+   * Build and send a VersionedTransaction with address lookup tables.
+   * Solves the "transaction too large" issue with complex instructions (Jupiter swaps, etc).
+   */
+  private async sendVersionedTransaction(
+    wallet: Keypair,
+    instructions: any[],
+    lookupTableAddresses: any[],
+  ): Promise<string> {
+    // Resolve lookup table accounts
+    const lookupTables: AddressLookupTableAccount[] = [];
+    for (const ltAddr of lookupTableAddresses) {
+      const pubkey = new PublicKey(ltAddr.toString());
+      const result = await this.connection.getAddressLookupTable(pubkey);
+      if (result.value) {
+        lookupTables.push(result.value);
+      }
+    }
+
+    const { blockhash, lastValidBlockHeight } = await this.connection.getLatestBlockhash();
+
+    const messageV0 = new TransactionMessage({
+      payerKey: wallet.publicKey,
+      recentBlockhash: blockhash,
+      instructions,
+    }).compileToV0Message(lookupTables);
+
+    const vtx = new VersionedTransaction(messageV0);
+    vtx.sign([wallet]);
+
+    const signature = await this.connection.sendTransaction(vtx, {
+      skipPreflight: false,
+      maxRetries: 3,
+    });
+
+    await this.connection.confirmTransaction(
+      { signature, blockhash, lastValidBlockHeight },
+      'confirmed'
+    );
+
+    return signature;
   }
 
   // ─── List Vaults ───────────────────────────────────────────
@@ -548,19 +593,10 @@ export class LiquidityClient {
         )
       );
 
-      // Build and send transaction
-      const tx = new Transaction();
-      for (const ix of result.instructions) {
-        tx.add(convertInstruction(ix));
-      }
-      tx.feePayer = wallet.publicKey;
-      tx.recentBlockhash = (await this.connection.getLatestBlockhash()).blockhash;
-
-      const signature = await sendAndConfirmTransaction(
-        this.connection,
-        tx,
-        [wallet],
-        { commitment: 'confirmed' }
+      const signature = await this.sendVersionedTransaction(
+        wallet,
+        result.instructions.map(convertInstruction),
+        result.lookupTablesAddresses || [],
       );
 
       return {
@@ -617,18 +653,10 @@ export class LiquidityClient {
         )
       );
 
-      const tx = new Transaction();
-      for (const ix of result.instructions) {
-        tx.add(convertInstruction(ix));
-      }
-      tx.feePayer = wallet.publicKey;
-      tx.recentBlockhash = (await this.connection.getLatestBlockhash()).blockhash;
-
-      const signature = await sendAndConfirmTransaction(
-        this.connection,
-        tx,
-        [wallet],
-        { commitment: 'confirmed' }
+      const signature = await this.sendVersionedTransaction(
+        wallet,
+        result.instructions.map(convertInstruction),
+        result.lookupTablesAddresses || [],
       );
 
       return {
