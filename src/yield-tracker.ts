@@ -321,24 +321,37 @@ export class YieldTracker {
     currentTotalSol: Decimal,
     jitosolToSolRatio: Decimal,
   ): YieldHistoryEntry['impermanentLoss'] | undefined {
-    // Current LP value in SOL
+    // Only compare LP positions — not the full portfolio
     let lpValueSol = new Decimal(0);
+    let initialLpValueSol = new Decimal(0);
+
     for (const pos of currentPositions) {
       lpValueSol = lpValueSol.plus(new Decimal(pos.valueSol));
     }
-
     if (lpValueSol.isZero()) return undefined;
 
-    // If we had just held the initial portfolio (no LP), what would it be worth?
-    // Initial total value (first snapshot) appreciated by JitoSOL staking ratio change
-    const initialTotalSol = new Decimal(firstEntry.portfolioTotalValueSol);
+    // Get initial LP value from first snapshot's positions
+    if (firstEntry.positions) {
+      for (const pos of firstEntry.positions) {
+        if (pos.strategy === 'LP Vault') {
+          initialLpValueSol = initialLpValueSol.plus(new Decimal(pos.valueSol));
+        }
+      }
+    }
+
+    // If no initial LP data, use current as baseline (just started)
+    if (initialLpValueSol.isZero()) {
+      initialLpValueSol = lpValueSol;
+    }
+
+    // Hold value = what the LP capital would be worth if just held as JitoSOL
+    // Appreciate by staking ratio change
     const initialRatio = new Decimal(firstEntry.jitosolToSolRatio || '1');
     const ratioChange = jitosolToSolRatio.gt(0) && initialRatio.gt(0)
       ? jitosolToSolRatio.div(initialRatio)
       : new Decimal(1);
+    const holdValueSol = initialLpValueSol.mul(ratioChange);
 
-    // Hold value = initial value * ratio appreciation (JitoSOL earns staking yield)
-    const holdValueSol = initialTotalSol.mul(ratioChange);
     const lossPercent = holdValueSol.gt(0)
       ? lpValueSol.minus(holdValueSol).div(holdValueSol).mul(100)
       : new Decimal(0);
