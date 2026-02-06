@@ -64,13 +64,21 @@ const HISTORY_FILE = path.join(__dirname, '..', 'config', 'yield-history.jsonl')
 
 // ─── Helpers ────────────────────────────────────────────────────
 
-async function getSolPrice(): Promise<Decimal> {
+interface TokenPrices {
+  sol: Decimal;
+  jitoSol: Decimal;
+}
+
+async function getTokenPrices(): Promise<TokenPrices> {
   try {
-    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,jito-staked-sol&vs_currencies=usd');
     const data = await res.json() as any;
-    return new Decimal(data.solana?.usd ?? 170);
+    return {
+      sol: new Decimal(data.solana?.usd ?? 86),
+      jitoSol: new Decimal(data['jito-staked-sol']?.usd ?? data.solana?.usd ?? 86),
+    };
   } catch {
-    return new Decimal(170);
+    return { sol: new Decimal(86), jitoSol: new Decimal(100) };
   }
 }
 
@@ -103,7 +111,9 @@ export class YieldTracker {
   async captureSnapshot(): Promise<YieldHistoryEntry> {
     console.log('📊 Capturing portfolio snapshot...');
 
-    const solPrice = await getSolPrice();
+    const prices = await getTokenPrices();
+    const solPrice = prices.sol;
+    const jitoSolPrice = prices.jitoSol;
 
     // 1. Get wallet SOL balance (1 RPC call)
     const solLamports = await this.connection.getBalance(this.wallet.publicKey);
@@ -129,17 +139,21 @@ export class YieldTracker {
 
     // 3. Get LP positions (batched RPC via Kamino SDK)
     const positions: PositionEntry[] = [];
-    let totalValueSol = walletSolBalance.plus(idleJitoSol); // SOL + idle JitoSOL (~= SOL)
-    let jitosolToSolRatio = new Decimal(1);
+    // Calculate total USD using proper per-token prices
+    let totalValueUsd = walletSolBalance.mul(solPrice).plus(idleJitoSol.mul(jitoSolPrice));
+    let totalValueSol = totalValueUsd.div(solPrice); // SOL-equivalent for backwards compat
+    let jitosolToSolRatio = jitoSolPrice.div(solPrice);
 
     try {
       const lpPositions = await this.liquidityClient.getUserPositions(this.wallet.publicKey);
 
       for (const lp of lpPositions) {
-        // Token amounts now properly normalized by liquidity client (fetches mint decimals)
-        const posValueSol = lp.tokenAAmount.plus(lp.tokenBAmount);
-        const posValueUsd = posValueSol.mul(solPrice);
-        totalValueSol = totalValueSol.plus(posValueSol);
+        // Token amounts properly normalized by liquidity client (fetches mint decimals)
+        // Price each token correctly
+        const posValueUsd = lp.tokenAAmount.mul(solPrice).plus(lp.tokenBAmount.mul(jitoSolPrice));
+        const posValueSol = posValueUsd.div(solPrice);
+        totalValueUsd = totalValueUsd.plus(posValueUsd);
+        totalValueSol = totalValueUsd.div(solPrice);
 
         // Check if strategy is in range
         let inRange = true;
@@ -171,7 +185,7 @@ export class YieldTracker {
       console.log(`   ⚠️ Failed to get LP positions: ${(err as Error).message}`);
     }
 
-    const totalValueUsd = totalValueSol.mul(solPrice);
+    // totalValueUsd already accumulated above with per-token prices
 
     // 4. Calculate cumulative yield from first snapshot
     const history = loadHistory();
