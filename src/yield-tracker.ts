@@ -136,8 +136,10 @@ export class YieldTracker {
       const lpPositions = await this.liquidityClient.getUserPositions(this.wallet.publicKey);
 
       for (const lp of lpPositions) {
-        // Token amounts represent SOL-equivalent value for JitoSOL-SOL pairs
-        const posValueSol = lp.tokenAAmount.plus(lp.tokenBAmount);
+        // SDK returns raw token amounts — divide by 10^9 for SOL/JitoSOL (9 decimals)
+        const tokenANormalized = lp.tokenAAmount.div(1e9);
+        const tokenBNormalized = lp.tokenBAmount.div(1e9);
+        const posValueSol = tokenANormalized.plus(tokenBNormalized);
         const posValueUsd = posValueSol.mul(solPrice);
         totalValueSol = totalValueSol.plus(posValueSol);
 
@@ -160,8 +162,8 @@ export class YieldTracker {
           valueSol: posValueSol.toFixed(6),
           valueUsd: posValueUsd.toFixed(2),
           apy: lp.currentApy.toFixed(2),
-          tokenAAmount: lp.tokenAAmount.toFixed(6),
-          tokenBAmount: lp.tokenBAmount.toFixed(6),
+          tokenAAmount: tokenANormalized.toFixed(6),
+          tokenBAmount: tokenBNormalized.toFixed(6),
           tokenASymbol: 'SOL',
           tokenBSymbol: 'JitoSOL',
           inRange,
