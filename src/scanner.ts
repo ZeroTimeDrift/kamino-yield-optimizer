@@ -405,10 +405,12 @@ async function main() {
 export { main as runScanner, fetchLiveJitoStakingApy };
 export type { ReserveRate, MultiplyRate };
 
-// Allow standalone execution
-main()
-  .then(() => process.exit(0))
-  .catch((err) => {
-    console.error('Scanner error:', err.message || err);
-    process.exit(1);
-  });
+// Allow standalone execution (only when run directly, not when imported)
+if (require.main === module) {
+  main()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error('Scanner error:', err.message || err);
+      process.exit(1);
+    });
+}

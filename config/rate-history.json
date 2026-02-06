@@ -1,0 +1,32 @@
+[
+  {
+    "timestamp": 1770400543895,
+    "strategyId": "hold_jitosol",
+    "apy": 5.583295669646171
+  },
+  {
+    "timestamp": 1770400543895,
+    "strategyId": "lp_vault",
+    "apy": 12.157572370036261
+  },
+  {
+    "timestamp": 1770400543895,
+    "strategyId": "klend_sol_supply",
+    "apy": 8.478358331484404
+  },
+  {
+    "timestamp": 1770400569054,
+    "strategyId": "hold_jitosol",
+    "apy": 5.583295669646171
+  },
+  {
+    "timestamp": 1770400569054,
+    "strategyId": "lp_vault",
+    "apy": 12.157571543056363
+  },
+  {
+    "timestamp": 1770400569054,
+    "strategyId": "klend_sol_supply",
+    "apy": 8.478364408354254
+  }
+]
