@@ -270,6 +270,7 @@ tr:hover { background: var(--bg3); }
   <div>
     <h1>🏊 Kamino Yield Dashboard</h1>
     <div class="header-meta">Wallet: <code id="wallet">...</code> | Last update: <span id="lastUpdate">...</span></div>
+    <div class="header-meta" id="livePrices" style="margin-top:4px;font-size:0.9rem">Loading prices...</div>
   </div>
   <div class="header-meta">Auto-refresh: 60s</div>
 </div>
@@ -373,7 +374,20 @@ function fmtTimeShort(ts) {
   return new Date(ts).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:false});
 }
 
+async function loadPrices() {
+  const prices = await fetchJson('/api/prices');
+  if (prices) {
+    const el = document.getElementById('livePrices');
+    if (el) {
+      el.innerHTML = '<span style="color:#58a6ff">SOL</span> $' + (prices.sol || 0).toFixed(2) +
+        ' &nbsp;|&nbsp; <span style="color:#f0883e">JitoSOL</span> $' + (prices.jitoSol || 0).toFixed(2) +
+        ' &nbsp;<span style="color:#666;font-size:11px">(' + new Date(prices.updatedAt).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}) + ')</span>';
+    }
+  }
+}
+
 async function loadDashboard() {
+  await loadPrices();
   // Portfolio
   const portfolio = await fetchJson('/api/portfolio');
   if (portfolio) {
@@ -586,6 +600,8 @@ async function loadDashboard() {
 // Initial load + auto-refresh
 loadDashboard();
 setInterval(loadDashboard, 60000);
+// Prices refresh every 60s independently
+setInterval(loadPrices, 60000);
 </script>
 </body>
 </html>`;
@@ -626,6 +642,30 @@ app.get('/api/rates', (_req: Request, res: Response) => {
 
 app.get('/api/protocol-rates', (_req: Request, res: Response) => {
   res.json(getProtocolRates());
+});
+
+// Live prices — fetched from CoinGecko, cached for 30s
+let priceCache: { sol: number; jitoSol: number; updatedAt: string } | null = null;
+let priceCacheTime = 0;
+
+app.get('/api/prices', async (_req: Request, res: Response) => {
+  const now = Date.now();
+  if (priceCache && now - priceCacheTime < 30_000) {
+    return res.json(priceCache);
+  }
+  try {
+    const resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,jito-staked-sol&vs_currencies=usd');
+    const data = await resp.json() as any;
+    priceCache = {
+      sol: data.solana?.usd ?? 0,
+      jitoSol: data['jito-staked-sol']?.usd ?? 0,
+      updatedAt: new Date().toISOString(),
+    };
+    priceCacheTime = now;
+    res.json(priceCache);
+  } catch (err: any) {
+    res.json(priceCache || { sol: 0, jitoSol: 0, updatedAt: null, error: err.message });
+  }
 });
 
 // Health check
