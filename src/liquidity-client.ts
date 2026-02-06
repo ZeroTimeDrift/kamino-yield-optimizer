@@ -14,6 +14,7 @@
  */
 
 import { Connection, Keypair, PublicKey, Transaction, sendAndConfirmTransaction, LAMPORTS_PER_SOL, VersionedTransaction, TransactionMessage, AddressLookupTableAccount } from '@solana/web3.js';
+import { getMint } from '@solana/spl-token';
 import { createSolanaRpc, address, Address, createKeyPairSignerFromBytes } from '@solana/kit';
 import { Kamino, StrategiesFilters, WhirlpoolAprApy, KaminoPosition } from '@kamino-finance/kliquidity-sdk';
 import Decimal from 'decimal.js';
@@ -417,17 +418,33 @@ export class LiquidityClient {
             tokenAMint = strategy.tokenAMint.toString();
             tokenBMint = strategy.tokenBMint.toString();
 
-            // Get token amounts per share
+            // Get token amounts per share, properly normalized with mint decimals
             try {
               const tokensPerShare = await retry(() =>
                 this.kamino.getTokenAAndBPerShare(kpos.strategy)
               );
-              tokenAAmount = tokensPerShare.a.mul(sharesAmount);
-              tokenBAmount = tokensPerShare.b.mul(sharesAmount);
-            } catch {
-              // Estimate from total vault balances
-              tokenAAmount = shareData.balance.tokenAAmounts.mul(sharesAmount).div(shareData.price.gt(0) ? shareData.price : new Decimal(1));
-              tokenBAmount = shareData.balance.tokenBAmounts.mul(sharesAmount).div(shareData.price.gt(0) ? shareData.price : new Decimal(1));
+              // tokensPerShare returns values per 1 raw share (per lamport of kToken)
+              // sharesAmount is in UI units (already / 10^kTokenDecimals)
+              // Result = tps × shares_ui, in an intermediate scale
+              // Need: multiply by 10^kTokenDecimals to get lamports, then / 10^tokenDecimals for UI units
+              const shareMintPubkey = new PublicKey(kpos.shareMint.toString());
+              const [shareMintInfo, tokenAMintInfo, tokenBMintInfo] = await Promise.all([
+                getMint(this.connection, shareMintPubkey),
+                getMint(this.connection, new PublicKey(tokenAMint)),
+                getMint(this.connection, new PublicKey(tokenBMint)),
+              ]);
+              const kTokenDecimals = shareMintInfo.decimals;
+              const scaleFactor = new Decimal(10).pow(kTokenDecimals);
+              const tokenAScale = new Decimal(10).pow(tokenAMintInfo.decimals);
+              const tokenBScale = new Decimal(10).pow(tokenBMintInfo.decimals);
+
+              tokenAAmount = tokensPerShare.a.mul(sharesAmount).mul(scaleFactor).div(tokenAScale);
+              tokenBAmount = tokensPerShare.b.mul(sharesAmount).mul(scaleFactor).div(tokenBScale);
+            } catch (err: any) {
+              console.log(`   ⚠️ Mint decimal fetch failed, using USD-derived values: ${err.message?.slice(0, 40)}`);
+              // Fallback: derive from USD value and approximate SOL price
+              tokenAAmount = new Decimal(0);
+              tokenBAmount = valueUsd.div(new Decimal(87)); // rough SOL price fallback
             }
           }
 

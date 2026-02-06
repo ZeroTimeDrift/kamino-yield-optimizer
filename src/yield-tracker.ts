@@ -136,13 +136,9 @@ export class YieldTracker {
       const lpPositions = await this.liquidityClient.getUserPositions(this.wallet.publicKey);
 
       for (const lp of lpPositions) {
-        // USD value from SDK is reliable (shares × share price) — derive SOL from that
-        const posValueUsd = lp.valueUsd;
-        const posValueSol = solPrice.gt(0) ? posValueUsd.div(solPrice) : new Decimal(0);
-        // Token amounts: SDK returns intermediate-scale values, normalize to actual SOL/JitoSOL
-        // Vault totals are in lamports, per-share calc gives proportional lamport-scale
-        const tokenANormalized = lp.tokenAAmount.div(1e3);
-        const tokenBNormalized = lp.tokenBAmount.div(1e3);
+        // Token amounts now properly normalized by liquidity client (fetches mint decimals)
+        const posValueSol = lp.tokenAAmount.plus(lp.tokenBAmount);
+        const posValueUsd = posValueSol.mul(solPrice);
         totalValueSol = totalValueSol.plus(posValueSol);
 
         // Check if strategy is in range
@@ -164,8 +160,8 @@ export class YieldTracker {
           valueSol: posValueSol.toFixed(6),
           valueUsd: posValueUsd.toFixed(2),
           apy: lp.currentApy.toFixed(2),
-          tokenAAmount: tokenANormalized.toFixed(6),
-          tokenBAmount: tokenBNormalized.toFixed(6),
+          tokenAAmount: lp.tokenAAmount.toFixed(6),
+          tokenBAmount: lp.tokenBAmount.toFixed(6),
           tokenASymbol: 'SOL',
           tokenBSymbol: 'JitoSOL',
           inRange,
