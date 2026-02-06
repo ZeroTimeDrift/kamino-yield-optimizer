@@ -18,6 +18,7 @@ import { createSolanaRpc, address } from '@solana/kit';
 import { KaminoMarket, PROGRAM_ID } from '@kamino-finance/klend-sdk';
 import * as fs from 'fs';
 import * as path from 'path';
+import { execSync } from 'child_process';
 
 // ─── Config ──────────────────────────────────────────────
 const SETTINGS_PATH = path.join(__dirname, '..', 'config', 'settings.json');
@@ -46,6 +47,9 @@ const DEBOUNCE_MS = 5_000; // Debounce rapid updates (5s)
 const LP_CHECK_INTERVAL_MS = 600_000; // Check LP yields every 10 minutes
 const HEALTH_LOG_INTERVAL_MS = 300_000; // Log health every 5 minutes
 const RECONNECT_DELAY_MS = 5_000; // Reconnect after 5s on disconnect
+const OPTIMIZER_CRON_ID = 'b8cd4bb8-bf75-4977-a55d-c0b433f73687';
+const TRIGGER_COOLDOWN_MS = 300_000; // Don't trigger more than once every 5 minutes
+let lastTriggerTime = 0;
 
 // ─── Types ───────────────────────────────────────────────
 interface RateSnapshot {
@@ -108,11 +112,40 @@ function saveState(state: WatcherState) {
   fs.writeFileSync(STATE_PATH, JSON.stringify(state, null, 2));
 }
 
-function emitAlert(state: WatcherState, type: string, message: string) {
+function emitAlert(state: WatcherState, type: string, message: string, triggerOptimizer = false) {
   const alert = { timestamp: new Date().toISOString(), type, message };
   state.alerts.push(alert);
   fs.appendFileSync(ALERT_PATH, JSON.stringify(alert) + '\n');
   console.log(`\n🚨 ALERT [${type}]: ${message}\n`);
+
+  if (triggerOptimizer) {
+    triggerCronJob(type);
+  }
+}
+
+function triggerCronJob(reason: string) {
+  const now = Date.now();
+  if (now - lastTriggerTime < TRIGGER_COOLDOWN_MS) {
+    console.log(`  ⏳ Trigger cooldown (${Math.round((TRIGGER_COOLDOWN_MS - (now - lastTriggerTime)) / 1000)}s remaining)`);
+    return;
+  }
+  lastTriggerTime = now;
+
+  console.log(`  🚀 Triggering optimizer cron (reason: ${reason})...`);
+  try {
+    execSync(
+      `clawdbot cron run --id ${OPTIMIZER_CRON_ID} --text "TRIGGERED by rate-watcher: ${reason}. Check alerts and take action. If MULTIPLY_POSITIVE, evaluate deploying into the position. Message Hevar on Telegram with what you find and any actions taken."`,
+      { timeout: 10_000, encoding: 'utf8' }
+    );
+    console.log(`  ✅ Optimizer cron triggered`);
+  } catch (err: any) {
+    console.error(`  ❌ Failed to trigger cron: ${err.message?.slice(0, 60)}`);
+    // Fallback: write trigger file for next scheduled run
+    fs.writeFileSync(
+      path.join(__dirname, '..', 'config', 'trigger.json'),
+      JSON.stringify({ reason, timestamp: new Date().toISOString() })
+    );
+  }
 }
 
 // ─── Rate Calculation ────────────────────────────────────
@@ -161,25 +194,27 @@ function detectInflections(state: WatcherState, snapshot: RateSnapshot) {
   const prev = state.currentRates[snapshot.market];
   if (!prev) return;
 
-  // Multiply spread turned positive
+  // Multiply spread turned positive — TRIGGER OPTIMIZER
   if (snapshot.profitable && !prev.profitable) {
     emitAlert(state, 'MULTIPLY_POSITIVE',
       `🟢 ${snapshot.market}: Multiply spread POSITIVE! ` +
       `SOL borrow: ${snapshot.solBorrowApy.toFixed(2)}% → Spread: +${snapshot.multiplySpread.toFixed(2)}%. ` +
-      `5x net: ~${(snapshot.multiplySpread * 5 + JITOSOL_STAKING_YIELD).toFixed(1)}% APY`
+      `5x net: ~${(snapshot.multiplySpread * 5 + JITOSOL_STAKING_YIELD).toFixed(1)}% APY`,
+      true // trigger optimizer
     );
     state.lastMultiplyPositive = snapshot.timestamp;
   }
 
-  // Spread turned negative
+  // Spread turned negative — TRIGGER OPTIMIZER (may need to unwind)
   if (!snapshot.profitable && prev.profitable) {
     emitAlert(state, 'MULTIPLY_NEGATIVE',
       `🔴 ${snapshot.market}: Multiply spread NEGATIVE. ` +
-      `SOL borrow: ${snapshot.solBorrowApy.toFixed(2)}% → Spread: ${snapshot.multiplySpread.toFixed(2)}%`
+      `SOL borrow: ${snapshot.solBorrowApy.toFixed(2)}% → Spread: ${snapshot.multiplySpread.toFixed(2)}%`,
+      true // trigger optimizer
     );
   }
 
-  // Large rate change
+  // Large rate change — TRIGGER OPTIMIZER
   if (prev.solBorrowApy > 0.5) {
     const rateChange = Math.abs(snapshot.solBorrowApy - prev.solBorrowApy) / prev.solBorrowApy;
     if (rateChange > RATE_CHANGE_THRESHOLD) {
@@ -187,15 +222,17 @@ function detectInflections(state: WatcherState, snapshot: RateSnapshot) {
       emitAlert(state, 'RATE_INFLECTION',
         `${dir} ${snapshot.market}: SOL borrow ${(rateChange * 100).toFixed(0)}% move ` +
         `(${prev.solBorrowApy.toFixed(2)}% → ${snapshot.solBorrowApy.toFixed(2)}%) | ` +
-        `Spread: ${snapshot.multiplySpread.toFixed(2)}%`
+        `Spread: ${snapshot.multiplySpread.toFixed(2)}%`,
+        true // trigger optimizer
       );
     }
   }
 
-  // JitoSOL supply spike
+  // JitoSOL supply spike — TRIGGER OPTIMIZER
   if (snapshot.jitosolSupplyApy > 1 && prev.jitosolSupplyApy < 0.5) {
     emitAlert(state, 'JITOSOL_SUPPLY_SPIKE',
-      `📈 ${snapshot.market}: JitoSOL supply APY spiked to ${snapshot.jitosolSupplyApy.toFixed(2)}%`
+      `📈 ${snapshot.market}: JitoSOL supply APY spiked to ${snapshot.jitosolSupplyApy.toFixed(2)}%`,
+      true // trigger optimizer
     );
   }
 }
