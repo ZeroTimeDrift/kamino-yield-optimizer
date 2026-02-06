@@ -43,9 +43,9 @@ const KAMINO_MARKETS: Record<string, string> = {
 
 const JITOSOL_STAKING_YIELD = 5.57;
 const RATE_CHANGE_THRESHOLD = 0.15; // 15% relative change triggers alert
-const DEBOUNCE_MS = 5_000; // Debounce rapid updates (5s)
-const LP_CHECK_INTERVAL_MS = 600_000; // Check LP yields every 10 minutes
-const HEALTH_LOG_INTERVAL_MS = 300_000; // Log health every 5 minutes
+const DEBOUNCE_MS = 120_000; // Debounce to max 1 rate check every 2 minutes
+const LP_CHECK_INTERVAL_MS = 1800_000; // Check LP yields every 30 minutes
+const HEALTH_LOG_INTERVAL_MS = 600_000; // Log health every 10 minutes
 const RECONNECT_DELAY_MS = 5_000; // Reconnect after 5s on disconnect
 const OPTIMIZER_CRON_ID = 'b8cd4bb8-bf75-4977-a55d-c0b433f73687';
 const TRIGGER_COOLDOWN_MS = 300_000; // Don't trigger more than once every 5 minutes
