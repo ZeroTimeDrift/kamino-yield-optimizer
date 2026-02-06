@@ -136,11 +136,13 @@ export class YieldTracker {
       const lpPositions = await this.liquidityClient.getUserPositions(this.wallet.publicKey);
 
       for (const lp of lpPositions) {
-        // SDK returns raw token amounts — divide by 10^9 for SOL/JitoSOL (9 decimals)
-        const tokenANormalized = lp.tokenAAmount.div(1e9);
-        const tokenBNormalized = lp.tokenBAmount.div(1e9);
-        const posValueSol = tokenANormalized.plus(tokenBNormalized);
-        const posValueUsd = posValueSol.mul(solPrice);
+        // USD value from SDK is reliable (shares × share price) — derive SOL from that
+        const posValueUsd = lp.valueUsd;
+        const posValueSol = solPrice.gt(0) ? posValueUsd.div(solPrice) : new Decimal(0);
+        // Token amounts: SDK returns intermediate-scale values, normalize to actual SOL/JitoSOL
+        // Vault totals are in lamports, per-share calc gives proportional lamport-scale
+        const tokenANormalized = lp.tokenAAmount.div(1e3);
+        const tokenBNormalized = lp.tokenBAmount.div(1e3);
         totalValueSol = totalValueSol.plus(posValueSol);
 
         // Check if strategy is in range
