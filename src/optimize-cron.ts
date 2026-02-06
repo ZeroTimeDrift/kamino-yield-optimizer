@@ -1,5 +1,9 @@
 /**
- * Kamino Yield Optimizer - AGGRESSIVE MODE
+ * Kamino Yield Optimizer - AGGRESSIVE MODE (Legacy Entry Point)
+ *
+ * This file is kept for backward compatibility with existing cron jobs.
+ * For the full multi-strategy optimizer, use optimize-v2.ts.
+ *
  * Maximizes yield by:
  * - Scanning ALL available vaults
  * - Auto-depositing idle balances
