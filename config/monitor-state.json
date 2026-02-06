@@ -1,0 +1,12 @@
+{
+  "lastCheck": "2026-02-06T17:18:41.540Z",
+  "lastAlertedPools": {
+    "cc5c8175-bdfa-442f-870b-6f2cdec94854": 63.88203,
+    "059175e4-9cc8-4703-944f-b54ecaf02f00": 42.13022,
+    "d61d8c57-4d50-4642-b3fc-f5943ab44059": 15.9793,
+    "923d43c8-455e-4196-9b5d-afcc966c934f": 12.32351,
+    "55616349-b749-4467-8edc-abbb40ae80f6": 10.02769
+  },
+  "bestYield": 722.4792,
+  "bestPool": "kamino-liquidity USDC-JITOSOL"
+}

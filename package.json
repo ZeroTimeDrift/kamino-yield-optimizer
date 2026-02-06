@@ -13,12 +13,13 @@
     "@kamino-finance/klend-sdk": "^7.4.0-beta.14",
     "@kamino-finance/kliquidity-sdk": "^8.5.9",
     "@solana/web3.js": "^1.95.0",
-    "decimal.js": "^10.4.3",
-    "bs58": "^5.0.0"
+    "bs58": "^5.0.0",
+    "decimal.js": "^10.4.3"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "typescript": "^5.0.0",
-    "ts-node": "^10.9.0"
+    "@types/node-fetch": "^2.6.13",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
   }
 }
