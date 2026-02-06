@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "scan": "ts-node src/scanner.ts",
+    "multi-scan": "ts-node src/multi-protocol-scanner.ts",
     "optimize": "ts-node src/optimizer.ts",
     "status": "ts-node src/status.ts"
   },
