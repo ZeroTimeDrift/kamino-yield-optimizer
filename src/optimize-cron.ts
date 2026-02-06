@@ -1,14 +1,15 @@
 /**
- * Kamino Yield Optimizer - AGGRESSIVE MODE (Legacy Entry Point)
+ * Kamino Yield Optimizer - Cron Entry Point
  *
- * This file is kept for backward compatibility with existing cron jobs.
- * For the full multi-strategy optimizer, use optimize-v2.ts.
+ * Runs every 2h (or when triggered by rate-watcher).
+ * Now integrates the auto-rebalancer for intelligent fee-aware decisions.
+ * Includes yield tracking, range monitoring, and rewards tracking.
  *
- * Maximizes yield by:
- * - Scanning ALL available vaults
- * - Auto-depositing idle balances
- * - Rebalancing to highest APY vaults
- * - Tracking performance over time
+ * Flow:
+ * 1. Run rebalancer (full fee accounting, strategy comparison)
+ * 2. Fall back to legacy K-Lend logic for non-LP positions
+ * 3. Run tracking modules (yield, range, rewards)
+ * 4. Log everything
  */
 
 import { KaminoClient } from './kamino-client';
@@ -16,6 +17,10 @@ import { Keypair, PublicKey, Connection, LAMPORTS_PER_SOL } from '@solana/web3.j
 import Decimal from 'decimal.js';
 import * as fs from 'fs';
 import * as path from 'path';
+import { runRebalancer } from './rebalancer';
+import { createYieldTracker } from './yield-tracker';
+import { createRangeMonitor } from './range-monitor';
+import { createRewardsTracker } from './rewards-tracker';
 
 // Config
 const GAS_BUFFER_SOL = 0.005; // Buffer for gas + ATA creation fees
@@ -67,11 +72,26 @@ async function main() {
 
   const settings = await loadSettings();
   const wallet = await loadWallet();
+  const connection = new Connection(settings.rpcUrl, { commitment: 'confirmed' });
   const client = new KaminoClient(settings.rpcUrl);
   const solPrice = await getSolPrice();
   
   await client.initialize();
   
+  // ─── Run Auto-Rebalancer (fee-aware decision engine) ──────
+  console.log('\n🔄 Running auto-rebalancer...');
+  try {
+    const rebalancerResult = await runRebalancer(settings, wallet, connection);
+    console.log(`\n   Rebalancer verdict: ${rebalancerResult.shouldRebalance ? '🔄 REBALANCE' : '✅ HOLD'}`);
+    if (rebalancerResult.idleRecommendation) {
+      console.log(`   Idle capital: ${rebalancerResult.idleRecommendation.shouldDeploy ? '💰 DEPLOY' : '💤 HOLD'}`);
+    }
+  } catch (err: any) {
+    console.log(`   ⚠️  Rebalancer failed: ${err.message}`);
+    console.log(`   Falling back to legacy optimizer logic.`);
+  }
+  console.log('');
+
   // 1. Current state
   const solBalance = await client.getSolBalance(wallet.publicKey);
   const solValueUsd = solBalance.mul(solPrice);
@@ -213,6 +233,57 @@ async function main() {
     action: actions.length > 0 ? actions.join('; ') : 'No action'
   });
   
+  // 6. Run tracking modules
+  console.log('\n🔍 Running tracking modules...');
+  
+  try {
+    const connection = new Connection(settings.rpcUrl);
+    
+    // Yield tracking
+    console.log('   📊 Yield tracker...');
+    try {
+      const yieldTracker = await createYieldTracker(connection, wallet, settings);
+      await yieldTracker.captureSnapshot();
+      console.log('   ✅ Portfolio snapshot captured');
+    } catch (err: any) {
+      console.log(`   ⚠️ Yield tracker failed: ${err.message}`);
+    }
+    
+    // Range monitoring
+    console.log('   📡 Range monitor...');
+    try {
+      const rangeMonitor = await createRangeMonitor(connection, wallet, settings);
+      const alerts = await rangeMonitor.monitorPositions(wallet.publicKey.toString());
+      
+      if (alerts.length > 0) {
+        console.log(`   🚨 ${alerts.length} range alerts generated`);
+        for (const alert of alerts.filter(a => a.actionRequired)) {
+          console.log(`      ${alert.type}: ${alert.range.strategyAddress.slice(0, 8)}...`);
+        }
+      } else {
+        console.log('   ✅ All LP positions in range');
+      }
+    } catch (err: any) {
+      console.log(`   ⚠️ Range monitor failed: ${err.message}`);
+    }
+    
+    // Rewards tracking (less frequent - only every 4th run)
+    const hour = new Date().getHours();
+    if (hour % 8 === 0) { // Every ~8 hours
+      console.log('   🎁 Rewards tracker...');
+      try {
+        const rewardsTracker = await createRewardsTracker(connection, wallet, settings);
+        await rewardsTracker.getRewardsSummary();
+        console.log('   ✅ Rewards snapshot saved');
+      } catch (err: any) {
+        console.log(`   ⚠️ Rewards tracker failed: ${err.message}`);
+      }
+    }
+    
+  } catch (err: any) {
+    console.log(`   ❌ Tracking modules failed: ${err.message}`);
+  }
+
   // Summary
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log('\n═══════════════════════════════════════════════════════════');

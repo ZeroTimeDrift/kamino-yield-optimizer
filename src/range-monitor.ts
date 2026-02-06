@@ -291,7 +291,7 @@ export async function createRangeMonitor(
   const { LiquidityClient } = await import('./liquidity-client');
   const { PortfolioManager } = await import('./portfolio');
   
-  const liquidityClient = new LiquidityClient(connection, wallet);
+  const liquidityClient = new LiquidityClient(settings.rpcUrl);
   const portfolioManager = new PortfolioManager(connection, wallet, settings);
   
   return new RangeMonitor(connection, wallet, liquidityClient, portfolioManager, settings);

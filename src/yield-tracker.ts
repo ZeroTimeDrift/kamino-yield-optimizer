@@ -1,36 +1,51 @@
 /**
  * Yield Tracker
- * 
+ *
  * Tracks actual returns over time to measure if the strategy is working.
  * Captures portfolio snapshots and calculates performance metrics.
+ *
+ * CONSERVATIVE WITH RPC: Uses LiquidityClient.getVaultDetails() for vault data
+ * and batches calls. SOL price from CoinGecko (no RPC).
  */
 
 import { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import * as fs from 'fs';
 import * as path from 'path';
-import { PortfolioManager, PortfolioSnapshot } from './portfolio';
-import { LiquidityClient } from './liquidity-client';
+import { LiquidityClient, LiquidityVaultInfo, LiquidityPosition, JITOSOL_SOL_STRATEGIES } from './liquidity-client';
 import { Settings, TOKEN_MINTS } from './types';
+
+// ─── Types ──────────────────────────────────────────────────────
 
 export interface YieldHistoryEntry {
   timestamp: string;
   portfolioTotalValueSol: string;
   portfolioTotalValueUsd: string;
-  positions: {
-    strategy: string;
-    address: string;
-    value: string;
-    apy: string;
-  }[];
+  positions: PositionEntry[];
+  idleJitoSol: string;
+  walletSolBalance: string;
   cumulativeYieldSol: string;
   cumulativeYieldUsd: string;
   impermanentLoss?: {
-    currentValueSol: string;
-    holdingValueSol: string;
+    lpValueSol: string;
+    holdValueSol: string;
     lossPercent: string;
   };
   solPriceUsd: string;
+  jitosolToSolRatio: string;
+}
+
+export interface PositionEntry {
+  strategy: string;
+  address: string;
+  valueSol: string;
+  valueUsd: string;
+  apy: string;
+  tokenAAmount: string;
+  tokenBAmount: string;
+  tokenASymbol: string;
+  tokenBSymbol: string;
+  inRange: boolean;
 }
 
 export interface PerformanceMetrics {
@@ -38,362 +53,324 @@ export interface PerformanceMetrics {
   totalEarnedSol: Decimal;
   totalEarnedUsd: Decimal;
   actualApy: Decimal;
-  vsHoldingDiff: Decimal;
-  impermanentLoss?: Decimal;
+  vsHoldingPercent: Decimal;
+  impermanentLossPercent: Decimal | null;
+  snapshotCount: number;
 }
 
+// ─── History file path ──────────────────────────────────────────
+
+const HISTORY_FILE = path.join(__dirname, '..', 'config', 'yield-history.jsonl');
+
+// ─── Helpers ────────────────────────────────────────────────────
+
+async function getSolPrice(): Promise<Decimal> {
+  try {
+    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+    const data = await res.json() as any;
+    return new Decimal(data.solana?.usd ?? 170);
+  } catch {
+    return new Decimal(170);
+  }
+}
+
+function loadHistory(): YieldHistoryEntry[] {
+  if (!fs.existsSync(HISTORY_FILE)) return [];
+  const content = fs.readFileSync(HISTORY_FILE, 'utf-8').trim();
+  if (!content) return [];
+  return content.split('\n').map(line => {
+    try { return JSON.parse(line); } catch { return null; }
+  }).filter(Boolean) as YieldHistoryEntry[];
+}
+
+// ─── Main class ─────────────────────────────────────────────────
+
 export class YieldTracker {
+  private liquidityClient: LiquidityClient;
   private connection: Connection;
   private wallet: Keypair;
-  private portfolioManager: PortfolioManager;
-  private liquidityClient: LiquidityClient;
-  private settings: Settings;
-  private historyFile: string;
 
-  constructor(
-    connection: Connection,
-    wallet: Keypair,
-    portfolioManager: PortfolioManager,
-    liquidityClient: LiquidityClient,
-    settings: Settings
-  ) {
+  constructor(rpcUrl: string, connection: Connection, wallet: Keypair) {
+    this.liquidityClient = new LiquidityClient(rpcUrl);
     this.connection = connection;
     this.wallet = wallet;
-    this.portfolioManager = portfolioManager;
-    this.liquidityClient = liquidityClient;
-    this.settings = settings;
-    this.historyFile = path.join(__dirname, '..', 'config', 'yield-history.jsonl');
-    
-    // Ensure config directory exists
-    const configDir = path.dirname(this.historyFile);
-    if (!fs.existsSync(configDir)) {
-      fs.mkdirSync(configDir, { recursive: true });
-    }
   }
 
   /**
-   * Record current portfolio state to yield history
+   * Record current portfolio state to yield-history.jsonl
+   * Makes ~3 RPC calls total (balance check + LP position fetch + vault details)
    */
   async captureSnapshot(): Promise<YieldHistoryEntry> {
     console.log('📊 Capturing portfolio snapshot...');
-    
-    const snapshot = await this.portfolioManager.getSnapshot();
-    const solPrice = await this.getSolPrice();
-    
-    // Calculate total portfolio value
-    const totalValueSol = this.calculateTotalValueSol(snapshot);
+
+    const solPrice = await getSolPrice();
+
+    // 1. Get wallet SOL balance (1 RPC call)
+    const solLamports = await this.connection.getBalance(this.wallet.publicKey);
+    const walletSolBalance = new Decimal(solLamports).div(LAMPORTS_PER_SOL);
+
+    // 2. Get JitoSOL balance (1 RPC call)
+    let idleJitoSol = new Decimal(0);
+    try {
+      const jitosolMint = new PublicKey(TOKEN_MINTS.JitoSOL);
+      const tokenAccounts = await this.connection.getTokenAccountsByOwner(
+        this.wallet.publicKey,
+        { mint: jitosolMint }
+      );
+      for (const { account } of tokenAccounts.value) {
+        const data = account.data;
+        // SPL token amount is at offset 64, 8 bytes LE
+        const amount = data.readBigUInt64LE(64);
+        idleJitoSol = idleJitoSol.plus(new Decimal(amount.toString()).div(1e9));
+      }
+    } catch (err) {
+      console.log(`   ⚠️ Failed to get JitoSOL balance: ${(err as Error).message}`);
+    }
+
+    // 3. Get LP positions (batched RPC via Kamino SDK)
+    const positions: PositionEntry[] = [];
+    let totalValueSol = walletSolBalance.plus(idleJitoSol); // SOL + idle JitoSOL (~= SOL)
+    let jitosolToSolRatio = new Decimal(1);
+
+    try {
+      const lpPositions = await this.liquidityClient.getUserPositions(this.wallet.publicKey);
+
+      for (const lp of lpPositions) {
+        // Token amounts represent SOL-equivalent value for JitoSOL-SOL pairs
+        const posValueSol = lp.tokenAAmount.plus(lp.tokenBAmount);
+        const posValueUsd = posValueSol.mul(solPrice);
+        totalValueSol = totalValueSol.plus(posValueSol);
+
+        // Check if strategy is in range
+        let inRange = true;
+        try {
+          const vaultDetails = await this.liquidityClient.getVaultDetails(lp.strategyAddress);
+          if (vaultDetails) {
+            inRange = !vaultDetails.outOfRange;
+            // Get JitoSOL/SOL ratio from pool price
+            if (vaultDetails.poolPrice.gt(0)) {
+              jitosolToSolRatio = vaultDetails.poolPrice;
+            }
+          }
+        } catch { /* use defaults */ }
+
+        positions.push({
+          strategy: 'LP Vault',
+          address: lp.strategyAddress,
+          valueSol: posValueSol.toFixed(6),
+          valueUsd: posValueUsd.toFixed(2),
+          apy: lp.currentApy.toFixed(2),
+          tokenAAmount: lp.tokenAAmount.toFixed(6),
+          tokenBAmount: lp.tokenBAmount.toFixed(6),
+          tokenASymbol: 'SOL',
+          tokenBSymbol: 'JitoSOL',
+          inRange,
+        });
+      }
+    } catch (err) {
+      console.log(`   ⚠️ Failed to get LP positions: ${(err as Error).message}`);
+    }
+
     const totalValueUsd = totalValueSol.mul(solPrice);
-    
-    // Get position breakdown
-    const positions = this.getPositionBreakdown(snapshot, solPrice);
-    
-    // Calculate cumulative yield
-    const cumulativeYield = await this.calculateCumulativeYield(totalValueSol, totalValueUsd);
-    
-    // Calculate impermanent loss for LP positions
-    const impermanentLoss = await this.estimateImpermanentLoss(snapshot, totalValueSol);
-    
+
+    // 4. Calculate cumulative yield from first snapshot
+    const history = loadHistory();
+    let cumulativeYieldSol = new Decimal(0);
+    let cumulativeYieldUsd = new Decimal(0);
+    if (history.length > 0) {
+      const firstValue = new Decimal(history[0].portfolioTotalValueSol);
+      cumulativeYieldSol = totalValueSol.minus(firstValue);
+      cumulativeYieldUsd = cumulativeYieldSol.mul(solPrice);
+    }
+
+    // 5. Estimate impermanent loss for LP positions
+    let impermanentLoss: YieldHistoryEntry['impermanentLoss'] | undefined;
+    if (positions.length > 0 && history.length > 0) {
+      impermanentLoss = this.estimateImpermanentLossFromHistory(
+        positions, history[0], totalValueSol, jitosolToSolRatio
+      );
+    }
+
     const entry: YieldHistoryEntry = {
       timestamp: new Date().toISOString(),
-      portfolioTotalValueSol: totalValueSol.toString(),
-      portfolioTotalValueUsd: totalValueUsd.toString(),
+      portfolioTotalValueSol: totalValueSol.toFixed(6),
+      portfolioTotalValueUsd: totalValueUsd.toFixed(2),
       positions,
-      cumulativeYieldSol: cumulativeYield.sol.toString(),
-      cumulativeYieldUsd: cumulativeYield.usd.toString(),
-      impermanentLoss: impermanentLoss ? {
-        currentValueSol: impermanentLoss.currentValue.toString(),
-        holdingValueSol: impermanentLoss.holdingValue.toString(),
-        lossPercent: impermanentLoss.lossPercent.toString()
-      } : undefined,
-      solPriceUsd: solPrice.toString()
+      idleJitoSol: idleJitoSol.toFixed(6),
+      walletSolBalance: walletSolBalance.toFixed(6),
+      cumulativeYieldSol: cumulativeYieldSol.toFixed(6),
+      cumulativeYieldUsd: cumulativeYieldUsd.toFixed(2),
+      impermanentLoss,
+      solPriceUsd: solPrice.toFixed(2),
+      jitosolToSolRatio: jitosolToSolRatio.toFixed(6),
     };
-    
-    // Append to JSONL file
-    const jsonLine = JSON.stringify(entry) + '\n';
-    fs.appendFileSync(this.historyFile, jsonLine);
-    
-    console.log(`💾 Saved snapshot: ${totalValueSol.toFixed(4)} SOL ($${totalValueUsd.toFixed(2)})`);
+
+    // Append to JSONL
+    fs.appendFileSync(HISTORY_FILE, JSON.stringify(entry) + '\n');
+    console.log(`💾 Snapshot: ${totalValueSol.toFixed(4)} SOL ($${totalValueUsd.toFixed(2)}) | Yield: ${cumulativeYieldSol.toFixed(4)} SOL`);
+
     return entry;
   }
 
   /**
    * Calculate actual returns over a period
    */
-  async calculateReturns(since: Date): Promise<PerformanceMetrics> {
-    const history = this.loadHistory();
-    
+  calculateReturns(since: Date): PerformanceMetrics {
+    const history = loadHistory();
     if (history.length === 0) {
       throw new Error('No yield history found. Run captureSnapshot() first.');
     }
-    
-    // Find starting point
-    const sinceTime = since.getTime();
-    const startEntry = history.find(entry => new Date(entry.timestamp).getTime() >= sinceTime);
+
+    const sinceMs = since.getTime();
+    const startEntry = history.find(e => new Date(e.timestamp).getTime() >= sinceMs) || history[0];
     const endEntry = history[history.length - 1];
-    
-    if (!startEntry) {
-      throw new Error(`No data found since ${since.toISOString()}`);
-    }
-    
-    // Calculate returns
+
     const startValue = new Decimal(startEntry.portfolioTotalValueSol);
     const endValue = new Decimal(endEntry.portfolioTotalValueSol);
     const startValueUsd = new Decimal(startEntry.portfolioTotalValueUsd);
     const endValueUsd = new Decimal(endEntry.portfolioTotalValueUsd);
-    
+
     const earnedSol = endValue.minus(startValue);
     const earnedUsd = endValueUsd.minus(startValueUsd);
-    
-    // Calculate time period
-    const startTime = new Date(startEntry.timestamp);
-    const endTime = new Date(endEntry.timestamp);
-    const daysDiff = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60 * 24);
-    
-    // Calculate APY
-    const returnPercent = earnedSol.div(startValue);
-    const annualizedReturn = returnPercent.div(daysDiff).mul(365);
-    
-    // Calculate vs holding comparison (using SOL price changes)
+
+    const startTime = new Date(startEntry.timestamp).getTime();
+    const endTime = new Date(endEntry.timestamp).getTime();
+    const daysDiff = Math.max((endTime - startTime) / (1000 * 60 * 60 * 24), 0.01);
+
+    // Annualized return (APY)
+    const returnPct = startValue.gt(0) ? earnedSol.div(startValue) : new Decimal(0);
+    const annualized = returnPct.div(daysDiff).mul(365).mul(100);
+
+    // vs just holding: compare SOL value growth vs SOL price growth
     const startSolPrice = new Decimal(startEntry.solPriceUsd);
     const endSolPrice = new Decimal(endEntry.solPriceUsd);
-    const solPriceReturn = endSolPrice.minus(startSolPrice).div(startSolPrice);
-    const vsHolding = annualizedReturn.minus(solPriceReturn);
-    
-    // Get impermanent loss from latest entry
-    const impermanentLoss = endEntry.impermanentLoss ? 
-      new Decimal(endEntry.impermanentLoss.lossPercent) : undefined;
-    
+    const solPriceGrowth = startSolPrice.gt(0)
+      ? endSolPrice.minus(startSolPrice).div(startSolPrice).mul(100)
+      : new Decimal(0);
+    const vsHolding = annualized.minus(solPriceGrowth);
+
+    // IL from latest entry
+    let ilPercent: Decimal | null = null;
+    if (endEntry.impermanentLoss) {
+      ilPercent = new Decimal(endEntry.impermanentLoss.lossPercent);
+    }
+
     return {
       deployedDaysAgo: daysDiff,
       totalEarnedSol: earnedSol,
       totalEarnedUsd: earnedUsd,
-      actualApy: annualizedReturn.mul(100), // Convert to percentage
-      vsHoldingDiff: vsHolding.mul(100),
-      impermanentLoss
+      actualApy: annualized,
+      vsHoldingPercent: vsHolding,
+      impermanentLossPercent: ilPercent,
+      snapshotCount: history.length,
     };
   }
 
   /**
    * Get human-readable performance summary
    */
-  async getPerformanceSummary(since?: Date): Promise<string> {
-    const history = this.loadHistory();
-    
+  getPerformanceSummary(): string {
+    const history = loadHistory();
     if (history.length === 0) {
-      return '📊 No yield tracking data available yet. Run captureSnapshot() first.';
+      return '📊 No yield tracking data yet. First snapshot pending.';
     }
-    
-    // Use oldest entry as default start
-    const startDate = since || new Date(history[0].timestamp);
-    
+
     try {
-      const metrics = await this.calculateReturns(startDate);
-      
-      const summary = [
-        `📊 **Portfolio Performance Summary**`,
-        `⏱️ Deployed: ${metrics.deployedDaysAgo.toFixed(1)} days ago`,
-        `💰 Earned: ${metrics.totalEarnedSol.toFixed(4)} SOL ($${metrics.totalEarnedUsd.toFixed(2)})`,
-        `📈 Actual APY: ${metrics.actualApy.toFixed(2)}%`,
-        `🆚 vs Holding SOL: ${metrics.vsHoldingDiff.gt(0) ? '+' : ''}${metrics.vsHoldingDiff.toFixed(2)}%`
+      const metrics = this.calculateReturns(new Date(history[0].timestamp));
+      const latest = history[history.length - 1];
+
+      const lines = [
+        `📊 **Portfolio Performance**`,
+        `⏱️ Tracking: ${metrics.deployedDaysAgo.toFixed(1)} days (${metrics.snapshotCount} snapshots)`,
+        `💰 Total Value: ${new Decimal(latest.portfolioTotalValueSol).toFixed(4)} SOL ($${new Decimal(latest.portfolioTotalValueUsd).toFixed(2)})`,
+        `📈 Earned: ${metrics.totalEarnedSol.toFixed(4)} SOL ($${metrics.totalEarnedUsd.toFixed(2)})`,
+        `🎯 Actual APY: ${metrics.actualApy.toFixed(2)}%`,
+        `🆚 vs Holding: ${metrics.vsHoldingPercent.gt(0) ? '+' : ''}${metrics.vsHoldingPercent.toFixed(2)}%`,
       ];
-      
-      if (metrics.impermanentLoss) {
-        summary.push(`⚠️ Impermanent Loss: ${metrics.impermanentLoss.toFixed(2)}%`);
+
+      if (metrics.impermanentLossPercent !== null) {
+        lines.push(`⚠️ IL estimate: ${metrics.impermanentLossPercent.toFixed(4)}%`);
       }
-      
-      return summary.join('\n');
-    } catch (error) {
-      return `❌ Error calculating returns: ${error instanceof Error ? error.message : 'Unknown error'}`;
+
+      return lines.join('\n');
+    } catch (err) {
+      return `❌ ${(err as Error).message}`;
     }
   }
 
   /**
-   * Estimate impermanent loss for LP positions
+   * Estimate IL by comparing LP value vs "just holding" from first snapshot
    */
-  async estimateImpermanentLoss(snapshot: PortfolioSnapshot, totalValueSol: Decimal): Promise<{
-    currentValue: Decimal;
-    holdingValue: Decimal;
-    lossPercent: Decimal;
-  } | null> {
-    const lpPositions = snapshot.liquidityPositions;
-    if (lpPositions.length === 0) {
-      return null;
+  private estimateImpermanentLossFromHistory(
+    currentPositions: PositionEntry[],
+    firstEntry: YieldHistoryEntry,
+    currentTotalSol: Decimal,
+    jitosolToSolRatio: Decimal,
+  ): YieldHistoryEntry['impermanentLoss'] | undefined {
+    // Current LP value in SOL
+    let lpValueSol = new Decimal(0);
+    for (const pos of currentPositions) {
+      lpValueSol = lpValueSol.plus(new Decimal(pos.valueSol));
     }
-    
-    // For JitoSOL-SOL LP: calculate what the position would be worth if just held JitoSOL
-    let totalLpValue = new Decimal(0);
-    let totalHoldingValue = new Decimal(0);
-    
-    for (const position of lpPositions) {
-      // Current LP value (already in SOL terms)
-      const currentValue = new Decimal(position.valueUsd).div(await this.getSolPrice());
-      totalLpValue = totalLpValue.plus(currentValue);
-      
-      // Estimate what it would be worth if just held the underlying tokens
-      // This is a simplified calculation - in reality we'd need the exact entry amounts
-      // For now, assume equal weighting and use current token amounts
-      const tokenASol = new Decimal(position.tokenAAmount);
-      const tokenBSol = new Decimal(position.tokenBAmount);
-      
-      if (position.tokenASymbol === 'SOL') {
-        totalHoldingValue = totalHoldingValue.plus(tokenASol).plus(tokenBSol);
-      } else if (position.tokenBSymbol === 'SOL') {
-        totalHoldingValue = totalHoldingValue.plus(tokenASol).plus(tokenBSol);
-      } else {
-        // Both non-SOL tokens - convert to SOL equivalent
-        totalHoldingValue = totalHoldingValue.plus(currentValue);
-      }
-    }
-    
-    if (totalHoldingValue.isZero()) {
-      return null;
-    }
-    
-    const lossPercent = totalLpValue.minus(totalHoldingValue).div(totalHoldingValue).mul(100);
-    
+
+    if (lpValueSol.isZero()) return undefined;
+
+    // If we had just held the initial portfolio (no LP), what would it be worth?
+    // Initial total value (first snapshot) appreciated by JitoSOL staking ratio change
+    const initialTotalSol = new Decimal(firstEntry.portfolioTotalValueSol);
+    const initialRatio = new Decimal(firstEntry.jitosolToSolRatio || '1');
+    const ratioChange = jitosolToSolRatio.gt(0) && initialRatio.gt(0)
+      ? jitosolToSolRatio.div(initialRatio)
+      : new Decimal(1);
+
+    // Hold value = initial value * ratio appreciation (JitoSOL earns staking yield)
+    const holdValueSol = initialTotalSol.mul(ratioChange);
+    const lossPercent = holdValueSol.gt(0)
+      ? lpValueSol.minus(holdValueSol).div(holdValueSol).mul(100)
+      : new Decimal(0);
+
     return {
-      currentValue: totalLpValue,
-      holdingValue: totalHoldingValue,
-      lossPercent
+      lpValueSol: lpValueSol.toFixed(6),
+      holdValueSol: holdValueSol.toFixed(6),
+      lossPercent: lossPercent.toFixed(4),
     };
-  }
-
-  private calculateTotalValueSol(snapshot: PortfolioSnapshot): Decimal {
-    let total = new Decimal(0);
-    
-    // SOL balance
-    total = total.plus(snapshot.balances.SOL || new Decimal(0));
-    
-    // K-Lend positions (convert USDC to SOL equivalent)
-    for (const position of snapshot.klendPositions) {
-      if (position.token === 'SOL' || position.token === 'JitoSOL') {
-        total = total.plus(position.tokenAmount);
-      }
-      // For USDC positions, we'd need to convert - skip for now
-    }
-    
-    // Multiply positions
-    for (const position of snapshot.multiplyPositions) {
-      // Net value is already in USD, convert to SOL
-      // This is approximate - would need current SOL price
-      const solEquivalent = position.netValueUsd.div(100); // rough estimate
-      total = total.plus(solEquivalent);
-    }
-    
-    // Liquidity positions
-    for (const position of snapshot.liquidityPositions) {
-      // Assuming position value is in SOL terms for JitoSOL-SOL pairs
-      const tokenASol = new Decimal(position.tokenAAmount);
-      const tokenBSol = new Decimal(position.tokenBAmount);
-      total = total.plus(tokenASol).plus(tokenBSol);
-    }
-    
-    return total;
-  }
-
-  private getPositionBreakdown(snapshot: PortfolioSnapshot, solPrice: Decimal) {
-    const positions: any[] = [];
-    
-    // K-Lend positions
-    for (const position of snapshot.klendPositions) {
-      positions.push({
-        strategy: 'K-Lend',
-        address: position.vaultAddress,
-        value: position.valueUsd.toString(),
-        apy: position.currentApy.toString()
-      });
-    }
-    
-    // Multiply positions
-    for (const position of snapshot.multiplyPositions) {
-      positions.push({
-        strategy: 'Multiply',
-        address: position.obligationAddress,
-        value: position.netValueUsd.toString(),
-        apy: position.netApy.toString()
-      });
-    }
-    
-    // Liquidity positions
-    for (const position of snapshot.liquidityPositions) {
-      const valueSol = new Decimal(position.tokenAAmount).plus(position.tokenBAmount);
-      const valueUsd = valueSol.mul(solPrice);
-      positions.push({
-        strategy: 'Liquidity',
-        address: position.strategyAddress,
-        value: valueUsd.toString(),
-        apy: position.apy.toString()
-      });
-    }
-    
-    return positions;
-  }
-
-  private async calculateCumulativeYield(currentValueSol: Decimal, currentValueUsd: Decimal): Promise<{
-    sol: Decimal;
-    usd: Decimal;
-  }> {
-    const history = this.loadHistory();
-    
-    if (history.length === 0) {
-      return { sol: new Decimal(0), usd: new Decimal(0) };
-    }
-    
-    // Use first entry as baseline
-    const firstEntry = history[0];
-    const initialValueSol = new Decimal(firstEntry.portfolioTotalValueSol);
-    const initialValueUsd = new Decimal(firstEntry.portfolioTotalValueUsd);
-    
-    return {
-      sol: currentValueSol.minus(initialValueSol),
-      usd: currentValueUsd.minus(initialValueUsd)
-    };
-  }
-
-  private async getSolPrice(): Promise<Decimal> {
-    try {
-      // Simple price fetch - in production you'd use a proper price feed
-      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
-      const data = await response.json();
-      return new Decimal(data.solana.usd);
-    } catch (error) {
-      console.warn('Failed to fetch SOL price, using default:', error);
-      return new Decimal(100); // Fallback price
-    }
-  }
-
-  private loadHistory(): YieldHistoryEntry[] {
-    if (!fs.existsSync(this.historyFile)) {
-      return [];
-    }
-    
-    const content = fs.readFileSync(this.historyFile, 'utf-8');
-    const lines = content.trim().split('\n').filter(line => line.trim());
-    
-    return lines.map(line => {
-      try {
-        return JSON.parse(line);
-      } catch (error) {
-        console.warn('Failed to parse history line:', line);
-        return null;
-      }
-    }).filter(entry => entry !== null);
   }
 }
 
 /**
- * Create YieldTracker instance from settings
+ * Load yield history (for dashboard use)
  */
-export async function createYieldTracker(
+export function getYieldHistory(): YieldHistoryEntry[] {
+  return loadHistory();
+}
+
+/**
+ * Factory function
+ */
+export function createYieldTracker(
   connection: Connection,
   wallet: Keypair,
   settings: Settings
-): Promise<YieldTracker> {
-  const { PortfolioManager } = await import('./portfolio');
-  const { LiquidityClient } = await import('./liquidity-client');
-  
-  const portfolioManager = new PortfolioManager(connection, wallet, settings);
-  const liquidityClient = new LiquidityClient(connection, wallet);
-  
-  return new YieldTracker(connection, wallet, portfolioManager, liquidityClient, settings);
+): YieldTracker {
+  return new YieldTracker(settings.rpcUrl, connection, wallet);
+}
+
+// ─── CLI Runner ─────────────────────────────────────────────────
+
+if (require.main === module) {
+  (async () => {
+    const settingsPath = path.join(__dirname, '../config/settings.json');
+    const settings: Settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+    const walletPath = path.join(__dirname, '../config/wallet.json');
+    const secretKey = JSON.parse(fs.readFileSync(walletPath, 'utf-8'));
+    const wallet = Keypair.fromSecretKey(Uint8Array.from(secretKey));
+    const connection = new Connection(settings.rpcUrl, { commitment: 'confirmed' });
+
+    const tracker = new YieldTracker(settings.rpcUrl, connection, wallet);
+    await tracker.captureSnapshot();
+    console.log('\n' + tracker.getPerformanceSummary());
+  })().then(() => process.exit(0)).catch(err => {
+    console.error('Fatal:', err.message || err);
+    process.exit(1);
+  });
 }
