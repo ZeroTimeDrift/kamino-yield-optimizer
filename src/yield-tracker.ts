@@ -67,18 +67,20 @@ const HISTORY_FILE = path.join(__dirname, '..', 'config', 'yield-history.jsonl')
 interface TokenPrices {
   sol: Decimal;
   jitoSol: Decimal;
+  kmno: Decimal;
 }
 
 async function getTokenPrices(): Promise<TokenPrices> {
   try {
-    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,jito-staked-sol&vs_currencies=usd');
+    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,jito-staked-sol,kamino&vs_currencies=usd');
     const data = await res.json() as any;
     return {
       sol: new Decimal(data.solana?.usd ?? 86),
       jitoSol: new Decimal(data['jito-staked-sol']?.usd ?? data.solana?.usd ?? 86),
+      kmno: new Decimal(data.kamino?.usd ?? 0.04),
     };
   } catch {
-    return { sol: new Decimal(86), jitoSol: new Decimal(100) };
+    return { sol: new Decimal(86), jitoSol: new Decimal(100), kmno: new Decimal(0.04) };
   }
 }
 
@@ -185,7 +187,66 @@ export class YieldTracker {
       console.log(`   ⚠️ Failed to get LP positions: ${(err as Error).message}`);
     }
 
-    // totalValueUsd already accumulated above with per-token prices
+    // 3b. Get KMNO balance + staking + KLend deposits
+    const kmnoPrice = prices.kmno || new Decimal(0.04);
+    try {
+      // KMNO wallet balance
+      const KMNO_MINT = new PublicKey('KMNo3nJsBXfcpJTVhZcXLW7RmTwTt4GVFE7suUBo9sS');
+      const kmnoAccounts = await this.connection.getTokenAccountsByOwner(
+        this.wallet.publicKey, { mint: KMNO_MINT }
+      );
+      let kmnoBalance = new Decimal(0);
+      for (const { account } of kmnoAccounts.value) {
+        const amount = account.data.readBigUInt64LE(64);
+        kmnoBalance = kmnoBalance.plus(new Decimal(amount.toString()).div(1e6));
+      }
+      if (kmnoBalance.gt(0)) {
+        const kmnoUsd = kmnoBalance.mul(kmnoPrice);
+        totalValueUsd = totalValueUsd.plus(kmnoUsd);
+        console.log(`   KMNO wallet: ${kmnoBalance.toFixed(2)} ($${kmnoUsd.toFixed(2)})`);
+      }
+
+      // KMNO staking (farm user state)
+      const FARMS_PROGRAM = new PublicKey('FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr');
+      const FARM_STATE = new PublicKey('2sFZDpBn4sA42uNbAD6QzQ98rPSmqnPyksYe6SJKVvay');
+      const [userStatePDA] = PublicKey.findProgramAddressSync(
+        [Buffer.from('user'), FARM_STATE.toBuffer(), this.wallet.publicKey.toBuffer()],
+        FARMS_PROGRAM
+      );
+      const userStateAcct = await this.connection.getAccountInfo(userStatePDA);
+      if (userStateAcct && userStateAcct.data.length >= 424) {
+        const low = userStateAcct.data.readBigUInt64LE(408);
+        const high = userStateAcct.data.readBigUInt64LE(416);
+        const activeStakeScaled = low + (high << 64n);
+        const kmnoStaked = Number(activeStakeScaled / 10n**18n) / 1e6;
+        if (kmnoStaked > 0.01) {
+          const stakedUsd = new Decimal(kmnoStaked).mul(kmnoPrice);
+          totalValueUsd = totalValueUsd.plus(stakedUsd);
+          console.log(`   KMNO staked: ${kmnoStaked.toFixed(2)} ($${stakedUsd.toFixed(2)})`);
+        }
+      }
+    } catch (err) {
+      console.log(`   ⚠️ Failed to get KMNO: ${(err as Error).message}`);
+    }
+
+    // 3c. Get KLend JitoSOL deposit
+    try {
+      const OBLIGATION_KEY = new PublicKey('7qoM9cQtTpyJK3VRPUU7XUcWZ8XnBjdffEFS58ReLuHw');
+      const oblAcct = await this.connection.getAccountInfo(OBLIGATION_KEY);
+      if (oblAcct && oblAcct.data.length > 140) {
+        const depositAmount = Number(oblAcct.data.readBigUInt64LE(128)) / 1e9;
+        if (depositAmount > 0.001) {
+          const klendUsd = new Decimal(depositAmount).mul(jitoSolPrice);
+          totalValueUsd = totalValueUsd.plus(klendUsd);
+          totalValueSol = totalValueUsd.div(solPrice);
+          console.log(`   KLend JitoSOL: ${depositAmount.toFixed(6)} ($${klendUsd.toFixed(2)})`);
+        }
+      }
+    } catch (err) {
+      console.log(`   ⚠️ Failed to get KLend: ${(err as Error).message}`);
+    }
+
+    totalValueSol = totalValueUsd.div(solPrice);
 
     // 4. Calculate cumulative yield from first snapshot
     const history = loadHistory();

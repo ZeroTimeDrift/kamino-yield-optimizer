@@ -4,16 +4,16 @@
   "pollCount": 0,
   "currentRates": {
     "Main": {
-      "timestamp": "2026-02-06T17:57:34.568Z",
+      "timestamp": "2026-02-07T10:15:14.243Z",
       "market": "Main",
-      "solBorrowApy": 10.919312788998381,
-      "solSupplyApy": 8.545028398024957,
-      "jitosolSupplyApy": 0.0003417176384967746,
-      "multiplySpread": -5.349312788998381,
+      "solBorrowApy": 11.666047185488493,
+      "solSupplyApy": 9.138492914154872,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.096047185488493,
       "profitable": false
     },
     "Jito": {
-      "timestamp": "2026-02-06T17:55:59.677Z",
+      "timestamp": "2026-02-07T09:54:55.895Z",
       "market": "Jito",
       "solBorrowApy": 13.31484694287013,
       "solSupplyApy": 0,
@@ -904,6 +904,1545 @@
       "jitosolSupplyApy": 0.0003417176384967746,
       "multiplySpread": -5.349312788998381,
       "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T18:12:41.942Z",
+      "market": "Main",
+      "solBorrowApy": 10.2535484094882,
+      "solSupplyApy": 8.00466294587945,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.6835484094882,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T18:16:18.051Z",
+      "market": "Main",
+      "solBorrowApy": 10.294478720111222,
+      "solSupplyApy": 8.038963194995553,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.724478720111222,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T18:19:04.226Z",
+      "market": "Main",
+      "solBorrowApy": 10.295314379910359,
+      "solSupplyApy": 8.03966374579721,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.725314379910358,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T18:22:02.290Z",
+      "market": "Main",
+      "solBorrowApy": 10.287478580223851,
+      "solSupplyApy": 8.033097205971407,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.717478580223851,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T18:27:21.498Z",
+      "market": "Main",
+      "solBorrowApy": 10.320476729125371,
+      "solSupplyApy": 8.060761077423084,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.750476729125371,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T18:31:02.367Z",
+      "market": "Main",
+      "solBorrowApy": 10.285424342825022,
+      "solSupplyApy": 8.031373933640861,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.715424342825022,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T18:40:20.607Z",
+      "market": "Main",
+      "solBorrowApy": 10.29832033608329,
+      "solSupplyApy": 8.042184555808497,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.728320336083289,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T18:52:24.964Z",
+      "market": "Main",
+      "solBorrowApy": 10.331565865633374,
+      "solSupplyApy": 8.070061130442063,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.761565865633374,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T18:56:18.842Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T19:01:06.680Z",
+      "market": "Main",
+      "solBorrowApy": 10.33566682625322,
+      "solSupplyApy": 8.073499855561494,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.76566682625322,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T19:06:44.907Z",
+      "market": "Main",
+      "solBorrowApy": 10.41177703303906,
+      "solSupplyApy": 8.137366205163076,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.84177703303906,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T19:09:23.164Z",
+      "market": "Main",
+      "solBorrowApy": 10.411790949690936,
+      "solSupplyApy": 8.137378320698918,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.841790949690935,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T19:16:05.785Z",
+      "market": "Main",
+      "solBorrowApy": 10.735788919232858,
+      "solSupplyApy": 8.399349831469149,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -5.165788919232858,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T19:21:42.899Z",
+      "market": "Main",
+      "solBorrowApy": 10.420807762548812,
+      "solSupplyApy": 8.144947767049171,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.850807762548811,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T19:24:14.648Z",
+      "market": "Main",
+      "solBorrowApy": 10.42079848402302,
+      "solSupplyApy": 8.144940194309068,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.85079848402302,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T19:34:58.924Z",
+      "market": "Main",
+      "solBorrowApy": 10.464227428216377,
+      "solSupplyApy": 8.181415144527815,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -4.894227428216377,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T19:43:44.608Z",
+      "market": "Main",
+      "solBorrowApy": 10.58906736342653,
+      "solSupplyApy": 8.282935326902718,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -5.0190673634265295,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T19:51:20.534Z",
+      "market": "Main",
+      "solBorrowApy": 10.899472953526601,
+      "solSupplyApy": 8.529276215056015,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -5.329472953526601,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T19:56:35.748Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T20:04:26.770Z",
+      "market": "Main",
+      "solBorrowApy": 10.889244546371257,
+      "solSupplyApy": 8.521155530144476,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -5.319244546371257,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T20:13:22.425Z",
+      "market": "Main",
+      "solBorrowApy": 10.908411546035325,
+      "solSupplyApy": 8.536373002651354,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -5.338411546035324,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T20:17:23.710Z",
+      "market": "Main",
+      "solBorrowApy": 10.921509321870925,
+      "solSupplyApy": 8.546770505189594,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -5.351509321870925,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T20:22:48.385Z",
+      "market": "Main",
+      "solBorrowApy": 11.170821523833308,
+      "solSupplyApy": 8.74478501991456,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -5.600821523833307,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T20:22:55.612Z",
+      "market": "Main",
+      "solBorrowApy": 11.17082308075814,
+      "solSupplyApy": 8.74478501991456,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -5.60082308075814,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T20:40:07.590Z",
+      "market": "Main",
+      "solBorrowApy": 12.688230890140417,
+      "solSupplyApy": 9.952748354987829,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -7.118230890140417,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T20:46:08.410Z",
+      "market": "Main",
+      "solBorrowApy": 12.633561940952799,
+      "solSupplyApy": 9.9091464588009,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -7.063561940952798,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T20:52:32.143Z",
+      "market": "Main",
+      "solBorrowApy": 12.63484911503381,
+      "solSupplyApy": 9.910173146893019,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -7.064849115033809,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T20:56:56.935Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:04:32.392Z",
+      "market": "Main",
+      "solBorrowApy": 12.416371362460477,
+      "solSupplyApy": 9.735978264277456,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -6.846371362460477,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:07:50.451Z",
+      "market": "Main",
+      "solBorrowApy": 12.463845445275679,
+      "solSupplyApy": 9.773821545904159,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -6.893845445275678,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:12:02.368Z",
+      "market": "Main",
+      "solBorrowApy": 12.47137750700813,
+      "solSupplyApy": 9.779825101333595,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -6.90137750700813,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:14:38.899Z",
+      "market": "Main",
+      "solBorrowApy": 12.469192810650686,
+      "solSupplyApy": 9.778083190876785,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -6.8991928106506855,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:18:47.194Z",
+      "market": "Main",
+      "solBorrowApy": 12.468409984576144,
+      "solSupplyApy": 9.777460537622318,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -6.898409984576144,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:31:49.301Z",
+      "market": "Main",
+      "solBorrowApy": 12.463935222212964,
+      "solSupplyApy": 9.773892264492456,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -6.8939352222129635,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:32:07.555Z",
+      "market": "Main",
+      "solBorrowApy": 12.456896612781199,
+      "solSupplyApy": 9.768282577140198,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -6.886896612781198,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:36:44.205Z",
+      "market": "Main",
+      "solBorrowApy": 12.455022454508867,
+      "solSupplyApy": 9.766788348674172,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -6.885022454508867,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:43:57.171Z",
+      "market": "Main",
+      "solBorrowApy": 12.512543416767485,
+      "solSupplyApy": 9.81264367742163,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -6.942543416767485,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:49:38.253Z",
+      "market": "Main",
+      "solBorrowApy": 12.531040684032991,
+      "solSupplyApy": 9.827393165465326,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -6.961040684032991,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:51:59.522Z",
+      "market": "Main",
+      "solBorrowApy": 12.636008530750287,
+      "solSupplyApy": 9.91109671259105,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -7.0660085307502865,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T21:55:23.691Z",
+      "market": "Main",
+      "solBorrowApy": 12.635494285027749,
+      "solSupplyApy": 9.910687264173967,
+      "jitosolSupplyApy": 0.0003417176384967746,
+      "multiplySpread": -7.065494285027748,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T22:03:52.618Z",
+      "market": "Main",
+      "solBorrowApy": 12.672560693770585,
+      "solSupplyApy": 9.940248433755738,
+      "jitosolSupplyApy": 0.00033471521616590394,
+      "multiplySpread": -7.1025606937705845,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T22:21:53.615Z",
+      "market": "Main",
+      "solBorrowApy": 12.495489166311891,
+      "solSupplyApy": 9.79904791149302,
+      "jitosolSupplyApy": 0.00031370795208207625,
+      "multiplySpread": -6.925489166311891,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T22:28:36.824Z",
+      "market": "Main",
+      "solBorrowApy": 12.412249741303217,
+      "solSupplyApy": 9.732692570645508,
+      "jitosolSupplyApy": 0.00031370795208207625,
+      "multiplySpread": -6.842249741303217,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T22:30:45.398Z",
+      "market": "Main",
+      "solBorrowApy": 12.412295396324868,
+      "solSupplyApy": 9.732729453470501,
+      "jitosolSupplyApy": 0.00031370795208207625,
+      "multiplySpread": -6.842295396324868,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T22:37:28.616Z",
+      "market": "Main",
+      "solBorrowApy": 12.447823772256438,
+      "solSupplyApy": 9.761049901046226,
+      "jitosolSupplyApy": 0.0003123074679534099,
+      "multiplySpread": -6.877823772256438,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T22:42:56.505Z",
+      "market": "Main",
+      "solBorrowApy": 12.547537617325322,
+      "solSupplyApy": 9.840546334882717,
+      "jitosolSupplyApy": 0.0003123074679534099,
+      "multiplySpread": -6.977537617325321,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T22:57:28.181Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T23:04:04.284Z",
+      "market": "Main",
+      "solBorrowApy": 12.604735304132975,
+      "solSupplyApy": 9.886157006782526,
+      "jitosolSupplyApy": 0.0003123074679534099,
+      "multiplySpread": -7.034735304132974,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T23:10:09.113Z",
+      "market": "Main",
+      "solBorrowApy": 12.610578264775274,
+      "solSupplyApy": 9.890815456789293,
+      "jitosolSupplyApy": 0.0003123074679534099,
+      "multiplySpread": -7.040578264775274,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T23:37:07.206Z",
+      "market": "Main",
+      "solBorrowApy": 12.3647297716869,
+      "solSupplyApy": 9.694818916400472,
+      "jitosolSupplyApy": 0.0003123074679534099,
+      "multiplySpread": -6.7947297716868995,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T23:40:22.862Z",
+      "market": "Main",
+      "solBorrowApy": 12.399056217034676,
+      "solSupplyApy": 9.722176860828124,
+      "jitosolSupplyApy": 0.0003123074679534099,
+      "multiplySpread": -6.829056217034676,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T23:42:24.860Z",
+      "market": "Main",
+      "solBorrowApy": 12.474512076986134,
+      "solSupplyApy": 9.782325014063687,
+      "jitosolSupplyApy": 0.0003123074679534099,
+      "multiplySpread": -6.9045120769861335,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T23:46:01.767Z",
+      "market": "Main",
+      "solBorrowApy": 12.501827486914664,
+      "solSupplyApy": 9.804100954026818,
+      "jitosolSupplyApy": 0.0003123074679534099,
+      "multiplySpread": -6.931827486914663,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T23:48:13.697Z",
+      "market": "Main",
+      "solBorrowApy": 12.61654612511489,
+      "solSupplyApy": 9.895575682544022,
+      "jitosolSupplyApy": 0.0003123074679534099,
+      "multiplySpread": -7.04654612511489,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T23:51:17.543Z",
+      "market": "Main",
+      "solBorrowApy": 12.483322419112742,
+      "solSupplyApy": 9.789348443746437,
+      "jitosolSupplyApy": 0.00031370795208207625,
+      "multiplySpread": -6.913322419112742,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T23:52:07.146Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-06T23:55:54.953Z",
+      "market": "Main",
+      "solBorrowApy": 12.484013980629548,
+      "solSupplyApy": 9.789898897896677,
+      "jitosolSupplyApy": 0.00031370795208207625,
+      "multiplySpread": -6.914013980629548,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:04:30.593Z",
+      "market": "Main",
+      "solBorrowApy": 12.577219903134651,
+      "solSupplyApy": 9.86421400831301,
+      "jitosolSupplyApy": 0.00031370795208207625,
+      "multiplySpread": -7.007219903134651,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:06:18.120Z",
+      "market": "Main",
+      "solBorrowApy": 12.57726720177892,
+      "solSupplyApy": 9.864250935344355,
+      "jitosolSupplyApy": 0.00031370795208207625,
+      "multiplySpread": -7.0072672017789195,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:11:31.097Z",
+      "market": "Main",
+      "solBorrowApy": 12.571331377168281,
+      "solSupplyApy": 9.859519760531231,
+      "jitosolSupplyApy": 0.00031370795208207625,
+      "multiplySpread": -7.001331377168281,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:17:32.043Z",
+      "market": "Main",
+      "solBorrowApy": 12.680207729844128,
+      "solSupplyApy": 9.946350398101721,
+      "jitosolSupplyApy": 0.00033471521616590394,
+      "multiplySpread": -7.110207729844127,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:27:08.837Z",
+      "market": "Main",
+      "solBorrowApy": 12.381414797428425,
+      "solSupplyApy": 9.7081159980714,
+      "jitosolSupplyApy": 0.00033471521616590394,
+      "multiplySpread": -6.811414797428425,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:29:31.916Z",
+      "market": "Main",
+      "solBorrowApy": 12.376897855664716,
+      "solSupplyApy": 9.70451617838397,
+      "jitosolSupplyApy": 0.00033471521616590394,
+      "multiplySpread": -6.806897855664715,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:34:50.038Z",
+      "market": "Main",
+      "solBorrowApy": 12.413222669570146,
+      "solSupplyApy": 9.73346864936886,
+      "jitosolSupplyApy": 0.00035012054595551234,
+      "multiplySpread": -6.843222669570146,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:37:21.041Z",
+      "market": "Main",
+      "solBorrowApy": 12.398618610858936,
+      "solSupplyApy": 9.721828044818448,
+      "jitosolSupplyApy": 0.00035012054595551234,
+      "multiplySpread": -6.8286186108589355,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:37:21.065Z",
+      "market": "Main",
+      "solBorrowApy": 12.398618610858936,
+      "solSupplyApy": 9.721828044818448,
+      "jitosolSupplyApy": 0.00035012054595551234,
+      "multiplySpread": -6.8286186108589355,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:39:41.621Z",
+      "market": "Main",
+      "solBorrowApy": 12.401006576068108,
+      "solSupplyApy": 9.723730411678044,
+      "jitosolSupplyApy": 0.0003655258781432025,
+      "multiplySpread": -6.831006576068107,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:48:33.404Z",
+      "market": "Main",
+      "solBorrowApy": 12.411539729387687,
+      "solSupplyApy": 9.732127035547865,
+      "jitosolSupplyApy": 0.0003655258781432025,
+      "multiplySpread": -6.841539729387687,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:52:26.670Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:55:43.132Z",
+      "market": "Main",
+      "solBorrowApy": 12.40997803381485,
+      "solSupplyApy": 9.730882253888984,
+      "jitosolSupplyApy": 0.0003725283026501103,
+      "multiplySpread": -6.83997803381485,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:56:23.666Z",
+      "market": "Main",
+      "solBorrowApy": 12.409984330930858,
+      "solSupplyApy": 9.73088840092422,
+      "jitosolSupplyApy": 0.0003725283026501103,
+      "multiplySpread": -6.839984330930857,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T00:58:57.525Z",
+      "market": "Main",
+      "solBorrowApy": 12.409175154414353,
+      "solSupplyApy": 9.730242964105562,
+      "jitosolSupplyApy": 0.000366926363004616,
+      "multiplySpread": -6.839175154414352,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:06:15.503Z",
+      "market": "Main",
+      "solBorrowApy": 10.473783840398898,
+      "solSupplyApy": 8.189443738965396,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -4.903783840398898,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:06:41.562Z",
+      "market": "Main",
+      "solBorrowApy": 10.47378693472485,
+      "solSupplyApy": 8.189446769307885,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -4.903786934724849,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:11:08.568Z",
+      "market": "Main",
+      "solBorrowApy": 10.444011154860933,
+      "solSupplyApy": 8.164434183405822,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -4.874011154860932,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:16:09.028Z",
+      "market": "Main",
+      "solBorrowApy": 11.60226616046307,
+      "solSupplyApy": 9.087759755452595,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.03226616046307,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:18:41.928Z",
+      "market": "Main",
+      "solBorrowApy": 11.605589078019008,
+      "solSupplyApy": 9.090401270578674,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.035589078019008,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:21:38.379Z",
+      "market": "Main",
+      "solBorrowApy": 11.545590176227961,
+      "solSupplyApy": 9.042682055668072,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.975590176227961,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:25:27.890Z",
+      "market": "Main",
+      "solBorrowApy": 11.393065524848623,
+      "solSupplyApy": 8.921407591515829,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.823065524848623,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:27:40.252Z",
+      "market": "Main",
+      "solBorrowApy": 11.369584758452156,
+      "solSupplyApy": 8.902742599041048,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.799584758452156,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:38:44.338Z",
+      "market": "Main",
+      "solBorrowApy": 11.42985415794322,
+      "solSupplyApy": 8.950655387323646,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.85985415794322,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:41:12.736Z",
+      "market": "Main",
+      "solBorrowApy": 11.407200359533798,
+      "solSupplyApy": 8.932644431283254,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.837200359533798,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:52:42.969Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T01:54:45.813Z",
+      "market": "Main",
+      "solBorrowApy": 11.477726584260894,
+      "solSupplyApy": 8.988716280091147,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.907726584260894,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T02:06:32.922Z",
+      "market": "Main",
+      "solBorrowApy": 11.288799338616396,
+      "solSupplyApy": 8.838530913424991,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.718799338616396,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T02:08:34.871Z",
+      "market": "Main",
+      "solBorrowApy": 11.28842372217489,
+      "solSupplyApy": 8.838233682825836,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.71842372217489,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T02:17:17.571Z",
+      "market": "Main",
+      "solBorrowApy": 11.29304654219192,
+      "solSupplyApy": 8.841907205156785,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.72304654219192,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T02:19:34.462Z",
+      "market": "Main",
+      "solBorrowApy": 11.29206148824695,
+      "solSupplyApy": 8.841125237526516,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.7220614882469505,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T02:24:45.077Z",
+      "market": "Main",
+      "solBorrowApy": 11.296776421974307,
+      "solSupplyApy": 8.844872026246753,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.726776421974307,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T02:31:14.101Z",
+      "market": "Main",
+      "solBorrowApy": 11.300632684855238,
+      "solSupplyApy": 8.847937538009031,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.730632684855237,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T02:36:43.937Z",
+      "market": "Main",
+      "solBorrowApy": 11.307689337202875,
+      "solSupplyApy": 8.85354592544838,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.737689337202875,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T02:47:56.223Z",
+      "market": "Main",
+      "solBorrowApy": 11.264366649621227,
+      "solSupplyApy": 8.819113553382095,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.694366649621227,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T02:52:59.544Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T02:53:32.545Z",
+      "market": "Main",
+      "solBorrowApy": 11.198072604580013,
+      "solSupplyApy": 8.766435890323399,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.628072604580012,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T03:11:39.341Z",
+      "market": "Main",
+      "solBorrowApy": 11.107332696290605,
+      "solSupplyApy": 8.694346000423891,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.537332696290605,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T03:13:53.658Z",
+      "market": "Main",
+      "solBorrowApy": 11.115007329275528,
+      "solSupplyApy": 8.700442751749705,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.545007329275528,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T03:20:09.894Z",
+      "market": "Main",
+      "solBorrowApy": 11.108932312476982,
+      "solSupplyApy": 8.69561708016282,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.538932312476982,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T03:28:46.416Z",
+      "market": "Main",
+      "solBorrowApy": 11.082751608224362,
+      "solSupplyApy": 8.674821952348122,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.512751608224361,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T03:36:25.891Z",
+      "market": "Main",
+      "solBorrowApy": 11.079988734623058,
+      "solSupplyApy": 8.67262729542202,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.509988734623057,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T03:53:16.450Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T04:02:19.470Z",
+      "market": "Main",
+      "solBorrowApy": 11.136628929494963,
+      "solSupplyApy": 8.717620531969716,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.5666289294949625,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T04:03:36.665Z",
+      "market": "Main",
+      "solBorrowApy": 11.136660058418535,
+      "solSupplyApy": 8.717643370495676,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.566660058418535,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T04:15:45.447Z",
+      "market": "Main",
+      "solBorrowApy": 11.478515004645761,
+      "solSupplyApy": 8.98934361786219,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.908515004645761,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T04:18:59.617Z",
+      "market": "Main",
+      "solBorrowApy": 11.480471248018919,
+      "solSupplyApy": 8.990899003725715,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.9104712480189185,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T04:23:15.513Z",
+      "market": "Main",
+      "solBorrowApy": 11.503775509913105,
+      "solSupplyApy": 9.00942949315986,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.933775509913104,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T04:25:44.909Z",
+      "market": "Main",
+      "solBorrowApy": 11.49713427489647,
+      "solSupplyApy": 9.004148921542265,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.927134274896471,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T04:32:43.285Z",
+      "market": "Main",
+      "solBorrowApy": 11.815495767802254,
+      "solSupplyApy": 9.257407835518672,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.245495767802254,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T04:40:35.045Z",
+      "market": "Main",
+      "solBorrowApy": 11.790282064155155,
+      "solSupplyApy": 9.237340521739501,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.220282064155155,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T04:51:03.111Z",
+      "market": "Main",
+      "solBorrowApy": 11.613284059493845,
+      "solSupplyApy": 9.096521764830289,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.043284059493844,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T04:52:02.123Z",
+      "market": "Main",
+      "solBorrowApy": 11.613299690709145,
+      "solSupplyApy": 9.09653551570322,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.043299690709144,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T05:18:16.788Z",
+      "market": "Main",
+      "solBorrowApy": 11.669911551292177,
+      "solSupplyApy": 9.141568223974117,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.099911551292177,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T05:22:42.279Z",
+      "market": "Main",
+      "solBorrowApy": 11.664672560696697,
+      "solSupplyApy": 9.13739854051241,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.094672560696697,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T05:25:35.506Z",
+      "market": "Main",
+      "solBorrowApy": 11.663848419475942,
+      "solSupplyApy": 9.136744367095062,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.0938484194759415,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T05:33:00.911Z",
+      "market": "Main",
+      "solBorrowApy": 11.563403499306958,
+      "solSupplyApy": 9.056848547059682,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.993403499306957,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T05:35:58.566Z",
+      "market": "Main",
+      "solBorrowApy": 11.646491260479896,
+      "solSupplyApy": 9.122935803557963,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.076491260479896,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T05:45:28.184Z",
+      "market": "Main",
+      "solBorrowApy": 11.567945554994562,
+      "solSupplyApy": 9.060460716452345,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.997945554994562,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T05:48:59.266Z",
+      "market": "Main",
+      "solBorrowApy": 11.572520609158277,
+      "solSupplyApy": 9.064100499054572,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -6.002520609158276,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T05:53:48.687Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:07:13.736Z",
+      "market": "Main",
+      "solBorrowApy": 11.378558122706117,
+      "solSupplyApy": 8.9098744846277,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.808558122706117,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:08:18.948Z",
+      "market": "Main",
+      "solBorrowApy": 11.378570601379856,
+      "solSupplyApy": 8.909885161453236,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.808570601379856,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:13:33.517Z",
+      "market": "Main",
+      "solBorrowApy": 11.380507932435036,
+      "solSupplyApy": 8.911424160540648,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.810507932435035,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:17:35.027Z",
+      "market": "Main",
+      "solBorrowApy": 11.381013328687107,
+      "solSupplyApy": 8.911826835843751,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.811013328687107,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:25:28.167Z",
+      "market": "Main",
+      "solBorrowApy": 11.458236419531342,
+      "solSupplyApy": 8.973220199192111,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.888236419531342,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:38:18.057Z",
+      "market": "Main",
+      "solBorrowApy": 11.448246787174309,
+      "solSupplyApy": 8.96527688909634,
+      "jitosolSupplyApy": 0.0003907346086462482,
+      "multiplySpread": -5.878246787174309,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:43:37.091Z",
+      "market": "Main",
+      "solBorrowApy": 11.369726692012438,
+      "solSupplyApy": 8.90285546100138,
+      "jitosolSupplyApy": 0.0003977370349073084,
+      "multiplySpread": -5.799726692012438,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:45:30.178Z",
+      "market": "Main",
+      "solBorrowApy": 11.369773483335699,
+      "solSupplyApy": 8.90289206490551,
+      "jitosolSupplyApy": 0.0003977370349073084,
+      "multiplySpread": -5.799773483335699,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:47:51.274Z",
+      "market": "Main",
+      "solBorrowApy": 11.369266578380909,
+      "solSupplyApy": 8.902489422636584,
+      "jitosolSupplyApy": 0.0003921350938629331,
+      "multiplySpread": -5.799266578380909,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:52:43.079Z",
+      "market": "Main",
+      "solBorrowApy": 11.3574992333896,
+      "solSupplyApy": 8.89313603466977,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.7874992333896,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:54:02.375Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T06:55:57.877Z",
+      "market": "Main",
+      "solBorrowApy": 11.361912816800434,
+      "solSupplyApy": 8.896642126571086,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.7919128168004335,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T07:13:59.631Z",
+      "market": "Main",
+      "solBorrowApy": 11.909020708378648,
+      "solSupplyApy": 9.331844828439294,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.339020708378648,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T07:19:41.626Z",
+      "market": "Main",
+      "solBorrowApy": 11.991776142531707,
+      "solSupplyApy": 9.397727962535773,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.421776142531707,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T07:25:36.175Z",
+      "market": "Main",
+      "solBorrowApy": 11.9740355567566,
+      "solSupplyApy": 9.383604508879717,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.4040355567566,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T07:29:38.023Z",
+      "market": "Main",
+      "solBorrowApy": 11.963535558191406,
+      "solSupplyApy": 9.375243744372263,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.393535558191406,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T07:39:27.928Z",
+      "market": "Main",
+      "solBorrowApy": 12.127873906846599,
+      "solSupplyApy": 9.506108249204303,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.5578739068465985,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T07:50:15.041Z",
+      "market": "Main",
+      "solBorrowApy": 12.169707398830699,
+      "solSupplyApy": 9.539431013944654,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.599707398830699,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T07:54:20.958Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T07:55:24.403Z",
+      "market": "Main",
+      "solBorrowApy": 12.139571891367673,
+      "solSupplyApy": 9.51542533145302,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.569571891367673,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T07:56:18.329Z",
+      "market": "Main",
+      "solBorrowApy": 12.139593878257449,
+      "solSupplyApy": 9.515443736350559,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.569593878257448,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:02:15.255Z",
+      "market": "Main",
+      "solBorrowApy": 12.158042397944335,
+      "solSupplyApy": 9.530137966502327,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.588042397944335,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:03:43.604Z",
+      "market": "Main",
+      "solBorrowApy": 12.158081666717436,
+      "solSupplyApy": 9.53016864545424,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.588081666717436,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:08:07.616Z",
+      "market": "Main",
+      "solBorrowApy": 12.119846676715863,
+      "solSupplyApy": 9.499714812218896,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.5498466767158625,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:14:25.771Z",
+      "market": "Main",
+      "solBorrowApy": 12.122129793626346,
+      "solSupplyApy": 9.501532050050976,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.552129793626346,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:18:32.849Z",
+      "market": "Main",
+      "solBorrowApy": 12.11271341359943,
+      "solSupplyApy": 9.494033263166092,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.542713413599429,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:18:32.995Z",
+      "market": "Main",
+      "solBorrowApy": 12.11271341359943,
+      "solSupplyApy": 9.494033263166092,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.542713413599429,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:21:45.704Z",
+      "market": "Main",
+      "solBorrowApy": 12.132906921505949,
+      "solSupplyApy": 9.510117181344558,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.562906921505949,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:22:07.439Z",
+      "market": "Main",
+      "solBorrowApy": 12.132914773499381,
+      "solSupplyApy": 9.51012484967979,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.562914773499381,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:30:50.114Z",
+      "market": "Main",
+      "solBorrowApy": 11.596741208472627,
+      "solSupplyApy": 9.08336297390997,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.026741208472627,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:32:53.419Z",
+      "market": "Main",
+      "solBorrowApy": 11.659144519231713,
+      "solSupplyApy": 9.133002815049984,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.089144519231713,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:46:54.333Z",
+      "market": "Main",
+      "solBorrowApy": 11.681392837637627,
+      "solSupplyApy": 9.150702955332314,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.111392837637627,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:54:37.649Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:55:18.308Z",
+      "market": "Main",
+      "solBorrowApy": 11.579156958638537,
+      "solSupplyApy": 9.069377864974104,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.0091569586385365,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T08:57:36.940Z",
+      "market": "Main",
+      "solBorrowApy": 11.566900256448044,
+      "solSupplyApy": 9.05962983052997,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.996900256448043,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:04:59.989Z",
+      "market": "Main",
+      "solBorrowApy": 11.608082112638595,
+      "solSupplyApy": 9.092382830853163,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.038082112638595,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:12:43.825Z",
+      "market": "Main",
+      "solBorrowApy": 11.51701387527777,
+      "solSupplyApy": 9.019956287379195,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.94701387527777,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:17:21.689Z",
+      "market": "Main",
+      "solBorrowApy": 11.517791641030929,
+      "solSupplyApy": 9.020574644100687,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.947791641030928,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:21:38.224Z",
+      "market": "Main",
+      "solBorrowApy": 11.523362663947335,
+      "solSupplyApy": 9.025005539806386,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.953362663947335,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:24:20.188Z",
+      "market": "Main",
+      "solBorrowApy": 11.516854574527757,
+      "solSupplyApy": 9.019829562854497,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.946854574527757,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:27:32.923Z",
+      "market": "Main",
+      "solBorrowApy": 11.535992595902211,
+      "solSupplyApy": 9.035049773729398,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.965992595902211,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:28:31.316Z",
+      "market": "Main",
+      "solBorrowApy": 11.536016026489193,
+      "solSupplyApy": 9.035068097896204,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.966016026489193,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:34:46.900Z",
+      "market": "Main",
+      "solBorrowApy": 11.504963884541697,
+      "solSupplyApy": 9.010374496678764,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.9349638845416965,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:42:40.999Z",
+      "market": "Main",
+      "solBorrowApy": 11.565797156794243,
+      "solSupplyApy": 9.05875313055622,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.995797156794243,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:44:35.434Z",
+      "market": "Main",
+      "solBorrowApy": 11.565845592952373,
+      "solSupplyApy": 9.058789786859943,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.995845592952373,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:49:21.657Z",
+      "market": "Main",
+      "solBorrowApy": 11.568384614554429,
+      "solSupplyApy": 9.060810484662163,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.998384614554428,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:53:13.733Z",
+      "market": "Main",
+      "solBorrowApy": 11.60857603707861,
+      "solSupplyApy": 9.092777008276176,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.0385760370786095,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:54:55.895Z",
+      "market": "Jito",
+      "solBorrowApy": 13.31484694287013,
+      "solSupplyApy": 0,
+      "jitosolSupplyApy": 0,
+      "multiplySpread": -7.744846942870129,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T09:59:21.175Z",
+      "market": "Main",
+      "solBorrowApy": 11.632529306300832,
+      "solSupplyApy": 9.1118306151847,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.062529306300831,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T10:02:52.083Z",
+      "market": "Main",
+      "solBorrowApy": 11.625997650025898,
+      "solSupplyApy": 9.106633708020162,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.055997650025898,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T10:03:09.881Z",
+      "market": "Main",
+      "solBorrowApy": 11.626005466523527,
+      "solSupplyApy": 9.106639820085483,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.056005466523526,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T10:09:15.589Z",
+      "market": "Main",
+      "solBorrowApy": 11.658888062281836,
+      "solSupplyApy": 9.132798011573984,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.0888880622818355,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T10:15:14.243Z",
+      "market": "Main",
+      "solBorrowApy": 11.666047185488493,
+      "solSupplyApy": 9.138492914154872,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.096047185488493,
+      "profitable": false
     }
   ],
   "alerts": [
@@ -911,17 +2450,92 @@
       "timestamp": "2026-02-06T17:21:17.733Z",
       "type": "LP_HIGH_YIELD",
       "message": "💰 orca-dex | JTO-JITOSOL paying 63.9% APY (TVL: $0.6M)"
+    },
+    {
+      "timestamp": "2026-02-06T18:42:44.439Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 54.2% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-06T19:42:44.545Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 56.0% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-06T20:42:44.724Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 54.5% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-06T22:12:44.670Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 45.0% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-06T23:12:44.791Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 44.4% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-07T00:42:44.339Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 43.5% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-07T01:06:15.503Z",
+      "type": "RATE_INFLECTION",
+      "message": "📉 Main: SOL borrow 16% move (12.41% → 10.47%) | Spread: -4.90%"
+    },
+    {
+      "timestamp": "2026-02-07T01:42:44.421Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 kamino-liquidity | JTO-JITOSOL paying 32.4% APY (TVL: $0.6M)"
+    },
+    {
+      "timestamp": "2026-02-07T03:12:44.352Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 kamino-liquidity | JTO-JITOSOL paying 32.3% APY (TVL: $0.6M)"
+    },
+    {
+      "timestamp": "2026-02-07T03:42:44.563Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 40.8% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-07T05:12:44.324Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 46.4% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-07T06:12:44.356Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 47.3% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-07T07:12:44.533Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 47.8% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-07T08:42:44.545Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 48.2% APY (TVL: $0.7M)"
+    },
+    {
+      "timestamp": "2026-02-07T10:12:44.625Z",
+      "type": "LP_HIGH_YIELD",
+      "message": "💰 orca-dex | JTO-JITOSOL paying 49.2% APY (TVL: $0.6M)"
     }
   ],
   "lastMultiplyPositive": null,
   "stakingYield": 5.57,
   "mode": "websocket",
-  "wsUpdates": 84,
+  "wsUpdates": 255,
   "pollFallbacks": 0,
   "subscriptionIds": [
     0,
     1,
     2
   ],
-  "lastUpdate": "2026-02-06T17:57:34.568Z"
+  "lastUpdate": "2026-02-07T10:15:14.243Z"
 }

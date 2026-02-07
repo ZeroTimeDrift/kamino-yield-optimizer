@@ -1,1 +1,25 @@
 {"timestamp":"2026-02-06T17:21:17.733Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 63.9% APY (TVL: $0.6M)"}
+{"timestamp":"2026-02-06T18:31:05.630Z","type":"NEAR_BOUNDARY","strategy":"HCntzqDU5wXSWjwgLQP5hqh3kLHRYizKtPErvSCyggXd","message":"⚠️ LP position approaching boundary! SOL-JitoSOL is 0.01% from edge. Pool: 0.795477","inRange":true,"poolPrice":"0.795477","lower":"0.793828","upper":"0.795576","distance":"0.01"}
+{"timestamp":"2026-02-06T18:42:44.439Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 54.2% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-06T18:44:43.571Z","type":"NEAR_BOUNDARY","strategy":"HCntzqDU5wXSWjwgLQP5hqh3kLHRYizKtPErvSCyggXd","message":"⚠️ LP position approaching boundary! SOL-JitoSOL is 0.01% from edge. Pool: 0.795480","inRange":true,"poolPrice":"0.795480","lower":"0.793828","upper":"0.795576","distance":"0.01"}
+{"timestamp":"2026-02-06T19:42:44.545Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 56.0% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-06T20:30:37.539Z","type":"NEAR_BOUNDARY","strategy":"HCntzqDU5wXSWjwgLQP5hqh3kLHRYizKtPErvSCyggXd","message":"⚠️ LP position approaching boundary! SOL-JitoSOL is 0.02% from edge. Pool: 0.795453","inRange":true,"poolPrice":"0.795453","lower":"0.793828","upper":"0.795576","distance":"0.02"}
+{"timestamp":"2026-02-06T20:42:44.724Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 54.5% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-06T22:12:44.670Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 45.0% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-06T22:30:35.683Z","type":"NEAR_BOUNDARY","strategy":"HCntzqDU5wXSWjwgLQP5hqh3kLHRYizKtPErvSCyggXd","message":"⚠️ LP position approaching boundary! SOL-JitoSOL is 0.01% from edge. Pool: 0.795497","inRange":true,"poolPrice":"0.795497","lower":"0.793828","upper":"0.795576","distance":"0.01"}
+{"timestamp":"2026-02-06T23:12:44.791Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 44.4% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-07T00:30:34.115Z","type":"NEAR_BOUNDARY","strategy":"HCntzqDU5wXSWjwgLQP5hqh3kLHRYizKtPErvSCyggXd","message":"⚠️ LP position approaching boundary! SOL-JitoSOL is 0.02% from edge. Pool: 0.795419","inRange":true,"poolPrice":"0.795419","lower":"0.793828","upper":"0.795576","distance":"0.02"}
+{"timestamp":"2026-02-07T00:42:44.339Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 43.5% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-07T01:06:15.503Z","type":"RATE_INFLECTION","message":"📉 Main: SOL borrow 16% move (12.41% → 10.47%) | Spread: -4.90%"}
+{"timestamp":"2026-02-07T01:42:44.421Z","type":"LP_HIGH_YIELD","message":"💰 kamino-liquidity | JTO-JITOSOL paying 32.4% APY (TVL: $0.6M)"}
+{"timestamp":"2026-02-07T02:30:35.238Z","type":"NEAR_BOUNDARY","strategy":"HCntzqDU5wXSWjwgLQP5hqh3kLHRYizKtPErvSCyggXd","message":"⚠️ LP position approaching boundary! SOL-JitoSOL is 0.02% from edge. Pool: 0.795410","inRange":true,"poolPrice":"0.795410","lower":"0.793828","upper":"0.795576","distance":"0.02"}
+{"timestamp":"2026-02-07T03:12:44.352Z","type":"LP_HIGH_YIELD","message":"💰 kamino-liquidity | JTO-JITOSOL paying 32.3% APY (TVL: $0.6M)"}
+{"timestamp":"2026-02-07T03:42:44.563Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 40.8% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-07T04:30:28.172Z","type":"NEAR_BOUNDARY","strategy":"HCntzqDU5wXSWjwgLQP5hqh3kLHRYizKtPErvSCyggXd","message":"⚠️ LP position approaching boundary! SOL-JitoSOL is 0.02% from edge. Pool: 0.795428","inRange":true,"poolPrice":"0.795428","lower":"0.793828","upper":"0.795576","distance":"0.02"}
+{"timestamp":"2026-02-07T05:12:44.324Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 46.4% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-07T06:12:44.356Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 47.3% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-07T06:30:29.246Z","type":"NEAR_BOUNDARY","strategy":"HCntzqDU5wXSWjwgLQP5hqh3kLHRYizKtPErvSCyggXd","message":"⚠️ LP position approaching boundary! SOL-JitoSOL is 0.02% from edge. Pool: 0.795422","inRange":true,"poolPrice":"0.795422","lower":"0.793828","upper":"0.795576","distance":"0.02"}
+{"timestamp":"2026-02-07T07:12:44.533Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 47.8% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-07T08:30:31.996Z","type":"NEAR_BOUNDARY","strategy":"HCntzqDU5wXSWjwgLQP5hqh3kLHRYizKtPErvSCyggXd","message":"⚠️ LP position approaching boundary! SOL-JitoSOL is 0.02% from edge. Pool: 0.795449","inRange":true,"poolPrice":"0.795449","lower":"0.793828","upper":"0.795576","distance":"0.02"}
+{"timestamp":"2026-02-07T08:42:44.545Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 48.2% APY (TVL: $0.7M)"}
+{"timestamp":"2026-02-07T10:12:44.625Z","type":"LP_HIGH_YIELD","message":"💰 orca-dex | JTO-JITOSOL paying 49.2% APY (TVL: $0.6M)"}
