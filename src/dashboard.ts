@@ -1670,7 +1670,7 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
 });
 
 // Decision Tree — human-readable reasoning from latest rebalancer run
-app.get('/api/decision-tree', (_req: Request, res: Response) => {
+app.get('/api/decision-tree', async (_req: Request, res: Response) => {
   const rebalancerLog = readJsonlFile('rebalancer-log.jsonl', 5);
   if (rebalancerLog.length === 0) {
     return res.json({ error: 'No decision data yet' });
@@ -1758,7 +1758,18 @@ app.get('/api/decision-tree', (_req: Request, res: Response) => {
     verdict += ` Idle ${latest.idleSol} SOL: keep in wallet (switching cost exceeds benefit).`;
   }
 
-  const solPrice = 200; // approximate
+  // Get live SOL price from cache or fetch
+  let solPrice = 200;
+  try {
+    if (priceCache && priceCache.sol > 0) {
+      solPrice = priceCache.sol;
+    } else {
+      const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+      const priceData = await priceRes.json() as any;
+      solPrice = priceData.solana?.usd || 200;
+    }
+  } catch {}
+
   res.json({
     timestamp: latest.timestamp,
     currentStrategy: latest.currentStrategy,
