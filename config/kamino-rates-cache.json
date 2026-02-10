@@ -1,0 +1,3226 @@
+{
+  "timestamp": 1770711711568,
+  "data": {
+    "timestamp": "2026-02-10T08:21:51.568Z",
+    "jitoStakingApy": 6.28782492180171,
+    "jitoStakingSource": "jito-api",
+    "pools": [
+      {
+        "poolId": "d26c7c82-86d3-4bd1-be55-5ef3525332d0",
+        "symbol": "SOL-ACS",
+        "product": "liquidity",
+        "apy": 1034.93484,
+        "apyBase": 1034.93484,
+        "apyReward": 0,
+        "tvlUsd": 10601,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "ACS"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/d26c7c82"
+      },
+      {
+        "poolId": "45f452c6-382e-4e2e-a8f2-e1cb37cdf470",
+        "symbol": "SOL-GP",
+        "product": "liquidity",
+        "apy": 260.22427,
+        "apyBase": 260.22427,
+        "apyReward": 0,
+        "tvlUsd": 21422,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "GP"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/45f452c6"
+      },
+      {
+        "poolId": "a7eab2e5-91ce-4a5f-ba6e-d478ee5d391b",
+        "symbol": "JLP-USDC",
+        "product": "liquidity",
+        "apy": 77.40544,
+        "apyBase": 77.40544,
+        "apyReward": 0,
+        "tvlUsd": 42822,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JLP",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/a7eab2e5"
+      },
+      {
+        "poolId": "102d988b-1033-447f-8f6a-52c4f184286d",
+        "symbol": "SOL-ORE",
+        "product": "liquidity",
+        "apy": 74.82436,
+        "apyBase": 74.82436,
+        "apyReward": 0,
+        "tvlUsd": 38674,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "ORE"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/102d988b"
+      },
+      {
+        "poolId": "98bf7f88-464b-4c77-8641-8c3182a36d89",
+        "symbol": "HNT-USDC",
+        "product": "liquidity",
+        "apy": 73.31552,
+        "apyBase": 73.31552,
+        "apyReward": 0,
+        "tvlUsd": 21166,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "HNT",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/98bf7f88"
+      },
+      {
+        "poolId": "2311da1c-3d89-43cb-afdb-e19edfc01b1e",
+        "symbol": "JUP-SOL",
+        "product": "liquidity",
+        "apy": 63.27188,
+        "apyBase": 63.27188,
+        "apyReward": 0,
+        "tvlUsd": 586349,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JUP",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/2311da1c"
+      },
+      {
+        "poolId": "cf95308c-8b46-4bd4-a27d-2830a331625f",
+        "symbol": "SOL-RNDR",
+        "product": "liquidity",
+        "apy": 57.13679,
+        "apyBase": 57.13679,
+        "apyReward": 0,
+        "tvlUsd": 151015,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "RNDR"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/cf95308c"
+      },
+      {
+        "poolId": "79e2e168-ad4d-46b5-814b-300e5718cb51",
+        "symbol": "MNDE-MSOL",
+        "product": "liquidity",
+        "apy": 45.92844,
+        "apyBase": 45.92844,
+        "apyReward": 0,
+        "tvlUsd": 48429,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "MNDE",
+          "MSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/79e2e168"
+      },
+      {
+        "poolId": "8bb35d42-b0e4-484e-9e2b-04975eaf3851",
+        "symbol": "RNDR-USDC",
+        "product": "liquidity",
+        "apy": 43.81302,
+        "apyBase": 43.81302,
+        "apyReward": 0,
+        "tvlUsd": 14032,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "RNDR",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/8bb35d42"
+      },
+      {
+        "poolId": "8b801df7-f49f-4635-af48-6181c146f5ee",
+        "symbol": "SOL-SAMO",
+        "product": "liquidity",
+        "apy": 34.03316,
+        "apyBase": 34.03316,
+        "apyReward": 0,
+        "tvlUsd": 11145,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "SAMO"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/8b801df7"
+      },
+      {
+        "poolId": "bbad155a-ba0a-4b52-950f-c41a039a3e63",
+        "symbol": "BSOL-BLZE",
+        "product": "liquidity",
+        "apy": 33.94089,
+        "apyBase": 33.94089,
+        "apyReward": 0,
+        "tvlUsd": 15530,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "BSOL",
+          "BLZE"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/bbad155a"
+      },
+      {
+        "poolId": "e87ea551-269f-4eca-a8ea-515964035b6b",
+        "symbol": "SOL-POPCAT",
+        "product": "liquidity",
+        "apy": 31.46607,
+        "apyBase": 31.46607,
+        "apyReward": 0,
+        "tvlUsd": 11038,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "POPCAT"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/e87ea551"
+      },
+      {
+        "poolId": "42812946-46fa-4dfb-afc2-d6ce8541c3c7",
+        "symbol": "USDC-JITOSOL",
+        "product": "liquidity",
+        "apy": 28.658,
+        "apyBase": 28.658,
+        "apyReward": 0,
+        "tvlUsd": 316658,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "USDC",
+          "JITOSOL"
+        ],
+        "risk": "medium",
+        "url": "https://app.kamino.finance/liquidity/42812946"
+      },
+      {
+        "poolId": "46495b67-7477-48ee-bf03-0637cb2e1aec",
+        "symbol": "SOL-USDC",
+        "product": "liquidity",
+        "apy": 28.35511,
+        "apyBase": 28.35511,
+        "apyReward": 0,
+        "tvlUsd": 807351,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "USDC"
+        ],
+        "risk": "medium",
+        "url": "https://app.kamino.finance/liquidity/46495b67"
+      },
+      {
+        "poolId": "b96b2112-b529-4b09-b89e-b172d810108f",
+        "symbol": "JUP-JITOSOL",
+        "product": "liquidity",
+        "apy": 26.77054,
+        "apyBase": 26.77054,
+        "apyReward": 0,
+        "tvlUsd": 301913,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JUP",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/b96b2112"
+      },
+      {
+        "poolId": "ef0449a5-a176-4963-b92f-fbdf85b154a8",
+        "symbol": "SOL-USDC",
+        "product": "liquidity",
+        "apy": 25.89518,
+        "apyBase": 25.89518,
+        "apyReward": 0,
+        "tvlUsd": 83485,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "USDC"
+        ],
+        "risk": "medium",
+        "url": "https://app.kamino.finance/liquidity/ef0449a5"
+      },
+      {
+        "poolId": "eb3b548a-4c25-4e49-9e08-9733c8da29a6",
+        "symbol": "JUP-BSOL",
+        "product": "liquidity",
+        "apy": 25.23219,
+        "apyBase": 25.23219,
+        "apyReward": 0,
+        "tvlUsd": 162118,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JUP",
+          "BSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/eb3b548a"
+      },
+      {
+        "poolId": "42e89423-5d97-4177-8e4d-e2959af2d7f8",
+        "symbol": "JLP-JITOSOL",
+        "product": "liquidity",
+        "apy": 24.13305,
+        "apyBase": 24.13305,
+        "apyReward": 0,
+        "tvlUsd": 295617,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JLP",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/42e89423"
+      },
+      {
+        "poolId": "081fd175-6c3e-4f71-9ec3-7a58426bd218",
+        "symbol": "SOL-EURC",
+        "product": "liquidity",
+        "apy": 23.53498,
+        "apyBase": 23.53498,
+        "apyReward": 0,
+        "tvlUsd": 29445,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "EURC"
+        ],
+        "risk": "medium",
+        "url": "https://app.kamino.finance/liquidity/081fd175"
+      },
+      {
+        "poolId": "5b24e512-de61-484d-aca1-c9310be64922",
+        "symbol": "SOL-BORG",
+        "product": "liquidity",
+        "apy": 23.26738,
+        "apyBase": 23.26738,
+        "apyReward": 0,
+        "tvlUsd": 108656,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "BORG"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/5b24e512"
+      },
+      {
+        "poolId": "afed73ea-c61f-44a4-931b-c36168772425",
+        "symbol": "SOL-USDT",
+        "product": "liquidity",
+        "apy": 22.14659,
+        "apyBase": 22.14659,
+        "apyReward": 0,
+        "tvlUsd": 64137,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "USDT"
+        ],
+        "risk": "medium",
+        "url": "https://app.kamino.finance/liquidity/afed73ea"
+      },
+      {
+        "poolId": "8146a65e-6340-44de-a16f-a52ca3fdb3c2",
+        "symbol": "MSOL-USDC",
+        "product": "liquidity",
+        "apy": 21.50249,
+        "apyBase": 21.50249,
+        "apyReward": 0,
+        "tvlUsd": 142503,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "MSOL",
+          "USDC"
+        ],
+        "risk": "medium",
+        "url": "https://app.kamino.finance/liquidity/8146a65e"
+      },
+      {
+        "poolId": "6ab9acc7-e0a1-4e29-a08e-7ca960185212",
+        "symbol": "SOL-USDG",
+        "product": "liquidity",
+        "apy": 21.26469,
+        "apyBase": 21.26469,
+        "apyReward": 0,
+        "tvlUsd": 494247,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "USDG"
+        ],
+        "risk": "medium",
+        "url": "https://app.kamino.finance/liquidity/6ab9acc7"
+      },
+      {
+        "poolId": "f4201016-f203-4ccb-92db-8f56aac024bb",
+        "symbol": "BSOL-BORG",
+        "product": "liquidity",
+        "apy": 20.95521,
+        "apyBase": 20.95521,
+        "apyReward": 0,
+        "tvlUsd": 16643,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "BSOL",
+          "BORG"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/f4201016"
+      },
+      {
+        "poolId": "21f9fe4b-8bab-42b4-9bf9-3d18fbb90763",
+        "symbol": "ONYC-JITOSOL",
+        "product": "liquidity",
+        "apy": 20.14406,
+        "apyBase": 20.14406,
+        "apyReward": 0,
+        "tvlUsd": 34669,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "ONYC",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/21f9fe4b"
+      },
+      {
+        "poolId": "536f8c49-8380-400a-aa94-d826bada5400",
+        "symbol": "USDS-JITOSOL",
+        "product": "liquidity",
+        "apy": 19.52241,
+        "apyBase": 19.52241,
+        "apyReward": 0,
+        "tvlUsd": 57731,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "USDS",
+          "JITOSOL"
+        ],
+        "risk": "medium",
+        "url": "https://app.kamino.finance/liquidity/536f8c49"
+      },
+      {
+        "poolId": "127bda87-3c16-4e96-ad58-6dc8a5f6472f",
+        "symbol": "POPCAT-SOL",
+        "product": "liquidity",
+        "apy": 19.00546,
+        "apyBase": 19.00546,
+        "apyReward": 0,
+        "tvlUsd": 93035,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "POPCAT",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/127bda87"
+      },
+      {
+        "poolId": "4ddec5b5-bc86-4897-bd32-917bd63a52fe",
+        "symbol": "SOL-JLP",
+        "product": "liquidity",
+        "apy": 18.23903,
+        "apyBase": 18.23903,
+        "apyReward": 0,
+        "tvlUsd": 62015,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "JLP"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/4ddec5b5"
+      },
+      {
+        "poolId": "15802f03-83bf-498f-ae6a-6f0c14de6c6a",
+        "symbol": "KMNO-JUPSOL",
+        "product": "liquidity",
+        "apy": 17.88291,
+        "apyBase": 17.88291,
+        "apyReward": 0,
+        "tvlUsd": 82008,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "KMNO",
+          "JUPSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/15802f03"
+      },
+      {
+        "poolId": "70e45373-e1b0-48b7-9d51-4f683d1326c8",
+        "symbol": "HYUSD-JITOSOL",
+        "product": "liquidity",
+        "apy": 17.71763,
+        "apyBase": 17.71763,
+        "apyReward": 0,
+        "tvlUsd": 60774,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "HYUSD",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/70e45373"
+      },
+      {
+        "poolId": "ae1ff01f-7f26-47fb-ad73-4e61082980f4",
+        "symbol": "JUP-WEN",
+        "product": "liquidity",
+        "apy": 17.21178,
+        "apyBase": 17.21178,
+        "apyReward": 0,
+        "tvlUsd": 19315,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JUP",
+          "WEN"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/ae1ff01f"
+      },
+      {
+        "poolId": "865256ef-0cf0-443a-ac46-1e799f62877b",
+        "symbol": "SOL-JTO",
+        "product": "liquidity",
+        "apy": 16.82358,
+        "apyBase": 16.82358,
+        "apyReward": 0,
+        "tvlUsd": 25938,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "JTO"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/865256ef"
+      },
+      {
+        "poolId": "f4f1b5a0-2ef0-42aa-947b-a5d64ecfc6d8",
+        "symbol": "SOL-SCNSOL",
+        "product": "liquidity",
+        "apy": 16.72421,
+        "apyBase": 16.72421,
+        "apyReward": 0,
+        "tvlUsd": 453248,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "SCNSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/f4f1b5a0"
+      },
+      {
+        "poolId": "3a00c58b-bb16-46d3-a2de-1559c014f4c1",
+        "symbol": "JUP-BONK",
+        "product": "liquidity",
+        "apy": 16.26978,
+        "apyBase": 16.26978,
+        "apyReward": 0,
+        "tvlUsd": 90949,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JUP",
+          "BONK"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/3a00c58b"
+      },
+      {
+        "poolId": "59516770-597b-43d7-ad07-3007480688b4",
+        "symbol": "KMNO-SOL",
+        "product": "liquidity",
+        "apy": 14.99814,
+        "apyBase": 14.99814,
+        "apyReward": 0,
+        "tvlUsd": 55105,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "KMNO",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/59516770"
+      },
+      {
+        "poolId": "b3c91e0a-0a84-4276-9881-0ea352471c97",
+        "symbol": "SOL-DOOD",
+        "product": "liquidity",
+        "apy": 14.42618,
+        "apyBase": 14.42618,
+        "apyReward": 0,
+        "tvlUsd": 68411,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "DOOD"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/b3c91e0a"
+      },
+      {
+        "poolId": "281647d6-e006-49e4-80fa-53a3ba1f3d26",
+        "symbol": "SOL-USDS",
+        "product": "liquidity",
+        "apy": 14.29656,
+        "apyBase": 14.29656,
+        "apyReward": 0,
+        "tvlUsd": 23486,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "USDS"
+        ],
+        "risk": "medium",
+        "url": "https://app.kamino.finance/liquidity/281647d6"
+      },
+      {
+        "poolId": "ca7db8cc-856a-4e76-9f05-3f2730d71800",
+        "symbol": "SOL-RAY",
+        "product": "liquidity",
+        "apy": 12.94674,
+        "apyBase": 12.94674,
+        "apyReward": 0,
+        "tvlUsd": 78616,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "RAY"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/ca7db8cc"
+      },
+      {
+        "poolId": "383ef197-4f56-460a-a6de-fae4c9fa483f",
+        "symbol": "MSOL-ETH",
+        "product": "liquidity",
+        "apy": 10.89162,
+        "apyBase": 10.89162,
+        "apyReward": 0,
+        "tvlUsd": 30365,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "MSOL",
+          "ETH"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/383ef197"
+      },
+      {
+        "poolId": "6e8b600a-aa3b-402d-a68a-7dec1a097585",
+        "symbol": "USDG-XBTC",
+        "product": "liquidity",
+        "apy": 10.33397,
+        "apyBase": 10.33397,
+        "apyReward": 0,
+        "tvlUsd": 3602124,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "USDG",
+          "XBTC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/6e8b600a"
+      },
+      {
+        "poolId": "6f85ea1d-abe9-4d86-aca1-51a2203a040e",
+        "symbol": "SOL-WBTC",
+        "product": "liquidity",
+        "apy": 9.46774,
+        "apyBase": 9.46774,
+        "apyReward": 0,
+        "tvlUsd": 35073,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "WBTC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/6f85ea1d"
+      },
+      {
+        "poolId": "ef49c97e-e78f-4e2a-9525-0faea1a25421",
+        "symbol": "USDC-USDT",
+        "product": "liquidity",
+        "apy": 9.42509,
+        "apyBase": 9.42509,
+        "apyReward": 0,
+        "tvlUsd": 20926,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDC",
+          "USDT"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/ef49c97e"
+      },
+      {
+        "poolId": "e603d205-1efb-4e45-bdc5-9669b056934b",
+        "symbol": "JTO-JITOSOL",
+        "product": "liquidity",
+        "apy": 8.61939,
+        "apyBase": 8.61939,
+        "apyReward": 0,
+        "tvlUsd": 38801,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JTO",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/e603d205"
+      },
+      {
+        "poolId": "03f0d5c2-2b00-4a1c-8146-4c2f89eb8990",
+        "symbol": "CBBTC-JITOSOL",
+        "product": "liquidity",
+        "apy": 8.29286,
+        "apyBase": 8.29286,
+        "apyReward": 0,
+        "tvlUsd": 38404,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "CBBTC",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/03f0d5c2"
+      },
+      {
+        "poolId": "79b1d437-3870-4a01-8acc-b94754f9aa72",
+        "symbol": "SOL-PYTH",
+        "product": "liquidity",
+        "apy": 8.07281,
+        "apyBase": 8.07281,
+        "apyReward": 0,
+        "tvlUsd": 41058,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "PYTH"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/79b1d437"
+      },
+      {
+        "poolId": "24401423-abaa-48b0-82fa-bd6000bfd57d",
+        "symbol": "SOL-WBTC",
+        "product": "liquidity",
+        "apy": 7.14852,
+        "apyBase": 7.14852,
+        "apyReward": 0,
+        "tvlUsd": 44856,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "WBTC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/24401423"
+      },
+      {
+        "poolId": "059175e4-9cc8-4703-944f-b54ecaf02f00",
+        "symbol": "JTO-JITOSOL",
+        "product": "liquidity",
+        "apy": 6.85707,
+        "apyBase": 6.85707,
+        "apyReward": 0,
+        "tvlUsd": 563014,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JTO",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/059175e4"
+      },
+      {
+        "poolId": "662c038a-8737-419b-b76e-973f6c20096b",
+        "symbol": "SOL-BONK",
+        "product": "liquidity",
+        "apy": 6.54717,
+        "apyBase": 6.54717,
+        "apyReward": 0,
+        "tvlUsd": 143841,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "BONK"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/662c038a"
+      },
+      {
+        "poolId": "7f64cdf7-2afe-422b-aaba-a55d4dc8570d",
+        "symbol": "USDC-EURC",
+        "product": "liquidity",
+        "apy": 6.35972,
+        "apyBase": 6.35972,
+        "apyReward": 0,
+        "tvlUsd": 54685,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDC",
+          "EURC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/7f64cdf7"
+      },
+      {
+        "poolId": "jito-staking",
+        "symbol": "JITOSOL (staking)",
+        "product": "staking",
+        "apy": 6.28782492180171,
+        "apyBase": 6.28782492180171,
+        "apyReward": 0,
+        "tvlUsd": 0,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "JITOSOL"
+        ],
+        "risk": "low",
+        "url": "https://stake.jito.network/"
+      },
+      {
+        "poolId": "e1720ca6-d33a-4ea8-abbf-0c1de869d0f4",
+        "symbol": "KMNO-JITOSOL",
+        "product": "liquidity",
+        "apy": 6.12278,
+        "apyBase": 6.12278,
+        "apyReward": 0,
+        "tvlUsd": 212858,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "KMNO",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/e1720ca6"
+      },
+      {
+        "poolId": "81145e15-5eee-437e-9d72-a61932ce35c0",
+        "symbol": "MPLX-SOL",
+        "product": "liquidity",
+        "apy": 5.27158,
+        "apyBase": 5.27158,
+        "apyReward": 0,
+        "tvlUsd": 1679679,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "MPLX",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/81145e15"
+      },
+      {
+        "poolId": "b725a0c1-e766-42e9-af8c-927ece966d34",
+        "symbol": "SOL-WIF",
+        "product": "liquidity",
+        "apy": 5.01602,
+        "apyBase": 5.01602,
+        "apyReward": 0,
+        "tvlUsd": 130062,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "WIF"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/b725a0c1"
+      },
+      {
+        "poolId": "525b2dab-ea6a-4cbc-a07f-84ce561d1f83",
+        "symbol": "SOL",
+        "product": "klend",
+        "apy": 4.7614,
+        "apyBase": 4.7614,
+        "apyReward": 0,
+        "tvlUsd": 29086372,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "SOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/525b2dab"
+      },
+      {
+        "poolId": "418e29f4-0222-4367-94ae-4e17acdc4d00",
+        "symbol": "SOL-ZBTC",
+        "product": "liquidity",
+        "apy": 4.32177,
+        "apyBase": 4.32177,
+        "apyReward": 0,
+        "tvlUsd": 75203,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "ZBTC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/418e29f4"
+      },
+      {
+        "poolId": "91119a14-3b0a-433a-b09b-51cc079c6ea5",
+        "symbol": "SYRUPUSDC-USDC",
+        "product": "liquidity",
+        "apy": 4.28043,
+        "apyBase": 4.28043,
+        "apyReward": 0,
+        "tvlUsd": 25150616,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "SYRUPUSDC",
+          "USDC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/91119a14"
+      },
+      {
+        "poolId": "fdcccd6a-a491-4c30-8024-5677bd3f0993",
+        "symbol": "SOL-JITOSOL",
+        "product": "liquidity",
+        "apy": 4.21627,
+        "apyBase": 4.21627,
+        "apyReward": 0,
+        "tvlUsd": 1549499,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "SOL",
+          "JITOSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/fdcccd6a"
+      },
+      {
+        "poolId": "9b40ddaf-2122-42d3-b9b4-c591a8420765",
+        "symbol": "USD1",
+        "product": "klend",
+        "apy": 4.11514,
+        "apyBase": 4.11514,
+        "apyReward": 0,
+        "tvlUsd": 1163445,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "USD1"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/9b40ddaf"
+      },
+      {
+        "poolId": "be317431-c02e-4709-b023-60f960d83f27",
+        "symbol": "MPLX-USDC",
+        "product": "liquidity",
+        "apy": 4.07097,
+        "apyBase": 4.07097,
+        "apyReward": 0,
+        "tvlUsd": 513058,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "MPLX",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/be317431"
+      },
+      {
+        "poolId": "91d6ed2f-b69e-4d7b-8d56-ab3256fbe1f5",
+        "symbol": "CASH",
+        "product": "klend",
+        "apy": 3.4632,
+        "apyBase": 3.4632,
+        "apyReward": 0,
+        "tvlUsd": 901529,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "CASH"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/91d6ed2f"
+      },
+      {
+        "poolId": "d2141a59-c199-4be7-8d4b-c8223954836b",
+        "symbol": "USDC",
+        "product": "klend",
+        "apy": 3.28534,
+        "apyBase": 3.28534,
+        "apyReward": 0,
+        "tvlUsd": 35098126,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/d2141a59"
+      },
+      {
+        "poolId": "6e12e1bb-ff71-46bb-b231-3a652e694bd2",
+        "symbol": "XBTC-JITOSOL",
+        "product": "liquidity",
+        "apy": 3.06353,
+        "apyBase": 3.06353,
+        "apyReward": 0,
+        "tvlUsd": 105925,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "XBTC",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/6e12e1bb"
+      },
+      {
+        "poolId": "c7704352-eb71-47dd-9a81-d57f7cd60c7e",
+        "symbol": "FDUSD",
+        "product": "klend",
+        "apy": 2.95158,
+        "apyBase": 2.95158,
+        "apyReward": 0,
+        "tvlUsd": 43912,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "FDUSD"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/c7704352"
+      },
+      {
+        "poolId": "e1014444-6a83-4816-a8ac-6f9daca0dc79",
+        "symbol": "HYUSD-USDC",
+        "product": "liquidity",
+        "apy": 2.12433,
+        "apyBase": 2.12433,
+        "apyReward": 0,
+        "tvlUsd": 1687328,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "HYUSD",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/e1014444"
+      },
+      {
+        "poolId": "396b18a3-8121-4e89-bfec-4cff488ebe1c",
+        "symbol": "KMNO-USDC",
+        "product": "liquidity",
+        "apy": 1.66648,
+        "apyBase": 1.66648,
+        "apyReward": 0,
+        "tvlUsd": 1733926,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "KMNO",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/396b18a3"
+      },
+      {
+        "poolId": "8e602334-dfc8-42c3-b267-ba478424c3fc",
+        "symbol": "CBBTC-WBTC",
+        "product": "liquidity",
+        "apy": 1.64355,
+        "apyBase": 1.64355,
+        "apyReward": 0,
+        "tvlUsd": 198256,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "CBBTC",
+          "WBTC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/8e602334"
+      },
+      {
+        "poolId": "ceef4c39-3df9-4ead-89e3-45b824bb5136",
+        "symbol": "SOL-BSOL",
+        "product": "liquidity",
+        "apy": 1.42733,
+        "apyBase": 1.42733,
+        "apyReward": 0,
+        "tvlUsd": 521241,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "SOL",
+          "BSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/ceef4c39"
+      },
+      {
+        "poolId": "0cdd7f84-711e-4cd4-916d-da318857559a",
+        "symbol": "USDG",
+        "product": "klend",
+        "apy": 1.3264,
+        "apyBase": 1.3264,
+        "apyReward": 0,
+        "tvlUsd": 24507108,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDG"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/0cdd7f84"
+      },
+      {
+        "poolId": "55616349-b749-4467-8edc-abbb40ae80f6",
+        "symbol": "SOL-JITOSOL",
+        "product": "liquidity",
+        "apy": 1.06953,
+        "apyBase": 1.06953,
+        "apyReward": 0,
+        "tvlUsd": 7209912,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "SOL",
+          "JITOSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/55616349"
+      },
+      {
+        "poolId": "d61d8c57-4d50-4642-b3fc-f5943ab44059",
+        "symbol": "JITOSOL-SOL",
+        "product": "liquidity",
+        "apy": 0.96597,
+        "apyBase": 0.96597,
+        "apyReward": 0,
+        "tvlUsd": 3355735,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "JITOSOL",
+          "SOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/d61d8c57"
+      },
+      {
+        "poolId": "6c8e2a69-4396-4d97-9c16-9df2ec8eaabb",
+        "symbol": "SOL-MSOL",
+        "product": "liquidity",
+        "apy": 0.95475,
+        "apyBase": 0.95475,
+        "apyReward": 0,
+        "tvlUsd": 983279,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "SOL",
+          "MSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/6c8e2a69"
+      },
+      {
+        "poolId": "fa36ea14-cfb0-4f04-853f-366b22f0d887",
+        "symbol": "USDS",
+        "product": "klend",
+        "apy": 0.81279,
+        "apyBase": 0.81279,
+        "apyReward": 0,
+        "tvlUsd": 11963730,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDS"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/fa36ea14"
+      },
+      {
+        "poolId": "d489824b-99a4-49d1-a93e-dbe224d0f3e7",
+        "symbol": "CBBTC-ZBTC",
+        "product": "liquidity",
+        "apy": 0.74516,
+        "apyBase": 0.74516,
+        "apyReward": 0,
+        "tvlUsd": 894846,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "CBBTC",
+          "ZBTC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/d489824b"
+      },
+      {
+        "poolId": "5147b468-e863-45fb-a8d6-592f413f24c6",
+        "symbol": "PYUSD-USDC",
+        "product": "liquidity",
+        "apy": 0.73701,
+        "apyBase": 0.73701,
+        "apyReward": 0,
+        "tvlUsd": 30001529,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "PYUSD",
+          "USDC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/5147b468"
+      },
+      {
+        "poolId": "34c08a67-71ab-4e92-aed4-34ede13dce5b",
+        "symbol": "USDG-USDC",
+        "product": "liquidity",
+        "apy": 0.68238,
+        "apyBase": 0.68238,
+        "apyReward": 0,
+        "tvlUsd": 12691360,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDG",
+          "USDC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/34c08a67"
+      },
+      {
+        "poolId": "546b3c0c-138d-4190-b46b-efa1765f1dd3",
+        "symbol": "USDT",
+        "product": "klend",
+        "apy": 0.55601,
+        "apyBase": 0.55601,
+        "apyReward": 0,
+        "tvlUsd": 7689760,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDT"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/546b3c0c"
+      },
+      {
+        "poolId": "ba65f664-1757-4e50-9680-f8353a68958f",
+        "symbol": "USDG-SYRUPUSDC",
+        "product": "liquidity",
+        "apy": 0.45583,
+        "apyBase": 0.45583,
+        "apyReward": 0,
+        "tvlUsd": 3301107,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDG",
+          "SYRUPUSDC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/ba65f664"
+      },
+      {
+        "poolId": "233415e5-e0cf-49b8-8a70-975aaa8689a1",
+        "symbol": "USDG-ONYC",
+        "product": "liquidity",
+        "apy": 0.44718,
+        "apyBase": 0.44718,
+        "apyReward": 0,
+        "tvlUsd": 3384512,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "USDG",
+          "ONYC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/233415e5"
+      },
+      {
+        "poolId": "f1e89f4e-cff3-4eeb-b61b-adeb86852b89",
+        "symbol": "CBBTC-ZENBTC",
+        "product": "liquidity",
+        "apy": 0.33847,
+        "apyBase": 0.33847,
+        "apyReward": 0,
+        "tvlUsd": 913884,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "CBBTC",
+          "ZENBTC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/f1e89f4e"
+      },
+      {
+        "poolId": "eaece65e-ffb2-4631-a95e-7f267cb2f1ba",
+        "symbol": "PYUSD",
+        "product": "klend",
+        "apy": 0.30766,
+        "apyBase": 0.30766,
+        "apyReward": 0,
+        "tvlUsd": 161835071,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "PYUSD"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/eaece65e"
+      },
+      {
+        "poolId": "685148da-b97e-4a72-846f-ece3e493bc12",
+        "symbol": "UXD",
+        "product": "klend",
+        "apy": 0.30149,
+        "apyBase": 0.30149,
+        "apyReward": 0,
+        "tvlUsd": 39212,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "UXD"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/685148da"
+      },
+      {
+        "poolId": "72687423-0a19-44ed-8398-b72f87b406fd",
+        "symbol": "PRIME-CASH",
+        "product": "liquidity",
+        "apy": 0.17026,
+        "apyBase": 0.17026,
+        "apyReward": 0,
+        "tvlUsd": 19727212,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "PRIME",
+          "CASH"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/72687423"
+      },
+      {
+        "poolId": "b18a9940-3b8d-468c-acb7-ed28deeb31cb",
+        "symbol": "SOL-SSOL",
+        "product": "liquidity",
+        "apy": 0.1543,
+        "apyBase": 0.1543,
+        "apyReward": 0,
+        "tvlUsd": 157701,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "SSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/b18a9940"
+      },
+      {
+        "poolId": "190580f0-8121-4744-945b-6a5c04e09795",
+        "symbol": "EURC",
+        "product": "klend",
+        "apy": 0.12825,
+        "apyBase": 0.12825,
+        "apyReward": 0,
+        "tvlUsd": 1905959,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "EURC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/190580f0"
+      },
+      {
+        "poolId": "fa200a4c-e14a-4cec-a9e9-583f3c2f1891",
+        "symbol": "CASH-USDC",
+        "product": "liquidity",
+        "apy": 0.12813,
+        "apyBase": 0.12813,
+        "apyReward": 0,
+        "tvlUsd": 20557536,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "CASH",
+          "USDC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/fa200a4c"
+      },
+      {
+        "poolId": "6ded470a-8cfe-4d41-9c3c-df3262908cbc",
+        "symbol": "USDU-USDC",
+        "product": "liquidity",
+        "apy": 0.1162,
+        "apyBase": 0.1162,
+        "apyReward": 0,
+        "tvlUsd": 3004730,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "USDU",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/6ded470a"
+      },
+      {
+        "poolId": "1290c9f5-e71c-4152-b3e8-d5f2c120e2e9",
+        "symbol": "ETH",
+        "product": "klend",
+        "apy": 0.11442,
+        "apyBase": 0.11442,
+        "apyReward": 0,
+        "tvlUsd": 3042160,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "ETH"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/1290c9f5"
+      },
+      {
+        "poolId": "0969d0b7-dace-47e1-9a56-182d4ad08198",
+        "symbol": "USDS-USDC",
+        "product": "liquidity",
+        "apy": 0.075,
+        "apyBase": 0.075,
+        "apyReward": 0,
+        "tvlUsd": 28344109,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDS",
+          "USDC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/0969d0b7"
+      },
+      {
+        "poolId": "e18941f7-c4bb-4278-a46c-ec3b3d9795ee",
+        "symbol": "WBTC",
+        "product": "klend",
+        "apy": 0.0684,
+        "apyBase": 0.0684,
+        "apyReward": 0,
+        "tvlUsd": 306000,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "WBTC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/e18941f7"
+      },
+      {
+        "poolId": "5c2f9476-1fea-4884-b6b5-edcbab442f45",
+        "symbol": "USDS-USDC",
+        "product": "liquidity",
+        "apy": 0.01164,
+        "apyBase": 0.01164,
+        "apyReward": 0,
+        "tvlUsd": 13738330,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDS",
+          "USDC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/5c2f9476"
+      },
+      {
+        "poolId": "9837ed71-8e5e-45c4-a56d-54d738a1cb1e",
+        "symbol": "BSOL",
+        "product": "klend",
+        "apy": 0.00718,
+        "apyBase": 0.00718,
+        "apyReward": 0,
+        "tvlUsd": 12815993,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "BSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/9837ed71"
+      },
+      {
+        "poolId": "23676f13-f8c7-4865-ae69-e757395828ee",
+        "symbol": "MSOL",
+        "product": "klend",
+        "apy": 0.00105,
+        "apyBase": 0.00105,
+        "apyReward": 0,
+        "tvlUsd": 28411630,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "MSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/23676f13"
+      },
+      {
+        "poolId": "fcb7faba-4506-49f8-aa8f-9124018eb6c2",
+        "symbol": "XBTC",
+        "product": "klend",
+        "apy": 0.00103,
+        "apyBase": 0.00103,
+        "apyReward": 0,
+        "tvlUsd": 24032263,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "XBTC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/fcb7faba"
+      },
+      {
+        "poolId": "180d2715-2cd4-41f6-bffc-6c16a6a28ee9",
+        "symbol": "JTO",
+        "product": "klend",
+        "apy": 0.00068,
+        "apyBase": 0.00068,
+        "apyReward": 0,
+        "tvlUsd": 25569,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "JTO"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/180d2715"
+      },
+      {
+        "poolId": "1da10c92-fd2e-4506-a4d1-8c8fa22ff744",
+        "symbol": "JITOSOL",
+        "product": "klend",
+        "apy": 0.00049,
+        "apyBase": 0.00049,
+        "apyReward": 0,
+        "tvlUsd": 124332718,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "JITOSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/1da10c92"
+      },
+      {
+        "poolId": "ec8af777-6c9e-440a-9a3d-355f556baa04",
+        "symbol": "CBBTC",
+        "product": "klend",
+        "apy": 0.00044,
+        "apyBase": 0.00044,
+        "apyReward": 0,
+        "tvlUsd": 139529353,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "CBBTC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/ec8af777"
+      },
+      {
+        "poolId": "e705187b-da56-463d-a429-4e17bfb7e0d4",
+        "symbol": "JUPSOL",
+        "product": "klend",
+        "apy": 0.00008,
+        "apyBase": 0.00008,
+        "apyReward": 0,
+        "tvlUsd": 113911954,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "JUPSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/e705187b"
+      },
+      {
+        "poolId": "7bbfcf1d-72e7-43b9-9fa2-68d7c94bd4fa",
+        "symbol": "PSOL",
+        "product": "klend",
+        "apy": 0.00008,
+        "apyBase": 0.00008,
+        "apyReward": 0,
+        "tvlUsd": 6737977,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "PSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/7bbfcf1d"
+      },
+      {
+        "poolId": "d14bccf4-9a1d-41e5-96d7-0b25df947f3b",
+        "symbol": "PICOSOL",
+        "product": "klend",
+        "apy": 0.00005,
+        "apyBase": 0.00005,
+        "apyReward": 0,
+        "tvlUsd": 1274122,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "PICOSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/d14bccf4"
+      },
+      {
+        "poolId": "4be785fa-1b2e-44fa-a56e-16a0c2148eba",
+        "symbol": "VSOL",
+        "product": "klend",
+        "apy": 0.00001,
+        "apyBase": 0.00001,
+        "apyReward": 0,
+        "tvlUsd": 10871173,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "VSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/4be785fa"
+      },
+      {
+        "poolId": "d44d0684-a5a4-44cb-be02-f53623b52efd",
+        "symbol": "HSOL",
+        "product": "klend",
+        "apy": 0.00001,
+        "apyBase": 0.00001,
+        "apyReward": 0,
+        "tvlUsd": 10083567,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "HSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/d44d0684"
+      },
+      {
+        "poolId": "3e543447-7ef2-4b86-acce-db92b1749995",
+        "symbol": "JSOL",
+        "product": "klend",
+        "apy": 0.00001,
+        "apyBase": 0.00001,
+        "apyReward": 0,
+        "tvlUsd": 2488096,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "JSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/3e543447"
+      },
+      {
+        "poolId": "1accaa9f-f4fa-4063-9502-1733ed8e4832",
+        "symbol": "DSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 111684903,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "DSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/1accaa9f"
+      },
+      {
+        "poolId": "7d954b46-a2e9-461c-b1e3-f1e0cdd05c65",
+        "symbol": "FWDSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 36430580,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "FWDSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/7d954b46"
+      },
+      {
+        "poolId": "a7bc7803-51ac-4942-9dfc-a1702b7a3fdf",
+        "symbol": "DFDVSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 30660497,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "DFDVSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/a7bc7803"
+      },
+      {
+        "poolId": "419f5780-5fa6-4e32-bd34-7b8a9ed35646",
+        "symbol": "BONKSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 16436151,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "BONKSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/419f5780"
+      },
+      {
+        "poolId": "137413a1-3194-4114-b69d-76d0719a259b",
+        "symbol": "HNT-IOT",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 14928755,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "HNT",
+          "IOT"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/137413a1"
+      },
+      {
+        "poolId": "f11d9f47-07b0-4ae2-9a1c-b7476e463566",
+        "symbol": "STKESOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 10423307,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "STKESOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/f11d9f47"
+      },
+      {
+        "poolId": "019b43fe-bcaf-4336-ad9d-5f1dcebf03cb",
+        "symbol": "CGNTSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 10027916,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "CGNTSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/019b43fe"
+      },
+      {
+        "poolId": "65dd56eb-9115-491c-93c4-98b03d3d4b9c",
+        "symbol": "FBTC",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 6881301,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "FBTC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/65dd56eb"
+      },
+      {
+        "poolId": "dfdd4d21-03ab-437a-b118-a34944423054",
+        "symbol": "LAINESOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 5210100,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "LAINESOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/dfdd4d21"
+      },
+      {
+        "poolId": "dfb9e904-b360-40a2-abd4-056da6c52af0",
+        "symbol": "STRONGSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 4828987,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "STRONGSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/dfb9e904"
+      },
+      {
+        "poolId": "d1be45d6-eafe-4de5-9541-ca3340e8e234",
+        "symbol": "JLP",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 3635215,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "JLP"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/d1be45d6"
+      },
+      {
+        "poolId": "3ad89506-20cc-4dd3-a8ce-79415ce4e3a1",
+        "symbol": "WM-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 3251327,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "WM",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/3ad89506"
+      },
+      {
+        "poolId": "eb127bda-eff3-4985-82b3-364ed96ad35d",
+        "symbol": "BBSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 3006561,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "BBSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/eb127bda"
+      },
+      {
+        "poolId": "1b6be74e-4949-47c8-85ec-09ae0d41b25e",
+        "symbol": "WYLDS-CASH",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 2408171,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "WYLDS",
+          "CASH"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/1b6be74e"
+      },
+      {
+        "poolId": "a354ddc4-91b2-441c-807e-40b774920445",
+        "symbol": "DEJAAA-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 2173339,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "DEJAAA",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/a354ddc4"
+      },
+      {
+        "poolId": "93c0c806-6d48-4899-bc63-4505e4ffcd15",
+        "symbol": "PST-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 2149877,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "PST",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/93c0c806"
+      },
+      {
+        "poolId": "37eafe79-0c75-4f95-8daa-3985e7958fe7",
+        "symbol": "LANTERNSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 2107397,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "LANTERNSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/37eafe79"
+      },
+      {
+        "poolId": "279e3bac-ea2d-49c0-9c7a-34fcbd0aca6e",
+        "symbol": "NXSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 1817383,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "NXSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/279e3bac"
+      },
+      {
+        "poolId": "8895c49d-e817-46a4-8a53-3accea955851",
+        "symbol": "WYLDS-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 1504960,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "WYLDS",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/8895c49d"
+      },
+      {
+        "poolId": "110142b1-d2da-4f73-a9ac-d8fd415e0320",
+        "symbol": "AUSD-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 502731,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "AUSD",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/110142b1"
+      },
+      {
+        "poolId": "89078c25-46af-4855-a513-db4b5d91ed01",
+        "symbol": "KYSOL-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 460714,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "KYSOL",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/89078c25"
+      },
+      {
+        "poolId": "4cc9bd36-d85b-4644-a183-092f60d3a094",
+        "symbol": "YU-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 426175,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "YU",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/4cc9bd36"
+      },
+      {
+        "poolId": "2a7e3d6c-26c0-4d71-b904-97a30bb723f2",
+        "symbol": "CDCSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 399894,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "CDCSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/2a7e3d6c"
+      },
+      {
+        "poolId": "66239a2d-3fd1-458b-b5b5-ca4a058b6061",
+        "symbol": "FDUSD-USDT",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 392582,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "FDUSD",
+          "USDT"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/66239a2d"
+      },
+      {
+        "poolId": "50f19aad-d71d-4218-8d63-8c6bfcd153c1",
+        "symbol": "FDUSD-USDT",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 380028,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "FDUSD",
+          "USDT"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/50f19aad"
+      },
+      {
+        "poolId": "03354b4c-5f4e-4c6e-a416-247d2280f1ac",
+        "symbol": "MSOL-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 300276,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "MSOL",
+          "USDC"
+        ],
+        "risk": "medium",
+        "url": "https://app.kamino.finance/liquidity/03354b4c"
+      },
+      {
+        "poolId": "7b1b6144-f5b3-4d90-b166-549beab6b38c",
+        "symbol": "EZSOL-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 290436,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "EZSOL",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/7b1b6144"
+      },
+      {
+        "poolId": "e46ae0fd-0abb-48e8-a90c-82666fef74fb",
+        "symbol": "USDC-FRXUSD",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 240831,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "USDC",
+          "FRXUSD"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/e46ae0fd"
+      },
+      {
+        "poolId": "5bfe3f21-88c9-45c9-a878-14768da60fc2",
+        "symbol": "USDC-MPST",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 236018,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "USDC",
+          "MPST"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/5bfe3f21"
+      },
+      {
+        "poolId": "e54ab09e-d3c9-4e7d-8251-544f26d7fb3c",
+        "symbol": "WFRAGSOL-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 193399,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "WFRAGSOL",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/e54ab09e"
+      },
+      {
+        "poolId": "18958c66-ce44-4a60-a7c0-4c8a8fa3c51c",
+        "symbol": "HUBSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 192264,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "HUBSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/18958c66"
+      },
+      {
+        "poolId": "02fb317c-9559-4c8f-8474-9dbe2c7f2300",
+        "symbol": "MSOL-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 139015,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "MSOL",
+          "JITOSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/02fb317c"
+      },
+      {
+        "poolId": "6593bf91-4154-458d-b16e-3e072826910c",
+        "symbol": "BSOL-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 123757,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "BSOL",
+          "JITOSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/6593bf91"
+      },
+      {
+        "poolId": "4d3b74b0-1a30-4ad4-9f9f-478f0f3ef3fe",
+        "symbol": "KSOLBSOLORCA",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 122104,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "KSOLBSOLORCA"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/4d3b74b0"
+      },
+      {
+        "poolId": "a6b794fb-be05-4665-924e-1a0a5802c42d",
+        "symbol": "MPLX-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 120827,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "MPLX",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/a6b794fb"
+      },
+      {
+        "poolId": "cec6d16a-e280-4ec3-82f7-52b852eb35d3",
+        "symbol": "USDC-USDT",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 105878,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDC",
+          "USDT"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/cec6d16a"
+      },
+      {
+        "poolId": "4ab6be78-4dec-489b-b379-6add88822243",
+        "symbol": "USDH-USDT",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 104661,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "USDH",
+          "USDT"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/4ab6be78"
+      },
+      {
+        "poolId": "9be6dc37-9e38-4913-a13c-1b838200322d",
+        "symbol": "BNSOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 78519,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "BNSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/9be6dc37"
+      },
+      {
+        "poolId": "7a2ab868-decc-452c-a87b-a40723c2ae28",
+        "symbol": "DRIFT-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 72121,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "DRIFT",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/7a2ab868"
+      },
+      {
+        "poolId": "93d1ae5f-b295-40e9-bf40-7a39146d70d6",
+        "symbol": "NX8-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 71843,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "NX8",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/93d1ae5f"
+      },
+      {
+        "poolId": "13af328d-7ba4-49ca-a44b-01142af41a9e",
+        "symbol": "BSOL-MSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 66798,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "BSOL",
+          "MSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/13af328d"
+      },
+      {
+        "poolId": "d6c3506c-f1d6-4bad-976a-e057f3232c4e",
+        "symbol": "BSOL-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 66558,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "BSOL",
+          "JITOSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/d6c3506c"
+      },
+      {
+        "poolId": "2bbdd89e-abbf-4b25-a3fb-52e3aee1dc3f",
+        "symbol": "BORGY-BORG",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 59363,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "BORGY",
+          "BORG"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/2bbdd89e"
+      },
+      {
+        "poolId": "c4a41937-f938-4f53-9827-4893187e6886",
+        "symbol": "JUP",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 54112,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "JUP"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/c4a41937"
+      },
+      {
+        "poolId": "13623731-511e-46ba-a062-6598c266d932",
+        "symbol": "WFRAGBTC-ZBTC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 53793,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "WFRAGBTC",
+          "ZBTC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/13623731"
+      },
+      {
+        "poolId": "4d927d80-e805-43ef-abc1-1bd73d5c7e2c",
+        "symbol": "JTO-KYJTO",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 41814,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JTO",
+          "KYJTO"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/4d927d80"
+      },
+      {
+        "poolId": "790d3541-7269-4a6f-90d0-9436677df4e0",
+        "symbol": "WEN-SOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 40766,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "WEN",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/790d3541"
+      },
+      {
+        "poolId": "8000c42a-0f4f-4768-882e-cb7641ccffee",
+        "symbol": "PENGU-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 37897,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "PENGU",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/8000c42a"
+      },
+      {
+        "poolId": "8bc4760e-0c86-4309-8f4c-24ef76b10dbe",
+        "symbol": "SOL-SOLID",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 35863,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "SOLID"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/8bc4760e"
+      },
+      {
+        "poolId": "d0d84008-3982-43d0-ab16-d7a6bb6cbfb8",
+        "symbol": "KSOLJITOSOLRAYDIUM",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 35843,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "KSOLJITOSOLRAYDIUM"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/d0d84008"
+      },
+      {
+        "poolId": "074d6f4e-ccd8-429c-bc49-ab3ecbeb43e4",
+        "symbol": "KMNO-SOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 33183,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "KMNO",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/074d6f4e"
+      },
+      {
+        "poolId": "6acdb55a-a2ea-4a32-aa7e-085427672dc9",
+        "symbol": "UXD-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 32687,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "UXD",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/6acdb55a"
+      },
+      {
+        "poolId": "acd9caba-fe10-48c6-91a3-5e0a65bca2f5",
+        "symbol": "WFRAGJTO-JTO",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 29724,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "WFRAGJTO",
+          "JTO"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/acd9caba"
+      },
+      {
+        "poolId": "46b936d0-d749-4387-ae11-fad29862bbfb",
+        "symbol": "LST-SOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 29007,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "LST",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/46b936d0"
+      },
+      {
+        "poolId": "dc1420de-7646-456a-be87-5d6c9c0a726d",
+        "symbol": "USDH-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 28862,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "USDH",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/dc1420de"
+      },
+      {
+        "poolId": "99ed0428-978e-4c9b-8404-e2aa5c0f4da8",
+        "symbol": "W-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 28701,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "W",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/99ed0428"
+      },
+      {
+        "poolId": "180ed61f-ee1e-429d-bf68-1a19ef558e47",
+        "symbol": "WOO-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 28042,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "WOO",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/180ed61f"
+      },
+      {
+        "poolId": "167fec93-517a-497f-83f9-b57dbb83bc08",
+        "symbol": "KSOLMSOLRAYDIUM",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 27817,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "KSOLMSOLRAYDIUM"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/167fec93"
+      },
+      {
+        "poolId": "30773b76-ca58-43c3-9b82-0e010899bd04",
+        "symbol": "ZEX-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 27151,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "ZEX",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/30773b76"
+      },
+      {
+        "poolId": "e8488753-4fa2-480c-89ec-d530760bf7d4",
+        "symbol": "EZJTO-JTO",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 24326,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "EZJTO",
+          "JTO"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/e8488753"
+      },
+      {
+        "poolId": "339d374b-74db-4794-ab5b-ceb3a4330a87",
+        "symbol": "MOCKJUP-SOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 23017,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "MOCKJUP",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/339d374b"
+      },
+      {
+        "poolId": "9c130016-93aa-437f-b3d0-111d5263eea2",
+        "symbol": "SOL-HUBSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 22186,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "HUBSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/9c130016"
+      },
+      {
+        "poolId": "5f10249f-b265-4dbf-8b7f-8599406ba785",
+        "symbol": "SOL-STSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 22141,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "STSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/5f10249f"
+      },
+      {
+        "poolId": "101eb151-5ede-4a6e-96cb-087151383954",
+        "symbol": "LST-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 21516,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "LST",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/101eb151"
+      },
+      {
+        "poolId": "e8d4f734-014e-4a3a-92f4-4e2965e05c62",
+        "symbol": "SOL-FARTCOIN",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 21243,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "FARTCOIN"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/e8d4f734"
+      },
+      {
+        "poolId": "3119496e-872a-42ee-8602-a3c2807627a6",
+        "symbol": "BONKSOL-SCNSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 20889,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "BONKSOL",
+          "SCNSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/3119496e"
+      },
+      {
+        "poolId": "889816db-0dee-43bd-be0c-ef84c5d220e7",
+        "symbol": "SOL-HNT",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 19590,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "HNT"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/889816db"
+      },
+      {
+        "poolId": "8384baf6-7943-4b11-b538-beb05ccbd70c",
+        "symbol": "KMNO-BSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 18971,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "KMNO",
+          "BSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/8384baf6"
+      },
+      {
+        "poolId": "c6f4de78-0efc-472f-b867-c3d37f3b2e25",
+        "symbol": "JUP-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 15120,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JUP",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/c6f4de78"
+      },
+      {
+        "poolId": "a67fa3d8-902e-42d7-ad2b-83c768e506b3",
+        "symbol": "FDUSD-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 14904,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "FDUSD",
+          "USDC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/a67fa3d8"
+      },
+      {
+        "poolId": "c13b195d-7c7a-47f1-bed3-64ae5a90792d",
+        "symbol": "CLOUD-SCNSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 14836,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "CLOUD",
+          "SCNSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/c13b195d"
+      },
+      {
+        "poolId": "10708d11-be1e-4d7c-a126-3f293577fa51",
+        "symbol": "JUP-SOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 14203,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JUP",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/10708d11"
+      },
+      {
+        "poolId": "accc1706-d001-44bb-9434-2c8b9a134e22",
+        "symbol": "USDY-USDC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 13783,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "USDY",
+          "USDC"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/accc1706"
+      },
+      {
+        "poolId": "02be5d13-0691-44ff-b480-f129f046dc2a",
+        "symbol": "KMNO-MSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 13094,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "KMNO",
+          "MSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/02be5d13"
+      },
+      {
+        "poolId": "6edcbfbe-30fd-4b36-a9d0-020d6333514f",
+        "symbol": "PYUSD-USDT",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 12470,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "PYUSD",
+          "USDT"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/6edcbfbe"
+      },
+      {
+        "poolId": "3820d500-8315-4b13-a801-a29f85d2aeef",
+        "symbol": "SOL-XBG",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 11557,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "XBG"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/3820d500"
+      },
+      {
+        "poolId": "dfaaa971-28e5-4c97-ade9-418e4ed5db12",
+        "symbol": "MMOSH-SOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 10582,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "MMOSH",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/dfaaa971"
+      },
+      {
+        "poolId": "1c596cee-934e-4d70-9010-03eefcdfbce1",
+        "symbol": "TNSR-JITOSOL",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 10542,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "TNSR",
+          "JITOSOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/1c596cee"
+      },
+      {
+        "poolId": "3f473e01-6ca1-4169-965e-644c97e600df",
+        "symbol": "SOL-ZEUS",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 10152,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "ZEUS"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/3f473e01"
+      },
+      {
+        "poolId": "23048c9c-64f1-4a07-9e14-c89362241b06",
+        "symbol": "SOL-ORCA",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 10139,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "ORCA"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/23048c9c"
+      },
+      {
+        "poolId": "061e6034-2828-4194-a0bf-110d2572d2a0",
+        "symbol": "ADRASOL",
+        "product": "klend",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 10097,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "ADRASOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/061e6034"
+      },
+      {
+        "poolId": "c92e8f80-3871-4188-8ef6-b3baf6ba1e83",
+        "symbol": "SOL-GIGA",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 10049,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "GIGA"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/c92e8f80"
+      },
+      {
+        "poolId": "b3ad0500-a7e0-488e-886f-4eac6e6fba34",
+        "symbol": "USDC-EURC",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 10027,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDC",
+          "EURC"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/b3ad0500"
+      },
+      {
+        "poolId": "ace01b44-f418-4aaa-a9e9-bf3230ecc241",
+        "symbol": "KMNO-PYUSD",
+        "product": "liquidity",
+        "apy": 0,
+        "apyBase": 0,
+        "apyReward": 0,
+        "tvlUsd": 10000,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "KMNO",
+          "PYUSD"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/ace01b44"
+      }
+    ],
+    "best": {
+      "klendSol": {
+        "poolId": "525b2dab-ea6a-4cbc-a07f-84ce561d1f83",
+        "symbol": "SOL",
+        "product": "klend",
+        "apy": 4.7614,
+        "apyBase": 4.7614,
+        "apyReward": 0,
+        "tvlUsd": 29086372,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "SOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/525b2dab"
+      },
+      "klendStablecoin": {
+        "poolId": "91d6ed2f-b69e-4d7b-8d56-ab3256fbe1f5",
+        "symbol": "CASH",
+        "product": "klend",
+        "apy": 3.4632,
+        "apyBase": 3.4632,
+        "apyReward": 0,
+        "tvlUsd": 901529,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "CASH"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/91d6ed2f"
+      },
+      "klendLst": {
+        "poolId": "9837ed71-8e5e-45c4-a56d-54d738a1cb1e",
+        "symbol": "BSOL",
+        "product": "klend",
+        "apy": 0.00718,
+        "apyBase": 0.00718,
+        "apyReward": 0,
+        "tvlUsd": 12815993,
+        "exposure": "single",
+        "hasIlRisk": false,
+        "tokens": [
+          "BSOL"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/lending/reserve/9837ed71"
+      },
+      "lpCorrelated": {
+        "poolId": "ef49c97e-e78f-4e2a-9525-0faea1a25421",
+        "symbol": "USDC-USDT",
+        "product": "liquidity",
+        "apy": 9.42509,
+        "apyBase": 9.42509,
+        "apyReward": 0,
+        "tvlUsd": 20926,
+        "exposure": "multi",
+        "hasIlRisk": false,
+        "tokens": [
+          "USDC",
+          "USDT"
+        ],
+        "risk": "low",
+        "url": "https://app.kamino.finance/liquidity/ef49c97e"
+      },
+      "lpUncorrelated": {
+        "poolId": "2311da1c-3d89-43cb-afdb-e19edfc01b1e",
+        "symbol": "JUP-SOL",
+        "product": "liquidity",
+        "apy": 63.27188,
+        "apyBase": 63.27188,
+        "apyReward": 0,
+        "tvlUsd": 586349,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "JUP",
+          "SOL"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/2311da1c"
+      },
+      "overall": {
+        "poolId": "d26c7c82-86d3-4bd1-be55-5ef3525332d0",
+        "symbol": "SOL-ACS",
+        "product": "liquidity",
+        "apy": 1034.93484,
+        "apyBase": 1034.93484,
+        "apyReward": 0,
+        "tvlUsd": 10601,
+        "exposure": "multi",
+        "hasIlRisk": true,
+        "tokens": [
+          "SOL",
+          "ACS"
+        ],
+        "risk": "high",
+        "url": "https://app.kamino.finance/liquidity/d26c7c82"
+      }
+    }
+  }
+}

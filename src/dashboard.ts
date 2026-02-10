@@ -1461,89 +1461,70 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
     const totalUsd = (solBalance * solPrice + jitosolBalance * jitosolPrice).toFixed(2);
     send({ type: 'step', text: 'SOL: $' + solPrice.toFixed(2) + ' | JitoSOL: $' + jitosolPrice.toFixed(2) + ' | Total value: ~$' + totalUsd, icon: '💲' });
 
-    // Step 3: Fetch live rates
-    send({ type: 'section', text: '📊 Step 3: Scanning live yields across Kamino...' });
+    // Step 3: Fetch ALL Kamino rates from DeFi Llama + Jito API
+    send({ type: 'section', text: '📊 Step 3: Scanning ALL Kamino yields (DeFi Llama + Jito API)...' });
 
-    // JitoSOL staking APY
-    let stakingApy = 5.94;
+    const { fetchKaminoRates } = require('./kamino-rates');
+    let kaminoRates: any;
     try {
-      const jitoRes = await fetch('https://kobe.mainnet.jito.network/api/v1/stake_pool_stats');
-      const jitoData = await jitoRes.json() as any;
-      if (jitoData.apy && jitoData.apy.length > 0) {
-        stakingApy = jitoData.apy[jitoData.apy.length - 1].data * 100;
-      }
-    } catch {}
-    send({ type: 'step', text: 'JitoSOL staking yield: ' + stakingApy.toFixed(2) + '% APY (live from Jito API)', icon: '🥩', color: '#3fb950' });
-
-    // K-Lend rates via Kamino SDK
-    send({ type: 'step', text: 'Loading Kamino K-Lend markets...', icon: '🏦' });
-
-    let klendSolApy = 0;
-    let klendJitosolApy = 0;
-    let solBorrowApy = 0;
-    try {
-      const { createSolanaRpc, address } = require('@solana/kit');
-      const { KaminoMarket, PROGRAM_ID } = require('@kamino-finance/klend-sdk');
-      const rpc = createSolanaRpc(settings.rpcUrl);
-      const market = await KaminoMarket.load(rpc, address('7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF'), 400, PROGRAM_ID);
-      const slot = BigInt(await connection.getSlot());
-      const reserves = market.getReserves();
-
-      for (const reserve of reserves) {
-        try {
-          const symbol = reserve.symbol?.toUpperCase();
-          const mint = reserve.getLiquidityMint().toString();
-          const supplyApy = (reserve.totalSupplyAPY(slot) || 0) * 100;
-          const borrowApy = (reserve.totalBorrowAPY(slot) || 0) * 100;
-
-          if (mint === 'So11111111111111111111111111111111111111112') {
-            klendSolApy = supplyApy;
-            solBorrowApy = borrowApy;
-            send({ type: 'step', text: 'K-Lend SOL: supply ' + supplyApy.toFixed(2) + '% / borrow ' + borrowApy.toFixed(2) + '%', icon: supplyApy > 5 ? '🔥' : '📈' });
-          }
-          if (mint === JITOSOL_MINT) {
-            klendJitosolApy = supplyApy;
-            send({ type: 'step', text: 'K-Lend JitoSOL: supply ' + supplyApy.toFixed(2) + '% (+ ' + stakingApy.toFixed(2) + '% staking = ' + (supplyApy + stakingApy).toFixed(2) + '% total)', icon: supplyApy > 0.5 ? '🔥' : '📈' });
-          }
-        } catch {}
-      }
+      kaminoRates = await fetchKaminoRates(true);
     } catch (err: any) {
-      send({ type: 'step', text: 'K-Lend scan failed: ' + (err.message || '').slice(0, 60), pass: false });
+      send({ type: 'step', text: 'Failed to fetch Kamino rates: ' + (err.message || '').slice(0, 60), pass: false });
+      send({ type: 'done', elapsed: ((Date.now() - startTime) / 1000).toFixed(1) });
+      return res.end();
     }
 
-    // Multiply spread
-    const multiplySpread = stakingApy - solBorrowApy;
-    const multiplyProfitable = multiplySpread > 1;
-    send({ type: 'step', text: 'Multiply spread: ' + stakingApy.toFixed(2) + '% staking - ' + solBorrowApy.toFixed(2) + '% borrow = ' + multiplySpread.toFixed(2) + '% ' + (multiplyProfitable ? '(profitable!)' : '(unprofitable)'), pass: multiplyProfitable });
+    const stakingApy = kaminoRates.jitoStakingApy;
+    send({ type: 'step', text: 'JitoSOL staking yield: ' + stakingApy.toFixed(2) + '% APY (' + kaminoRates.jitoStakingSource + ')', icon: '🥩', color: '#3fb950' });
 
-    // Cross-protocol quick check
-    send({ type: 'step', text: 'Checking cross-protocol rates (DeFi Llama)...', icon: '🌐' });
-    let topCrossProtocol: string[] = [];
-    try {
-      const cachedRates = readJsonFile('protocol-rates.json');
-      if (cachedRates && cachedRates.data) {
-        const top3 = cachedRates.data
-          .filter((y: any) => y.apy > stakingApy && y.tvl > 1000000)
-          .slice(0, 3);
-        for (const y of top3) {
-          send({ type: 'step', text: y.protocol + ' ' + y.pool + ': ' + y.apy.toFixed(2) + '% APY ($' + (y.tvl / 1e6).toFixed(1) + 'M TVL, ' + y.risk + ' risk)', icon: '🔥', color: '#f0883e' });
-          topCrossProtocol.push(y.protocol + ' ' + y.pool);
-        }
-        if (top3.length === 0) {
-          send({ type: 'step', text: 'No cross-protocol opportunities beating current yield', icon: 'ℹ️', color: '#8b949e' });
-        }
-      }
-    } catch {}
+    // K-Lend rates
+    const klendPools = kaminoRates.pools.filter((p: any) => p.product === 'klend' && p.apy > 0);
+    send({ type: 'step', text: 'K-Lend: ' + klendPools.length + ' pools with APY > 0', icon: '🏦' });
+    for (const p of klendPools.slice(0, 5)) {
+      send({ type: 'step', text: 'K-Lend ' + p.symbol + ': ' + p.apy.toFixed(2) + '% APY (TVL: $' + (p.tvlUsd / 1e6).toFixed(1) + 'M)', icon: p.apy > 4 ? '🔥' : '📈' });
+    }
+
+    // LP Vaults — low IL (SOL-correlated pairs)
+    const lpLowIl = kaminoRates.pools.filter((p: any) => p.product === 'liquidity' && !p.hasIlRisk && p.apy > 0 && p.tvlUsd > 1000);
+    send({ type: 'step', text: 'LP Vaults (low IL): ' + lpLowIl.length + ' pools', icon: '🏊' });
+    for (const p of lpLowIl.slice(0, 5)) {
+      send({ type: 'step', text: p.symbol + ': ' + p.apy.toFixed(2) + '% APY (TVL: $' + (p.tvlUsd / 1e6).toFixed(1) + 'M)', icon: p.apy > 5 ? '🔥' : '📈', color: p.apy > stakingApy ? '#3fb950' : '#e6edf3' });
+    }
+
+    // LP Vaults — higher yield with IL risk
+    const lpHighYield = kaminoRates.pools.filter((p: any) => p.product === 'liquidity' && p.hasIlRisk && p.apy > 0 && p.tvlUsd > 50000);
+    send({ type: 'step', text: 'LP Vaults (higher yield, IL risk): ' + lpHighYield.length + ' pools', icon: '🔥' });
+    for (const p of lpHighYield.slice(0, 5)) {
+      send({ type: 'step', text: p.symbol + ': ' + p.apy.toFixed(2) + '% APY (TVL: $' + (p.tvlUsd / 1e6).toFixed(1) + 'M, ' + p.risk + ' risk)', icon: '🔥', color: '#f0883e' });
+    }
 
     // Step 4: Strategy evaluation
-    send({ type: 'section', text: '⚖️ Step 4: Scoring strategies (full fee accounting)...' });
+    send({ type: 'section', text: '⚖️ Step 4: Building strategy menu from Kamino pools...' });
 
-    const strategies = [
-      { id: 'hold_jitosol', name: 'Hold JitoSOL', grossApy: stakingApy, netApy: stakingApy },
+    // Build strategies from real data
+    const klendSolApy = klendPools.find((p: any) => p.tokens.includes('SOL'))?.apy || 0;
+    const klendJitosolApy = klendPools.find((p: any) => p.tokens.includes('JITOSOL'))?.apy || 0;
+    const bestLpLowIl = lpLowIl[0];
+    const bestLpHighYield = lpHighYield[0];
+
+    const strategies: any[] = [
+      { id: 'hold_jitosol', name: 'Hold JitoSOL (staking)', grossApy: stakingApy, netApy: stakingApy },
       { id: 'klend_sol_supply', name: 'K-Lend SOL Supply', grossApy: klendSolApy, netApy: klendSolApy },
-      { id: 'klend_jitosol_supply', name: 'K-Lend JitoSOL Supply', grossApy: klendJitosolApy + stakingApy, netApy: klendJitosolApy + stakingApy },
-      { id: 'multiply', name: 'Multiply JitoSOL/SOL', grossApy: multiplyProfitable ? multiplySpread * 3 : 0, netApy: multiplyProfitable ? multiplySpread * 3 : 0 },
     ];
+
+    if (klendJitosolApy > 0) {
+      strategies.push({ id: 'klend_jitosol_supply', name: 'K-Lend JitoSOL Supply', grossApy: klendJitosolApy + stakingApy, netApy: klendJitosolApy + stakingApy });
+    }
+
+    if (bestLpLowIl) {
+      strategies.push({ id: 'lp_low_il', name: 'LP: ' + bestLpLowIl.symbol + ' (low IL)', grossApy: bestLpLowIl.apy, netApy: bestLpLowIl.apy * 0.99 }); // 1% ongoing cost estimate
+    }
+
+    if (bestLpHighYield) {
+      // Net APY accounts for estimated IL: ~5% annual for SOL/stablecoin, ~10% for uncorrelated
+      const ilDeduction = bestLpHighYield.risk === 'medium' ? 5 : 10;
+      strategies.push({ id: 'lp_high_yield', name: 'LP: ' + bestLpHighYield.symbol + ' (' + bestLpHighYield.risk + ' IL)', grossApy: bestLpHighYield.apy, netApy: bestLpHighYield.apy - ilDeduction });
+    }
 
     // Sort by net APY
     strategies.sort((a, b) => b.netApy - a.netApy);
@@ -1625,8 +1606,8 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
       verdictText = 'Current position (' + stakingApy.toFixed(2) + '% JitoSOL staking) is optimal. Best alternative (' + bestStrategy.name + ' @ ' + bestStrategy.netApy.toFixed(2) + '%) does not meet all criteria.';
     }
 
-    if (topCrossProtocol.length > 0) {
-      verdictText += ' Note: ' + topCrossProtocol.length + ' cross-protocol opportunity(s) found but cross-protocol execution not yet enabled.';
+    if (bestLpHighYield && bestLpHighYield.apy > stakingApy * 3) {
+      verdictText += ' Note: ' + bestLpHighYield.symbol + ' LP vault offers ' + bestLpHighYield.apy.toFixed(0) + '% APY but carries ' + bestLpHighYield.risk + ' IL risk.';
     }
 
     send({ type: 'verdict', action: shouldRebalance ? 'REBALANCE' : 'HOLD', text: verdictText });
