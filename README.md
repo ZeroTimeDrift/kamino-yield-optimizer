@@ -1,113 +1,218 @@
-# Kamino Yield Optimizer
+# 🔥 Kamino Yield Optimizer
 
-Autonomous multi-strategy DeFi yield optimizer on Solana. Manages capital across Kamino K-Lend, Multiply vaults, and token swaps via Jupiter to maximize risk-adjusted returns.
+**Autonomous AI-powered DeFi yield optimizer for Solana.** Manages capital across Kamino K-Lend, Multiply vaults, LP positions, and Jupiter swaps to maximize risk-adjusted returns with full fee accounting.
 
-## What It Does
+> Built by an autonomous AI agent (Prometheus/ClawdBot) that manages real DeFi positions on Solana mainnet.
 
-- **Multi-market scanning** — Scans K-Lend rates across Main, Jito, and Altcoins markets (80+ reserves)
-- **Multiply monitoring** — Tracks JitoSOL<>SOL leveraged staking spreads and manages positions
-- **Jupiter swaps** — SOL↔USDC, SOL→JitoSOL with slippage protection
-- **Portfolio management** — Target allocation tracking with automatic drift detection
-- **Auto-rebalancing** — Moves funds to higher-yield strategies when thresholds are met
-- **Safety guards** — Gas buffer, min spread checks, LTV alerts, dry-run mode
-- **Performance tracking** — Logs every action to `config/performance.jsonl`
-- **Runs autonomously** via cron (every 2 hours)
+## ✨ What Makes This Different
+
+Most yield optimizers are simple rate-chasers. This one is different:
+
+1. **Full Fee Accounting** — Every rebalance decision considers tx fees, slippage, IL risk, swap costs, withdrawal fees, deposit fees, opportunity cost, and break-even time. No decision is made unless it's profitable after ALL costs.
+
+2. **Spike Protection** — Won't chase APY spikes. Yield must sustain above current position for >1 hour before the optimizer acts.
+
+3. **Multi-Strategy Decision Engine** — Compares 5 strategies simultaneously:
+   - Hold JitoSOL (baseline ~5.6% staking yield)
+   - K-Lend supply (SOL or JitoSOL, best market)
+   - Multiply (leveraged staking, only when spread > 1%)
+   - LP vaults (concentrated liquidity, JitoSOL-SOL)
+   - Cross-protocol opportunities (Marginfi, Drift, Meteora via DeFi Llama)
+
+4. **Real Money** — This runs on mainnet with real capital. Not a simulation. Every feature was built because the agent needed it to manage actual DeFi positions.
+
+5. **AI Agent Native** — Designed for autonomous agents. Clean CLI, JSON output mode, continuous agent mode, and integration with the ClawdBot agent framework.
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                  MULTI-STRATEGY OPTIMIZER                │
-├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  optimize-v2.ts  ←── Main entry point                    │
-│    ├── scanner.ts        Rate scanning across markets    │
-│    ├── portfolio.ts      Allocation tracking & drift     │
-│    ├── kamino-client.ts  K-Lend deposits/withdrawals     │
-│    ├── multiply-client.ts  Leveraged position mgmt       │
-│    └── jupiter-client.ts   Token swaps (SOL↔USDC)       │
-│                                                          │
-│  Target Portfolio:                                       │
-│    60% USDC (K-Lend, highest rate market)                │
-│    30% JitoSOL<>SOL Multiply (5x leverage)               │
-│    10% SOL gas reserve                                   │
-│                                                          │
-│  Safety:                                                 │
-│    • Gas buffer: 0.01 SOL minimum                        │
-│    • Multiply min spread: 1% (staking - borrow)          │
-│    • LTV alert threshold: 85%                            │
-│    • Rebalance min gain: 0.5% APY improvement            │
-│    • Dry-run mode for testing                            │
-│                                                          │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                   AUTONOMOUS AGENT LAYER                    │
+│  ┌───────────┐  ┌────────────┐  ┌──────────────────────┐   │
+│  │  Scanner   │  │ Portfolio   │  │   Rebalancer          │   │
+│  │ (live      │  │ (multi-     │  │ (fee-aware decision   │   │
+│  │  rates)    │  │  strategy)  │  │  engine + execution)  │   │
+│  └─────┬─────┘  └──────┬─────┘  └──────────┬───────────┘   │
+│        │               │                    │               │
+│  ┌─────┴───────────────┴────────────────────┴───────────┐   │
+│  │              Strategy Executor                        │   │
+│  ├──────────┬──────────────┬───────────┬───────────────┤   │
+│  │ K-Lend   │  Multiply    │ LP Vaults │  Cross-Proto  │   │
+│  │ (supply/ │ (leveraged   │ (conc.    │ (DeFi Llama   │   │
+│  │  borrow) │  staking)    │  liq.)    │  comparison)  │   │
+│  └──────────┴──────────────┴───────────┴───────────────┘   │
+│        │                                                    │
+│  ┌─────┴───────────────────────────────────────────────┐    │
+│  │     Jupiter V6 API (routing + swaps)                │    │
+│  └─────────────────────┬───────────────────────────────┘    │
+│                        │                                    │
+│  ┌─────────────────────┴───────────────────────────────┐    │
+│  │     Solana Blockchain (mainnet-beta)                │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## Quick Start
 
-### 1. Install Dependencies
+### 1. Install
 
 ```bash
-cd skills/kamino-yield
+git clone https://github.com/ZeroTimeDrift/kamino-yield-optimizer.git
+cd kamino-yield-optimizer
 npm install
 ```
 
-### 2. Generate Wallet (if new)
+### 2. Setup Wallet
 
 ```bash
 npx ts-node src/generate-wallet.ts
+# Creates config/wallet.json — fund this address with SOL
 ```
 
-Creates `config/wallet.json`. Fund the generated address with SOL + USDC.
-
-### 3. Scan Current Rates
+### 3. Scan Rates
 
 ```bash
-npx ts-node src/scanner.ts
+npx ts-node src/index.ts scan
 ```
 
-Shows live APYs across all Kamino markets, Multiply opportunities, and top picks.
-
-### 4. Run Full Optimizer
+### 4. Run Optimizer (dry-run by default)
 
 ```bash
-npx ts-node src/optimize-v2.ts
+npx ts-node src/index.ts optimize          # Dry run
+npx ts-node src/index.ts optimize --live   # Real transactions
 ```
 
-Runs the complete multi-strategy optimization cycle. Respects `dryRun` setting.
-
-### 5. Run Legacy Optimizer (K-Lend only)
+### 5. Run Tests
 
 ```bash
-npx ts-node src/optimize-cron.ts
+npm test
 ```
 
-Original single-strategy optimizer — still works, untouched.
+## CLI Commands
+
+| Command | Description |
+|---------|-------------|
+| `scan` | Scan live rates across all Kamino markets + cross-protocol |
+| `optimize` | Run full multi-strategy optimization cycle |
+| `rebalance` | Evaluate positions & execute rebalance decisions |
+| `portfolio` | Show current portfolio snapshot with allocations |
+| `status` | Quick wallet balance & position overview |
+| `backtest` | Historical performance analysis with strategy comparison |
+| `agent` | Run in autonomous mode (continuous 30min cycles) |
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `--dry-run` | Simulate without executing (default) |
+| `--live` | Execute real on-chain transactions |
+| `--json` | Output structured JSON for programmatic use |
+| `--verbose` | Show detailed execution logs |
+
+## The Decision Engine
+
+The rebalancer is the brain. Here's how it thinks:
+
+### Fee Model (All Costs Accounted)
+
+```
+Total Switch Cost = tx_fees + withdrawal_fee + deposit_fee
+                  + slippage + jupiter_fee + IL_risk + opportunity_cost
+```
+
+| Cost Component | Source | Estimate |
+|----------------|--------|----------|
+| TX fees | Solana network | 0.000005-0.0005 SOL/tx |
+| Withdrawal fee | Kamino LP | ~0.1% of position |
+| Deposit fee | Kamino LP | ~0.05% (internal swap) |
+| Slippage | Jupiter swap | 0.3-1.0% (size-dependent) |
+| Jupiter fee | Platform | ~0.1% |
+| IL risk | LP vault | ~0.1% / 30 days (JitoSOL-SOL) |
+| Opportunity cost | Transit time | ~5 min of current yield |
+
+### Decision Criteria (ALL must pass)
+
+1. **Break-even < 7 days** — Switch cost must be recovered within a week
+2. **Net improvement > 1% APY** — After all fees, the new strategy must beat current by 1%+
+3. **Sustained yield** — New strategy must maintain higher yield for >1 hour (no spike chasing)
+
+### Scoring Formula
+
+```
+Score = Net_APY - (Switch_Cost / Capital × 100 × 365/30)
+```
+
+The score represents the 30-day adjusted APY, accounting for entry costs.
+
+## Strategies
+
+### Hold JitoSOL (~5.6% APY)
+The baseline. Zero cost, zero risk beyond SOL price exposure. JitoSOL earns native Jito staking yield automatically.
+
+### K-Lend Supply (variable APY)
+Deposit tokens into Kamino lending reserves. Scans Main, Jito, and Altcoins markets. JitoSOL supply is interesting because you STACK K-Lend yield on top of staking yield.
+
+### Multiply (leveraged staking)
+Opens JitoSOL↔SOL leveraged positions. Only when staking APY > borrow cost + 1% minimum spread. Zero historical liquidations on LST↔SOL pairs (stake-rate pricing). Currently often unprofitable due to high SOL borrow rates.
+
+### LP Vaults (concentrated liquidity)
+Kamino-managed concentrated liquidity positions (JitoSOL-SOL). Higher yield from trading fees but with IL risk. Our model estimates IL at ~0.1%/month for correlated pairs.
+
+### Cross-Protocol (read-only comparison)
+Scans yields from Marginfi, Drift, Solend, Meteora, Orca, Raydium via DeFi Llama API. Currently informational only — cross-protocol execution planned.
+
+## Backtesting
+
+Run strategy comparisons against historical or synthetic yield data:
+
+```bash
+npx ts-node src/backtester.ts --days 90
+```
+
+Compares: hold vs optimizer vs aggressive vs klend_only vs lp_only. Shows returns, drawdown, fees, and alpha over passive holding.
+
+## Safety Features
+
+| Feature | Description |
+|---------|-------------|
+| 🔒 Dry-run default | No real transactions without `--live` flag |
+| ⛽ Gas buffer | Always maintains 0.01 SOL minimum for fees |
+| 📊 Break-even check | Rejects switches with payback > 7 days |
+| ⏰ Spike protection | Requires sustained yield improvement (>1hr) |
+| 📉 LTV monitoring | Alerts when Multiply LTV exceeds 85% |
+| 🔁 Retry logic | Exponential backoff for RPC rate limits |
+| 🔐 Local signing | Private keys never leave the server |
+| 📝 Decision logging | Every decision logged with full reasoning |
 
 ## File Structure
 
 ```
-kamino-yield/
-├── config/
-│   ├── wallet.json           # Solana keypair (KEEP SECRET)
-│   ├── settings.json         # Full configuration
-│   └── performance.jsonl     # Performance tracking log
+kamino-yield-optimizer/
 ├── src/
-│   ├── optimize-v2.ts        # Multi-strategy optimizer (main)
-│   ├── optimize-cron.ts      # Legacy single-strategy optimizer
-│   ├── scanner.ts            # Rate scanner across all markets
+│   ├── index.ts              # CLI entry point (all commands)
+│   ├── scanner.ts            # Multi-market rate scanner
+│   ├── rebalancer.ts         # Fee-aware decision engine (1200+ lines)
+│   ├── optimize-v2.ts        # Multi-strategy optimizer
 │   ├── portfolio.ts          # Portfolio allocation manager
+│   ├── backtester.ts         # Historical strategy backtesting
 │   ├── kamino-client.ts      # Kamino K-Lend SDK wrapper
-│   ├── multiply-client.ts    # Kamino Multiply position manager
+│   ├── multiply-client.ts    # Leveraged staking manager
+│   ├── liquidity-client.ts   # LP vault operations
 │   ├── jupiter-client.ts     # Jupiter V6 swap integration
-│   ├── generate-wallet.ts    # Wallet generation utility
-│   └── types.ts              # TypeScript types & constants
-├── scripts/
-│   ├── optimize.sh           # Shell wrapper
-│   ├── scan.sh               # Quick scan wrapper
-│   └── status.sh             # Status check wrapper
-├── package.json
+│   ├── multi-protocol-scanner.ts # Cross-protocol yield scanner
+│   ├── types.ts              # TypeScript types & constants
+│   └── __tests__/
+│       ├── rebalancer.test.ts  # Decision engine tests
+│       └── fee-model.test.ts   # Fee calculation tests
+├── config/
+│   ├── settings.json         # Configuration
+│   ├── wallet.json           # Solana keypair (gitignored)
+│   ├── performance.jsonl     # Performance tracking log
+│   ├── rebalancer-log.jsonl  # Decision audit trail
+│   └── rate-history.json     # Historical rate data
+├── jest.config.js
 ├── tsconfig.json
-├── SKILL.md
+├── package.json
 └── README.md
 ```
 
@@ -115,90 +220,61 @@ kamino-yield/
 
 `config/settings.json`:
 
-| Section | Field | Description | Default |
-|---------|-------|-------------|---------|
-| root | `rpcUrl` | Solana RPC endpoint | mainnet-beta |
-| root | `dryRun` | Simulate without executing | `true` |
-| root | `riskTolerance` | conservative/balanced/aggressive | `balanced` |
-| portfolio | `targets` | Allocation targets by strategy | 60/30/10 |
-| portfolio | `rebalanceThreshold` | Max drift before rebalancing | `0.10` (10%) |
-| multiply | `maxLeverage` | Maximum leverage for Multiply | `5` |
-| multiply | `minSpread` | Min staking-borrow spread | `0.01` (1%) |
-| multiply | `maxLTV` | LTV alert threshold | `0.85` (85%) |
-| jupiter | `slippageBps` | Max slippage in basis points | `50` (0.5%) |
-
-## Strategies
-
-### K-Lend (Simple Lending)
-Deposits tokens into Kamino lending reserves. Scans Main, Jito, and Altcoins markets for the best rate per token. Auto-rebalances between markets when a better rate appears.
-
-### Multiply (Leveraged Staking)
-Opens JitoSOL<>SOL leveraged positions on Kamino's Jito isolated market. Earns amplified staking yield minus borrow costs. Only opens when spread is favorable (staking APY - borrow APY > min spread). Zero historical liquidations on LST<>SOL pairs due to stake-rate pricing.
-
-### Jupiter Swaps
-Converts between tokens to match target portfolio allocation. Uses Jupiter V6 API for best routing and price. Supports SOL↔USDC and SOL→JitoSOL.
-
-## Safety Features
-
-- **Gas buffer**: Always maintains 0.01 SOL for transaction fees
-- **Min spread check**: Won't open Multiply positions if spread < 1%
-- **LTV monitoring**: Logs warnings if Multiply LTV exceeds 85%
-- **Dry-run mode**: Full simulation without real transactions (default: ON)
-- **Rebalance threshold**: Only moves funds for >0.5% APY improvement
-- **Retry logic**: Exponential backoff for RPC rate limits
-- **Local signing**: Private keys never leave your server
-
-## Example Scanner Output
-
-```
-══════════════════════════════════════════════════════
-  📊 KAMINO RATE SCANNER
-══════════════════════════════════════════════════════
-
-Market: Main (84 reserves)
-  🔥 SOL        Supply: 6.74%  Borrow: 8.46%
-  ✨ USDC       Supply: 3.80%  Borrow: 5.52%
-  ✨ USDT       Supply: 0.49%  Borrow: 2.31%
-
-Market: Altcoins
-  🔥 USDC       Supply: 5.04%  Borrow: 7.21%
-
-Multiply Opportunities:
-  JitoSOL<>SOL  Staking: 5.94%  Borrow: 7.66%
-                Spread: -1.72% ❌ (min 1.00%)
-
-Top Picks:
-  1. SOL K-Lend (Main): 6.74% APY
-  2. USDC K-Lend (Altcoins): 5.04% APY
-  3. USDC K-Lend (Main): 3.80% APY
-══════════════════════════════════════════════════════
+```json
+{
+  "rpcUrl": "https://api.mainnet-beta.solana.com",
+  "dryRun": true,
+  "riskTolerance": "balanced",
+  "minYieldImprovement": 0.5,
+  "gasBufferSol": 0.01,
+  "portfolio": {
+    "allocations": {
+      "klendUsdc": 0.60,
+      "multiply": 0.30,
+      "gasReserve": 0.10
+    },
+    "rebalanceThreshold": 0.10
+  },
+  "multiply": {
+    "maxLeverage": 5,
+    "minSpread": 1.0,
+    "maxLtv": 0.85
+  },
+  "jupiter": {
+    "slippageBps": 50,
+    "preferDirect": true
+  }
+}
 ```
 
-## Cron Setup (Clawdbot)
+## Tech Stack
 
-Already configured as a cron job running every 2 hours:
-```
-Kamino yield optimizer (every 2h) — 30 */2 * * * Asia/Dubai
-```
+- **Runtime:** Node.js / TypeScript
+- **Blockchain:** Solana (web3.js + @solana/kit)
+- **DeFi SDKs:** @kamino-finance/klend-sdk, @kamino-finance/kliquidity-sdk
+- **Swaps:** Jupiter V6 API
+- **Data:** CoinGecko (prices), Jito API (staking APY), DeFi Llama (cross-protocol)
+- **Testing:** Jest + ts-jest
+- **Agent Framework:** ClawdBot (optional, for autonomous operation)
 
-## Supported Tokens
+## How the AI Agent Uses This
 
-- **SOL** — native Solana
-- **USDC** — Circle USD stablecoin
-- **USDT** — Tether USD
-- **JitoSOL** — Jito liquid staking token
-- **mSOL** — Marinade staked SOL
+This optimizer was built by and for an AI agent (Prometheus). In production:
 
-## Troubleshooting
+1. **Cron mode** — Runs every 2 hours via ClawdBot cron
+2. **Agent decisions** — The AI agent reviews optimizer output and can override or adjust
+3. **Learning** — Decision logs feed back into the agent's memory for strategy refinement
+4. **Reporting** — Agent reports significant events to the human operator
 
-### RPC Rate Limits
-Public RPC rate limits aggressively. Use a private RPC (Helius, Triton) for reliability. Set in `config/settings.json`.
+The human operator (Hevar) granted full DeFi autonomy: *"Make these decisions yourself."*
 
-### Multiply Spread Negative
-This is normal — borrow costs sometimes exceed staking yield. The optimizer correctly refuses to open positions. Wait for favorable conditions.
+## Performance
 
-### Scanner Shows 0% APY
-Some reserves have zero utilization. This is expected for less-popular tokens.
+With ~$216 in capital (1.867 JitoSOL):
+- **Current yield:** ~5.6% APY (passive JitoSOL staking)
+- **Infrastructure cost:** ~$0/month (runs on existing server)
+- **Decision quality:** Fee model correctly avoids unprofitable rebalances
+- **Uptime:** Monitored via cron, auto-recovers from RPC failures
 
 ## License
 
@@ -206,8 +282,8 @@ MIT
 
 ## Credits
 
-Built for autonomous agent capital management. Uses:
+Built with:
 - [@kamino-finance/klend-sdk](https://github.com/Kamino-Finance/klend-sdk)
 - [@kamino-finance/kliquidity-sdk](https://github.com/Kamino-Finance/kliquidity-sdk)
-- [@solana/web3.js](https://github.com/solana-labs/solana-web3.js)
 - [Jupiter V6 API](https://station.jup.ag/docs/apis/swap-api)
+- [DeFi Llama API](https://defillama.com/docs/api)

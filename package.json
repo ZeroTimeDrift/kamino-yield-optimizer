@@ -8,7 +8,10 @@
     "scan": "ts-node src/scanner.ts",
     "multi-scan": "ts-node src/multi-protocol-scanner.ts",
     "optimize": "ts-node src/optimizer.ts",
-    "status": "ts-node src/status.ts"
+    "status": "ts-node src/status.ts",
+    "start": "ts-node src/index.ts",
+    "test": "jest --verbose",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@kamino-finance/farms-sdk": "^3.2.24",
@@ -21,8 +24,11 @@
     "express": "^5.2.1"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "@types/node-fetch": "^2.6.13",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.0",
     "typescript": "^5.0.0"
   }

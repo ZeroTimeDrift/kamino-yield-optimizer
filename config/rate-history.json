@@ -253,5 +253,20 @@
     "timestamp": 1770453071308,
     "strategyId": "klend_sol_supply",
     "apy": 9.132414388186726
+  },
+  {
+    "timestamp": 1770460252989,
+    "strategyId": "hold_jitosol",
+    "apy": 5.621760734400394
+  },
+  {
+    "timestamp": 1770460252989,
+    "strategyId": "lp_vault",
+    "apy": 2.9654982147839073
+  },
+  {
+    "timestamp": 1770460252989,
+    "strategyId": "klend_sol_supply",
+    "apy": 8.8835165936908
   }
 ]

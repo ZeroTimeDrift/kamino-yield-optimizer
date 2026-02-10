@@ -4,12 +4,12 @@
   "pollCount": 0,
   "currentRates": {
     "Main": {
-      "timestamp": "2026-02-07T10:15:14.243Z",
+      "timestamp": "2026-02-07T10:42:44.034Z",
       "market": "Main",
-      "solBorrowApy": 11.666047185488493,
-      "solSupplyApy": 9.138492914154872,
+      "solBorrowApy": 11.298434879207232,
+      "solSupplyApy": 8.846189072934818,
       "jitosolSupplyApy": 0.00039353557910182246,
-      "multiplySpread": -6.096047185488493,
+      "multiplySpread": -5.7284348792072315,
       "profitable": false
     },
     "Jito": {
@@ -2443,6 +2443,51 @@
       "jitosolSupplyApy": 0.00039353557910182246,
       "multiplySpread": -6.096047185488493,
       "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T10:18:20.471Z",
+      "market": "Main",
+      "solBorrowApy": 11.689279183574563,
+      "solSupplyApy": 9.156976647385084,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.119279183574562,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T10:22:45.543Z",
+      "market": "Main",
+      "solBorrowApy": 11.676387908927865,
+      "solSupplyApy": 9.146719409201886,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.106387908927864,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T10:28:57.044Z",
+      "market": "Main",
+      "solBorrowApy": 11.654711337190871,
+      "solSupplyApy": 9.129475358132865,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -6.084711337190871,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T10:40:47.473Z",
+      "market": "Main",
+      "solBorrowApy": 11.29838811785644,
+      "solSupplyApy": 8.846152488089398,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.72838811785644,
+      "profitable": false
+    },
+    {
+      "timestamp": "2026-02-07T10:42:44.034Z",
+      "market": "Main",
+      "solBorrowApy": 11.298434879207232,
+      "solSupplyApy": 8.846189072934818,
+      "jitosolSupplyApy": 0.00039353557910182246,
+      "multiplySpread": -5.7284348792072315,
+      "profitable": false
     }
   ],
   "alerts": [
@@ -2530,12 +2575,12 @@
   "lastMultiplyPositive": null,
   "stakingYield": 5.57,
   "mode": "websocket",
-  "wsUpdates": 255,
+  "wsUpdates": 260,
   "pollFallbacks": 0,
   "subscriptionIds": [
     0,
     1,
     2
   ],
-  "lastUpdate": "2026-02-07T10:15:14.243Z"
+  "lastUpdate": "2026-02-07T10:42:44.034Z"
 }
