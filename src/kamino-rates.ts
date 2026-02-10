@@ -1,82 +1,105 @@
 /**
  * Kamino Rates — Pure Kamino API
  *
- * Uses Kamino's own REST API (api.kamino.finance) as the single source of truth.
- * Also fetches JitoSOL staking yield from Jito API.
+ * All data sourced directly from api.kamino.finance:
  *
- * Products:
- * - Liquidity Vaults (strategies/metrics) — concentrated LP with KMNO rewards
- * - K-Lend (klend-sdk on-chain) — lending/borrowing
- * - JitoSOL staking (Jito API) — baseline yield
+ * Endpoints used:
+ *   GET /kamino-market?env=mainnet-beta                           → List all markets
+ *   GET /kamino-market/{market}/reserves/metrics?env=mainnet-beta → K-Lend supply/borrow APYs
+ *   GET /kamino-market/{market}/leverage/metrics                  → Multiply/Leverage positions
+ *   GET /strategies/metrics?env=mainnet-beta                     → LP vault APYs (fee + KMNO rewards)
+ *
+ * Also: Jito API for JitoSOL baseline staking yield.
  *
  * Goal: Grow SOL through yield on Kamino.
  */
 
-import Decimal from 'decimal.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
 // ─── Types ──────────────────────────────────────────────────────
 
-export interface KaminoPool {
-  /** Strategy address */
+/** K-Lend reserve (lending market) */
+export interface KlendReserve {
+  reserve: string;
+  liquidityToken: string;
+  liquidityTokenMint: string;
+  maxLtv: number;
+  supplyApy: number;
+  borrowApy: number;
+  totalSupplyUsd: number;
+  totalBorrowUsd: number;
+}
+
+/** LP vault (liquidity strategy) */
+export interface LpVault {
   address: string;
-  /** Token pair */
-  symbol: string;
   tokenA: string;
   tokenB: string;
-  /** Product type */
-  product: 'liquidity' | 'klend' | 'staking';
-  /** 7-day APY (base fees + KMNO rewards) */
-  apy7d: number;
-  /** 24-hour APY */
-  apy24h: number;
-  /** 30-day APY */
-  apy30d: number;
-  /** Fee APY only (trading fees earned) */
-  feeApy: number;
-  /** KMNO reward APY */
-  rewardApy: number;
-  /** Total APY = max(7d, feeApy + rewardApy) */
-  totalApy: number;
-  /** TVL in USD */
+  symbol: string;
   tvlUsd: number;
-  /** Share price */
   sharePrice: number;
-  /** Whether this is a correlated pair (low IL) */
+  /** 7-day fee APY (organic, from trading fees) */
+  feeApy: number;
+  /** 7-day total APY from Kamino (includes KMNO rewards) */
+  // totalApy7d: number;  // COMMENTED OUT: ignoring KMNO rewards per strategy
+  /** 24h fee APY */
+  feeApy24h: number;
+  /** Whether tokens are correlated (SOL/LST pairs = low IL) */
   isCorrelated: boolean;
-  /** Risk level */
+  /** Risk classification */
   risk: 'low' | 'medium' | 'high';
 }
 
+/** Multiply/Leverage position metrics */
+export interface MultiplyMetrics {
+  depositReserve: string;
+  borrowReserve: string;
+  tag: string;
+  tvlUsd: number;
+  avgLeverage: number;
+  totalDepositedUsd: number;
+  totalBorrowedUsd: number;
+}
+
+/** Complete Kamino rate snapshot */
 export interface KaminoRates {
   timestamp: string;
   source: 'kamino-api';
-  /** JitoSOL staking yield */
+  /** Primary market address */
+  market: string;
+  /** JitoSOL native staking APY (baseline) */
   jitoStakingApy: number;
   jitoStakingSource: string;
-  /** All pools sorted by totalApy desc */
-  pools: KaminoPool[];
-  /** Best picks by category */
-  best: {
-    /** Best correlated LP (SOL/LST pairs — low IL) */
-    correlatedLp: KaminoPool | null;
-    /** Best SOL-stablecoin LP (medium IL) */
-    solStableLp: KaminoPool | null;
-    /** Best overall yield */
-    overall: KaminoPool | null;
-    /** Best for pure SOL growth (low risk) */
-    solGrowth: KaminoPool | null;
+  /** K-Lend reserves (supply/borrow rates) */
+  klendReserves: KlendReserve[];
+  /** LP vaults (fee APY only, KMNO rewards excluded) */
+  lpVaults: LpVault[];
+  /** Multiply/Leverage positions */
+  multiplyPositions: MultiplyMetrics[];
+  /** Summary for quick decision-making */
+  summary: {
+    /** Best K-Lend supply APY for SOL */
+    klendSolSupplyApy: number;
+    /** K-Lend SOL borrow APY (cost of leverage) */
+    klendSolBorrowApy: number;
+    /** Best K-Lend supply for JitoSOL */
+    klendJitosolSupplyApy: number;
+    /** Multiply spread: staking APY - borrow APY */
+    multiplySpread: number;
+    /** Best correlated LP fee APY (low IL) */
+    bestCorrelatedLpFeeApy: number;
+    bestCorrelatedLpSymbol: string;
+    /** Best SOL-stablecoin LP fee APY (medium IL) */
+    bestSolStableLpFeeApy: number;
+    bestSolStableLpSymbol: string;
   };
-  /** Total pools scanned */
-  totalPools: number;
-  /** Active pools (TVL > $1k) */
-  activePools: number;
 }
 
 // ─── Constants ──────────────────────────────────────────────────
 
-const KAMINO_API = 'https://api.kamino.finance/strategies/metrics?env=mainnet-beta';
+const KAMINO_BASE = 'https://api.kamino.finance';
+const PRIMARY_MARKET = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF';
 const JITO_API = 'https://kobe.mainnet.jito.network/api/v1/stake_pool_stats';
 const CACHE_FILE = path.join(__dirname, '../config/kamino-rates-cache.json');
 const CACHE_DURATION_MS = 5 * 60 * 1000;
@@ -86,32 +109,40 @@ const SOL_FAMILY = new Set([
   'SOL', 'JITOSOL', 'MSOL', 'BSOL', 'JUPSOL', 'DSOL', 'VSOL',
   'HSOL', 'BONKSOL', 'CGNTSOL', 'STKESOL', 'LAINESOL', 'FWDSOL',
   'DFDVSOL', 'NXSOL', 'EZSOL', 'KYSOL', 'WFRAGSOL', 'SCNSOL',
+  'PICOSL', 'JSOL', 'BBSOL', 'HUBSOL', 'STRONGSOL', 'LANTERNSOL',
+  'CDCSOL', 'BNSOL', 'PSOL', 'ONYC',
 ]);
 
 const STABLECOINS = new Set([
   'USDC', 'USDT', 'PYUSD', 'USDS', 'USDG', 'CASH', 'EURC',
   'FDUSD', 'SYRUPUSDC', 'USDH', 'UXD', 'USD1', 'HYUSD', 'USDU',
+  'PRIME', 'PST',
 ]);
 
 // ─── Cache ──────────────────────────────────────────────────────
 
 function loadCache(): { timestamp: number; data: KaminoRates } | null {
-  try {
-    return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
-  } catch { return null; }
+  try { return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8')); }
+  catch { return null; }
 }
 
 function saveCache(data: KaminoRates) {
+  const dir = path.dirname(CACHE_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(CACHE_FILE, JSON.stringify({ timestamp: Date.now(), data }, null, 2));
 }
 
-// ─── Jito Staking APY ──────────────────────────────────────────
+// ─── API Fetchers ───────────────────────────────────────────────
+
+async function fetchJson(url: string): Promise<any> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url} → HTTP ${res.status}`);
+  return res.json();
+}
 
 async function fetchJitoApy(): Promise<{ apy: number; source: string }> {
   try {
-    const res = await fetch(JITO_API);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json() as any;
+    const data = await fetchJson(JITO_API);
     const entries = data.apy;
     if (!entries?.length) throw new Error('No data');
     return { apy: entries[entries.length - 1].data * 100, source: 'jito-api' };
@@ -120,69 +151,84 @@ async function fetchJitoApy(): Promise<{ apy: number; source: string }> {
   }
 }
 
-// ─── Kamino Strategy Metrics ────────────────────────────────────
+async function fetchKlendReserves(market: string): Promise<KlendReserve[]> {
+  const data = await fetchJson(`${KAMINO_BASE}/kamino-market/${market}/reserves/metrics?env=mainnet-beta`);
+  return data
+    .map((r: any) => ({
+      reserve: r.reserve || '',
+      liquidityToken: r.liquidityToken || '?',
+      liquidityTokenMint: r.liquidityTokenMint || '',
+      maxLtv: parseFloat(r.maxLtv || '0'),
+      supplyApy: parseFloat(r.supplyApy || '0') * 100,
+      borrowApy: parseFloat(r.borrowApy || '0') * 100,
+      totalSupplyUsd: parseFloat(r.totalSupplyUsd || '0'),
+      totalBorrowUsd: parseFloat(r.totalBorrowUsd || '0'),
+    }))
+    .filter((r: KlendReserve) => r.totalSupplyUsd > 100); // skip dust
+}
 
-function classifyPair(tokenA: string, tokenB: string): { isCorrelated: boolean; risk: 'low' | 'medium' | 'high' } {
-  const a = tokenA.toUpperCase();
-  const b = tokenB.toUpperCase();
-
-  // Both SOL family → correlated, low IL
-  if (SOL_FAMILY.has(a) && SOL_FAMILY.has(b)) return { isCorrelated: true, risk: 'low' };
-  // Both stablecoins → correlated, low risk
-  if (STABLECOINS.has(a) && STABLECOINS.has(b)) return { isCorrelated: true, risk: 'low' };
-  // SOL + stablecoin → uncorrelated, medium risk
-  if ((SOL_FAMILY.has(a) && STABLECOINS.has(b)) || (STABLECOINS.has(a) && SOL_FAMILY.has(b))) return { isCorrelated: false, risk: 'medium' };
-  // Everything else → high risk
+function classifyPair(a: string, b: string): { isCorrelated: boolean; risk: 'low' | 'medium' | 'high' } {
+  const au = a.toUpperCase(), bu = b.toUpperCase();
+  if (SOL_FAMILY.has(au) && SOL_FAMILY.has(bu)) return { isCorrelated: true, risk: 'low' };
+  if (STABLECOINS.has(au) && STABLECOINS.has(bu)) return { isCorrelated: true, risk: 'low' };
+  if ((SOL_FAMILY.has(au) && STABLECOINS.has(bu)) || (STABLECOINS.has(au) && SOL_FAMILY.has(bu)))
+    return { isCorrelated: false, risk: 'medium' };
   return { isCorrelated: false, risk: 'high' };
 }
 
-async function fetchKaminoStrategies(): Promise<KaminoPool[]> {
-  const res = await fetch(KAMINO_API);
-  if (!res.ok) throw new Error(`Kamino API HTTP ${res.status}`);
-  const data = await res.json() as any[];
-
-  const pools: KaminoPool[] = [];
+async function fetchLpVaults(): Promise<LpVault[]> {
+  const data = await fetchJson(`${KAMINO_BASE}/strategies/metrics?env=mainnet-beta`);
+  const vaults: LpVault[] = [];
 
   for (const s of data) {
     const tvl = parseFloat(s.totalValueLocked || '0');
-    if (tvl < 1000) continue; // Skip dust
-
-    const kapy = s.kaminoApy?.vault || {};
-    const apy7d = parseFloat(kapy.apy7d || '0') * 100;
-    const apy24h = parseFloat(kapy.apy24h || '0') * 100;
-    const apy30d = parseFloat(kapy.apy30d || '0') * 100;
-    const rewardApy = parseFloat(kapy.krewardsApy7d || '0') * 100;
+    if (tvl < 1000) continue;
 
     const vault = s.apy?.vault || {};
     const feeApy = parseFloat(vault.feeApy || '0') * 100;
 
-    // Total = best estimate of current yield
-    const totalApy = Math.max(apy7d, feeApy + rewardApy);
-    if (totalApy <= 0 && apy24h <= 0) continue; // No yield
+    const kapy = s.kaminoApy?.vault || {};
+    const apy24h = parseFloat(kapy.apy24h || '0') * 100;
+
+    // STRATEGY: Only use fee APY (organic yield). KMNO rewards commented out.
+    // const rewardApy = parseFloat(kapy.krewardsApy7d || '0') * 100;
 
     const { isCorrelated, risk } = classifyPair(s.tokenA, s.tokenB);
 
-    pools.push({
+    vaults.push({
       address: s.strategy || '',
-      symbol: `${s.tokenA}-${s.tokenB}`,
       tokenA: s.tokenA,
       tokenB: s.tokenB,
-      product: 'liquidity',
-      apy7d,
-      apy24h,
-      apy30d,
-      feeApy,
-      rewardApy,
-      totalApy,
+      symbol: `${s.tokenA}-${s.tokenB}`,
       tvlUsd: tvl,
       sharePrice: parseFloat(s.sharePrice || '0'),
+      feeApy,
+      feeApy24h: apy24h, // 24h snapshot for trend
       isCorrelated,
       risk,
     });
   }
 
-  pools.sort((a, b) => b.totalApy - a.totalApy);
-  return pools;
+  return vaults.sort((a, b) => b.feeApy - a.feeApy);
+}
+
+async function fetchMultiplyMetrics(market: string): Promise<MultiplyMetrics[]> {
+  try {
+    const data = await fetchJson(`${KAMINO_BASE}/kamino-market/${market}/leverage/metrics`);
+    return data
+      .filter((p: any) => parseFloat(p.tvl || '0') > 1000)
+      .map((p: any) => ({
+        depositReserve: p.depositReserve || '',
+        borrowReserve: p.borrowReserve || '',
+        tag: p.tag || '',
+        tvlUsd: parseFloat(p.tvl || '0'),
+        avgLeverage: parseFloat(p.avgLeverage || '0'),
+        totalDepositedUsd: parseFloat(p.totalDepositedUsd || '0'),
+        totalBorrowedUsd: parseFloat(p.totalBorrowedUsd || '0'),
+      }));
+  } catch {
+    return [];
+  }
 }
 
 // ─── Main Fetch ─────────────────────────────────────────────────
@@ -195,57 +241,50 @@ export async function fetchKaminoRates(forceRefresh = false): Promise<KaminoRate
     }
   }
 
-  const [jito, pools] = await Promise.all([
+  const [jito, klendReserves, lpVaults, multiplyPositions] = await Promise.all([
     fetchJitoApy(),
-    fetchKaminoStrategies(),
+    fetchKlendReserves(PRIMARY_MARKET),
+    fetchLpVaults(),
+    fetchMultiplyMetrics(PRIMARY_MARKET),
   ]);
 
-  // Add JitoSOL staking as virtual pool
-  pools.push({
-    address: 'jito-staking',
-    symbol: 'JITOSOL (staking)',
-    tokenA: 'JITOSOL',
-    tokenB: '',
-    product: 'staking',
-    apy7d: jito.apy,
-    apy24h: jito.apy,
-    apy30d: jito.apy,
-    feeApy: jito.apy,
-    rewardApy: 0,
-    totalApy: jito.apy,
-    tvlUsd: 0,
-    sharePrice: 1,
-    isCorrelated: true,
-    risk: 'low',
-  });
+  // Build summary
+  const solReserve = klendReserves.find(r => r.liquidityToken === 'SOL');
+  const jitosolReserve = klendReserves.find(r => r.liquidityToken === 'JITOSOL');
 
-  pools.sort((a, b) => b.totalApy - a.totalApy);
+  const correlatedLps = lpVaults
+    .filter(v => v.isCorrelated && v.feeApy > 0)
+    .sort((a, b) => b.feeApy - a.feeApy);
 
-  // Best picks
-  const lpPools = pools.filter(p => p.product === 'liquidity');
-  const correlatedLps = lpPools.filter(p => p.isCorrelated && p.tvlUsd > 10000);
-  const solStableLps = lpPools.filter(p => p.risk === 'medium' && p.tvlUsd > 50000 &&
-    (SOL_FAMILY.has(p.tokenA.toUpperCase()) || SOL_FAMILY.has(p.tokenB.toUpperCase())));
+  const solStableLps = lpVaults
+    .filter(v => v.risk === 'medium' && v.feeApy > 0 &&
+      (SOL_FAMILY.has(v.tokenA.toUpperCase()) || SOL_FAMILY.has(v.tokenB.toUpperCase())))
+    .sort((a, b) => b.feeApy - a.feeApy);
 
-  // For SOL growth: best option that involves SOL or LSTs
-  const solPools = pools.filter(p =>
-    SOL_FAMILY.has(p.tokenA.toUpperCase()) || SOL_FAMILY.has(p.tokenB.toUpperCase())
-  );
+  const klendSolSupplyApy = solReserve?.supplyApy || 0;
+  const klendSolBorrowApy = solReserve?.borrowApy || 0;
+  const klendJitosolSupplyApy = jitosolReserve?.supplyApy || 0;
+  const multiplySpread = jito.apy - klendSolBorrowApy;
 
   const result: KaminoRates = {
     timestamp: new Date().toISOString(),
     source: 'kamino-api',
+    market: PRIMARY_MARKET,
     jitoStakingApy: jito.apy,
     jitoStakingSource: jito.source,
-    pools,
-    best: {
-      correlatedLp: correlatedLps[0] || null,
-      solStableLp: solStableLps[0] || null,
-      overall: pools[0] || null,
-      solGrowth: solPools[0] || null,
+    klendReserves,
+    lpVaults,
+    multiplyPositions,
+    summary: {
+      klendSolSupplyApy,
+      klendSolBorrowApy,
+      klendJitosolSupplyApy,
+      multiplySpread,
+      bestCorrelatedLpFeeApy: correlatedLps[0]?.feeApy || 0,
+      bestCorrelatedLpSymbol: correlatedLps[0]?.symbol || 'none',
+      bestSolStableLpFeeApy: solStableLps[0]?.feeApy || 0,
+      bestSolStableLpSymbol: solStableLps[0]?.symbol || 'none',
     },
-    totalPools: pools.length,
-    activePools: pools.filter(p => p.totalApy > 0).length,
   };
 
   saveCache(result);
@@ -255,41 +294,74 @@ export async function fetchKaminoRates(forceRefresh = false): Promise<KaminoRate
 // ─── Pretty Printer ─────────────────────────────────────────────
 
 export function printKaminoRates(rates: KaminoRates) {
+  const s = rates.summary;
+  const line = '─'.repeat(78);
+
   console.log('');
-  console.log('╔══════════════════════════════════════════════════════════════════════════════╗');
-  console.log('║                    🏦 KAMINO YIELD SCANNER (Kamino API)                      ║');
-  console.log(`║  ${rates.timestamp}  |  ${rates.activePools} active pools  |  Source: ${rates.source}    ║`);
-  console.log('╠══════════════════════════════════════════════════════════════════════════════╣');
-  console.log(`║  🥩 JitoSOL Staking: ${rates.jitoStakingApy.toFixed(2)}% APY (${rates.jitoStakingSource})                             ║`);
-  console.log('╠══════════════════════════════════════════════════════════════════════════════╣');
+  console.log(`┌${line}┐`);
+  console.log(`│  🏦 KAMINO YIELD SCANNER — Pure Kamino API                                    │`);
+  console.log(`│  ${rates.timestamp}                                                   │`);
+  console.log(`│  Source: api.kamino.finance  |  Market: ${rates.market.slice(0, 8)}...                     │`);
+  console.log(`├${line}┤`);
 
-  // Correlated LP (low IL — SOL/LST pairs)
-  console.log('║  🏊 CORRELATED LP VAULTS (Low IL — SOL/LST pairs)                            ║');
-  console.log('╠══════════════════════════════════════════════════════════════════════════════╣');
-  const corr = rates.pools.filter(p => p.isCorrelated && p.product === 'liquidity').slice(0, 8);
-  for (const p of corr) {
-    console.log(`║  ${p.symbol.padEnd(22)} 7d:${p.apy7d.toFixed(1).padStart(6)}%  fees:${p.feeApy.toFixed(1).padStart(5)}%  KMNO:${p.rewardApy.toFixed(1).padStart(5)}%  TVL:$${(p.tvlUsd/1e6).toFixed(1).padStart(5)}M  ║`);
+  // Baseline
+  console.log(`│  🥩 JitoSOL staking: ${rates.jitoStakingApy.toFixed(2)}% APY (${rates.jitoStakingSource})                              │`);
+  console.log(`├${line}┤`);
+
+  // K-Lend
+  console.log(`│  📈 K-LEND SUPPLY/BORROW (fee APY only)                                      │`);
+  console.log(`├${line}┤`);
+  const topKlend = rates.klendReserves
+    .filter(r => r.supplyApy > 0.01)
+    .sort((a, b) => b.supplyApy - a.supplyApy)
+    .slice(0, 12);
+  for (const r of topKlend) {
+    const sym = r.liquidityToken.padEnd(12);
+    const sup = (r.supplyApy.toFixed(2) + '%').padStart(8);
+    const bor = (r.borrowApy.toFixed(2) + '%').padStart(8);
+    const tvl = ('$' + (r.totalSupplyUsd / 1e6).toFixed(1) + 'M').padStart(10);
+    const ltv = (r.maxLtv * 100).toFixed(0) + '%';
+    console.log(`│  ${sym} supply:${sup}  borrow:${bor}  TVL:${tvl}  LTV:${ltv.padStart(4)}           │`);
   }
 
-  // SOL-Stablecoin LP (medium IL, higher yield)
-  console.log('╠══════════════════════════════════════════════════════════════════════════════╣');
-  console.log('║  🔥 SOL-STABLE LP VAULTS (Medium IL — Higher Yield)                          ║');
-  console.log('╠══════════════════════════════════════════════════════════════════════════════╣');
-  const solStable = rates.pools.filter(p => p.risk === 'medium' && p.product === 'liquidity').slice(0, 8);
-  for (const p of solStable) {
-    console.log(`║  ${p.symbol.padEnd(22)} 7d:${p.apy7d.toFixed(1).padStart(6)}%  fees:${p.feeApy.toFixed(1).padStart(5)}%  KMNO:${p.rewardApy.toFixed(1).padStart(5)}%  TVL:$${(p.tvlUsd/1e6).toFixed(1).padStart(5)}M  ║`);
+  // LP Vaults — correlated
+  console.log(`├${line}┤`);
+  console.log(`│  🏊 LP VAULTS — Correlated Pairs (Low IL) — Fee APY Only                     │`);
+  console.log(`├${line}┤`);
+  const corrVaults = rates.lpVaults.filter(v => v.isCorrelated && v.feeApy > 0).slice(0, 8);
+  if (corrVaults.length === 0) {
+    console.log(`│  No correlated LP vaults with fee APY > 0                                    │`);
+  }
+  for (const v of corrVaults) {
+    const sym = v.symbol.padEnd(22);
+    const fee = (v.feeApy.toFixed(2) + '%').padStart(8);
+    const tvl = ('$' + (v.tvlUsd / 1e6).toFixed(1) + 'M').padStart(8);
+    console.log(`│  ${sym} fee:${fee}  TVL:${tvl}                                     │`);
   }
 
-  // Best picks
-  console.log('╠══════════════════════════════════════════════════════════════════════════════╣');
-  console.log('║  🏆 BEST PICKS FOR SOL GROWTH                                                ║');
-  console.log('╠══════════════════════════════════════════════════════════════════════════════╣');
-  const b = rates.best;
-  if (b.correlatedLp) console.log(`║  Low IL:      ${b.correlatedLp.symbol.padEnd(18)} ${b.correlatedLp.totalApy.toFixed(2)}% total (fees:${b.correlatedLp.feeApy.toFixed(1)}% + KMNO:${b.correlatedLp.rewardApy.toFixed(1)}%)  ║`);
-  if (b.solStableLp) console.log(`║  Medium IL:   ${b.solStableLp.symbol.padEnd(18)} ${b.solStableLp.totalApy.toFixed(2)}% total                         ║`);
-  if (b.solGrowth) console.log(`║  Best SOL:    ${b.solGrowth.symbol.padEnd(18)} ${b.solGrowth.totalApy.toFixed(2)}% total                         ║`);
-  console.log(`║  Baseline:    JITOSOL staking       ${rates.jitoStakingApy.toFixed(2)}% (zero cost, zero risk)          ║`);
-  console.log('╚══════════════════════════════════════════════════════════════════════════════╝');
+  // LP Vaults — SOL/stablecoin
+  console.log(`├${line}┤`);
+  console.log(`│  🔥 LP VAULTS — SOL/Stablecoin (Medium IL) — Fee APY Only                    │`);
+  console.log(`├${line}┤`);
+  const solStable = rates.lpVaults.filter(v => v.risk === 'medium' && v.feeApy > 0).slice(0, 8);
+  for (const v of solStable) {
+    const sym = v.symbol.padEnd(22);
+    const fee = (v.feeApy.toFixed(2) + '%').padStart(8);
+    const tvl = ('$' + (v.tvlUsd / 1e6).toFixed(1) + 'M').padStart(8);
+    console.log(`│  ${sym} fee:${fee}  TVL:${tvl}                                     │`);
+  }
+
+  // Decision summary
+  console.log(`├${line}┤`);
+  console.log(`│  🏆 DECISION SUMMARY                                                         │`);
+  console.log(`├${line}┤`);
+  console.log(`│  JitoSOL staking:           ${s.klendSolSupplyApy > 0 ? rates.jitoStakingApy.toFixed(2) : '?.??'}% (baseline, zero cost)                      │`);
+  console.log(`│  K-Lend SOL supply:         ${s.klendSolSupplyApy.toFixed(2)}%                                              │`);
+  console.log(`│  K-Lend JitoSOL supply:     ${s.klendJitosolSupplyApy.toFixed(2)}% (+ ${rates.jitoStakingApy.toFixed(2)}% staking = ${(s.klendJitosolSupplyApy + rates.jitoStakingApy).toFixed(2)}% total)            │`);
+  console.log(`│  Multiply spread:           ${s.multiplySpread.toFixed(2)}% (staking - borrow) ${s.multiplySpread > 0 ? '✅ profitable' : '❌ unprofitable'}       │`);
+  console.log(`│  Best correlated LP:        ${s.bestCorrelatedLpSymbol} @ ${s.bestCorrelatedLpFeeApy.toFixed(2)}% fee APY               │`);
+  console.log(`│  Best SOL/stable LP:        ${s.bestSolStableLpSymbol} @ ${s.bestSolStableLpFeeApy.toFixed(2)}% fee APY               │`);
+  console.log(`└${line}┘`);
 }
 
 // ─── CLI ────────────────────────────────────────────────────────
