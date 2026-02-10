@@ -7,9 +7,12 @@ config/performance.jsonl
 
 # Build
 dist/
-*.js
 *.js.map
 *.d.ts
+
+# Compiled JS (keep config files)
+src/**/*.js
+!jest.config.js
 
 # Misc
 .DS_Store
