@@ -1451,13 +1451,15 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
 
     // SOL price
     let solPrice = 200;
+    let jitosolPrice = 200;
     try {
-      const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+      const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,jito-staked-sol&vs_currencies=usd');
       const priceData = await priceRes.json() as any;
       solPrice = priceData.solana?.usd || 200;
+      jitosolPrice = priceData['jito-staked-sol']?.usd || solPrice * 1.08;
     } catch {}
-    const totalUsd = (solBalance * solPrice + jitosolBalance * solPrice * 1.08).toFixed(2);
-    send({ type: 'step', text: 'SOL price: $' + solPrice.toFixed(2) + ' | Total value: ~$' + totalUsd, icon: '💲' });
+    const totalUsd = (solBalance * solPrice + jitosolBalance * jitosolPrice).toFixed(2);
+    send({ type: 'step', text: 'SOL: $' + solPrice.toFixed(2) + ' | JitoSOL: $' + jitosolPrice.toFixed(2) + ' | Total value: ~$' + totalUsd, icon: '💲' });
 
     // Step 3: Fetch live rates
     send({ type: 'section', text: '📊 Step 3: Scanning live yields across Kamino...' });
@@ -1758,15 +1760,18 @@ app.get('/api/decision-tree', async (_req: Request, res: Response) => {
     verdict += ` Idle ${latest.idleSol} SOL: keep in wallet (switching cost exceeds benefit).`;
   }
 
-  // Get live SOL price from cache or fetch
+  // Get live prices from cache or fetch
   let solPrice = 200;
+  let jitosolPrice = 200;
   try {
     if (priceCache && priceCache.sol > 0) {
       solPrice = priceCache.sol;
+      jitosolPrice = (priceCache as any).jitoSol || solPrice * 1.08;
     } else {
-      const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+      const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,jito-staked-sol&vs_currencies=usd');
       const priceData = await priceRes.json() as any;
       solPrice = priceData.solana?.usd || 200;
+      jitosolPrice = priceData['jito-staked-sol']?.usd || solPrice * 1.08;
     }
   } catch {}
 
@@ -1775,7 +1780,7 @@ app.get('/api/decision-tree', async (_req: Request, res: Response) => {
     currentStrategy: latest.currentStrategy,
     currentApy: latest.currentApy,
     capitalSol: latest.capitalSol,
-    capitalUsd: (parseFloat(latest.capitalSol || '0') * solPrice).toFixed(2),
+    capitalUsd: (parseFloat(latest.capitalSol || '0') * jitosolPrice).toFixed(2),
     action: latest.shouldRebalance ? 'REBALANCE' : 'HOLD',
     verdict,
     steps,
