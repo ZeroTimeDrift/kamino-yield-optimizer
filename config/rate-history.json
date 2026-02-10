@@ -268,5 +268,35 @@
     "timestamp": 1770460252989,
     "strategyId": "klend_sol_supply",
     "apy": 8.8835165936908
+  },
+  {
+    "timestamp": 1770710786104,
+    "strategyId": "hold_jitosol",
+    "apy": 6.28782492180171
+  },
+  {
+    "timestamp": 1770710786104,
+    "strategyId": "lp_vault",
+    "apy": 1.155048974772884
+  },
+  {
+    "timestamp": 1770710786104,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.648580295598803
+  },
+  {
+    "timestamp": 1770710806357,
+    "strategyId": "hold_jitosol",
+    "apy": 6.28782492180171
+  },
+  {
+    "timestamp": 1770710806357,
+    "strategyId": "lp_vault",
+    "apy": 1.1512449202589778
+  },
+  {
+    "timestamp": 1770710806357,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.648564174196346
   }
 ]

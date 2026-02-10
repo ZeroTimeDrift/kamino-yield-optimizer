@@ -524,6 +524,12 @@ tr:hover { background: var(--bg3); }
   </div>
 </div>
 
+<!-- Decision Tree — Full Width -->
+<div class="card" style="margin-bottom:16px">
+  <h2>🧠 Decision Tree — How the Agent Thinks</h2>
+  <div id="decisionTree">Loading decision tree...</div>
+</div>
+
 <div class="refresh-bar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
@@ -1034,9 +1040,83 @@ async function loadDashboard() {
   }
 }
 
+// Decision Tree loader
+async function loadDecisionTree() {
+  const tree = await fetchJson('/api/decision-tree');
+  const el = document.getElementById('decisionTree');
+  if (!tree || tree.error) {
+    el.innerHTML = '<p style="color:var(--text2)">No decision data yet. Run the optimizer to generate.</p>';
+    return;
+  }
+
+  let html = '<div style="font-family:monospace;font-size:0.85rem;line-height:1.8">';
+
+  // Current State
+  html += '<div style="padding:12px;background:var(--bg3);border-radius:8px;margin-bottom:12px">';
+  html += '<strong style="color:#58a6ff;font-size:1rem">📍 Current State</strong><br>';
+  html += '<span style="color:var(--text2)">Strategy:</span> <strong style="color:#3fb950">' + (tree.currentStrategy || 'unknown') + '</strong>';
+  html += ' &nbsp;|&nbsp; <span style="color:var(--text2)">APY:</span> <strong>' + (tree.currentApy || '?') + '%</strong>';
+  html += ' &nbsp;|&nbsp; <span style="color:var(--text2)">Capital:</span> <strong>' + (tree.capitalSol || '?') + ' SOL</strong>';
+  html += ' ($' + (tree.capitalUsd || '?') + ')';
+  html += '</div>';
+
+  // Decision Flow
+  html += '<div style="padding:12px;background:var(--bg3);border-radius:8px;margin-bottom:12px">';
+  html += '<strong style="color:#f0883e;font-size:1rem">🌳 Decision Flow</strong><br><br>';
+
+  if (tree.steps && tree.steps.length > 0) {
+    for (const step of tree.steps) {
+      const indent = '&nbsp;'.repeat((step.depth || 0) * 4);
+      const icon = step.pass === true ? '✅' : step.pass === false ? '❌' : step.type === 'info' ? 'ℹ️' : '🔍';
+      const color = step.pass === true ? '#3fb950' : step.pass === false ? '#f85149' : step.type === 'action' ? '#58a6ff' : '#e6edf3';
+      html += indent + icon + ' <span style="color:' + color + '">' + step.text + '</span><br>';
+    }
+  }
+  html += '</div>';
+
+  // Strategy Comparison Table
+  if (tree.strategies && tree.strategies.length > 0) {
+    html += '<div style="padding:12px;background:var(--bg3);border-radius:8px;margin-bottom:12px">';
+    html += '<strong style="color:#bc8cff;font-size:1rem">⚖️ Strategy Comparison (All Costs Included)</strong><br><br>';
+    html += '<table style="width:100%"><tr>';
+    html += '<th>Strategy</th><th>Gross APY</th><th>Net APY</th><th>Switch Cost</th><th>Break-Even</th><th>Score</th>';
+    html += '</tr>';
+    for (const s of tree.strategies) {
+      const isCurrent = s.current;
+      const isBest = s.best;
+      const rowStyle = isCurrent ? 'background:rgba(88,166,255,0.1)' : isBest ? 'background:rgba(63,185,80,0.1)' : '';
+      const marker = isCurrent ? ' ← current' : isBest ? ' ← best' : '';
+      html += '<tr style="' + rowStyle + '">';
+      html += '<td><strong>' + s.name + '</strong><span style="color:var(--text2);font-size:0.8rem">' + marker + '</span></td>';
+      html += '<td>' + s.grossApy + '%</td>';
+      html += '<td style="color:' + (parseFloat(s.netApy) > parseFloat(s.grossApy) * 0.8 ? '#3fb950' : '#d29922') + '">' + s.netApy + '%</td>';
+      html += '<td>' + (s.switchCost || '—') + '</td>';
+      html += '<td>' + (s.breakEven || '—') + '</td>';
+      html += '<td><strong>' + s.score + '</strong></td>';
+      html += '</tr>';
+    }
+    html += '</table>';
+    html += '</div>';
+  }
+
+  // Final Verdict
+  html += '<div style="padding:16px;background:' + (tree.action === 'HOLD' ? 'rgba(63,185,80,0.15)' : 'rgba(88,166,255,0.15)') + ';border-radius:8px;border:1px solid ' + (tree.action === 'HOLD' ? 'rgba(63,185,80,0.3)' : 'rgba(88,166,255,0.3)') + '">';
+  html += '<strong style="font-size:1.1rem">' + (tree.action === 'HOLD' ? '✅ VERDICT: HOLD' : '🔄 VERDICT: REBALANCE') + '</strong><br>';
+  html += '<span style="color:var(--text2)">' + (tree.verdict || '') + '</span>';
+  html += '</div>';
+
+  // Timestamp
+  html += '<div style="margin-top:8px;font-size:0.8rem;color:var(--text2)">Last evaluated: ' + fmtTime(tree.timestamp) + '</div>';
+  html += '</div>';
+
+  el.innerHTML = html;
+}
+
 // Initial load + auto-refresh
 loadDashboard();
+loadDecisionTree();
 setInterval(loadDashboard, 60000);
+setInterval(loadDecisionTree, 120000);
 // Prices refresh every 60s independently
 setInterval(loadPrices, 60000);
 </script>
@@ -1204,6 +1284,109 @@ app.get('/api/portfolio-live', async (_req: Request, res: Response) => {
   } catch (err: any) {
     res.json({ error: err.message });
   }
+});
+
+// Decision Tree — human-readable reasoning from latest rebalancer run
+app.get('/api/decision-tree', (_req: Request, res: Response) => {
+  const rebalancerLog = readJsonlFile('rebalancer-log.jsonl', 5);
+  if (rebalancerLog.length === 0) {
+    return res.json({ error: 'No decision data yet' });
+  }
+
+  const latest = rebalancerLog[rebalancerLog.length - 1];
+  const steps: { depth: number; text: string; pass?: boolean; type?: string }[] = [];
+
+  // Build the decision tree from reasoning
+  steps.push({ depth: 0, text: 'Start: Evaluate current position', type: 'info' });
+  steps.push({ depth: 1, text: `Current strategy: ${latest.currentStrategy} @ ${latest.currentApy || '?'}% APY`, type: 'info' });
+  steps.push({ depth: 1, text: `Capital: ${latest.capitalSol || '?'} SOL | Idle: ${latest.idleSol || '0'} SOL`, type: 'info' });
+
+  // Scan step
+  steps.push({ depth: 0, text: 'Scan all available strategies...', type: 'info' });
+
+  if (latest.strategies) {
+    for (const s of latest.strategies) {
+      const isCurrent = s.id === latest.currentStrategy;
+      if (isCurrent) {
+        steps.push({ depth: 1, text: `${s.id}: ${s.grossApy}% gross → ${s.netApy}% net (CURRENT)`, type: 'info' });
+      } else {
+        const improvement = (parseFloat(s.netApy) - parseFloat(latest.currentApy || '0')).toFixed(2);
+        const better = parseFloat(improvement) > 0;
+        steps.push({ depth: 1, text: `${s.id}: ${s.grossApy}% gross → ${s.netApy}% net (${better ? '+' : ''}${improvement}% vs current)`, pass: better ? undefined : false, type: 'info' });
+      }
+    }
+  }
+
+  // Decision criteria
+  steps.push({ depth: 0, text: 'Apply decision criteria...', type: 'info' });
+
+  if (latest.reasoning) {
+    for (const line of latest.reasoning) {
+      if (line.startsWith('✅ PASS:')) {
+        steps.push({ depth: 1, text: line.replace('✅ PASS: ', ''), pass: true });
+      } else if (line.startsWith('❌ FAIL:')) {
+        steps.push({ depth: 1, text: line.replace('❌ FAIL: ', ''), pass: false });
+      } else if (line.startsWith('Current strategy:') || line.startsWith('Capital:') || line.startsWith('Idle:')) {
+        // Already shown above
+      } else if (line.startsWith('Best alternative:')) {
+        steps.push({ depth: 1, text: line, type: 'info' });
+      } else if (line.startsWith('Net improvement:')) {
+        const val = parseFloat(line.split(':')[1]);
+        steps.push({ depth: 1, text: line, pass: val >= 1 ? true : false });
+      } else if (line.startsWith('Break-even:')) {
+        const val = parseFloat(line.split(':')[1]);
+        steps.push({ depth: 1, text: line, pass: val <= 7 ? true : false });
+      } else if (line.startsWith('Switch cost:')) {
+        steps.push({ depth: 1, text: line, type: 'info' });
+      } else if (line.includes('recommendation:') || line.includes('Evaluating idle')) {
+        steps.push({ depth: 1, text: line, type: 'info' });
+      } else if (line.trim()) {
+        steps.push({ depth: 1, text: line, type: 'info' });
+      }
+    }
+  }
+
+  // Build strategy table
+  const strategyTable = (latest.strategies || []).map((s: any) => ({
+    name: s.id,
+    grossApy: s.grossApy,
+    netApy: s.netApy,
+    switchCost: s.switchCostSol ? s.switchCostSol + ' SOL' : '—',
+    breakEven: s.breakEvenDays && s.breakEvenDays < 9999 ? s.breakEvenDays + ' days' : 'N/A',
+    score: s.score,
+    current: s.id === latest.currentStrategy,
+    best: latest.bestAlternative === s.id,
+  }));
+
+  // Compute verdict
+  let verdict = '';
+  if (latest.shouldRebalance) {
+    verdict = `Move from ${latest.currentStrategy} to ${latest.bestAlternative}. APY improvement justifies the switch cost. Break-even in ${latest.breakEvenDays || '?'} days.`;
+  } else if (latest.bestAlternative && latest.bestAlternativeApy) {
+    verdict = `Best alternative (${latest.bestAlternative} @ ${latest.bestAlternativeApy}%) doesn't meet all criteria. Current position is optimal given fees and risk.`;
+  } else {
+    verdict = `No better strategy available. Current position is the best risk-adjusted choice.`;
+  }
+
+  // Idle capital verdict
+  if (latest.idleDeploy && latest.idleStrategy) {
+    verdict += ` Idle capital: deploy to ${latest.idleStrategy}.`;
+  } else if (latest.idleSol && parseFloat(latest.idleSol) > 0.01) {
+    verdict += ` Idle ${latest.idleSol} SOL: keep in wallet (switching cost exceeds benefit).`;
+  }
+
+  const solPrice = 200; // approximate
+  res.json({
+    timestamp: latest.timestamp,
+    currentStrategy: latest.currentStrategy,
+    currentApy: latest.currentApy,
+    capitalSol: latest.capitalSol,
+    capitalUsd: (parseFloat(latest.capitalSol || '0') * solPrice).toFixed(2),
+    action: latest.shouldRebalance ? 'REBALANCE' : 'HOLD',
+    verdict,
+    steps,
+    strategies: strategyTable,
+  });
 });
 
 // Health check
