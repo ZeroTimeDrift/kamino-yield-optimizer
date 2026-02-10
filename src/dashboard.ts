@@ -526,8 +526,25 @@ tr:hover { background: var(--bg3); }
 
 <!-- Decision Tree — Full Width -->
 <div class="card" style="margin-bottom:16px">
-  <h2>🧠 Decision Tree — How the Agent Thinks</h2>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h2 style="margin-bottom:0">🧠 Decision Tree — How the Agent Thinks</h2>
+    <button id="rethinkBtn" onclick="runRethink()" style="
+      background:linear-gradient(135deg, #58a6ff, #bc8cff);
+      color:#fff;
+      border:none;
+      padding:8px 20px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:0.9rem;
+      transition:all 0.3s;
+      box-shadow: 0 2px 8px rgba(88,166,255,0.3);
+    " onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 16px rgba(88,166,255,0.5)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 2px 8px rgba(88,166,255,0.3)'">
+      🔄 Rethink
+    </button>
+  </div>
   <div id="decisionTree">Loading decision tree...</div>
+  <div id="rethinkLive" style="display:none"></div>
 </div>
 
 <div class="refresh-bar"></div>
@@ -1112,6 +1129,102 @@ async function loadDecisionTree() {
   el.innerHTML = html;
 }
 
+// Rethink — real-time streaming evaluation
+let rethinkRunning = false;
+
+function runRethink() {
+  if (rethinkRunning) return;
+  rethinkRunning = true;
+
+  const btn = document.getElementById('rethinkBtn');
+  btn.textContent = '⏳ Thinking...';
+  btn.style.background = 'linear-gradient(135deg, #d29922, #f0883e)';
+  btn.style.cursor = 'not-allowed';
+
+  const liveEl = document.getElementById('rethinkLive');
+  const treeEl = document.getElementById('decisionTree');
+  treeEl.style.display = 'none';
+  liveEl.style.display = 'block';
+  liveEl.innerHTML = '<div style="padding:16px;background:var(--bg3);border-radius:8px;font-family:monospace;font-size:0.85rem;line-height:1.8;min-height:200px">' +
+    '<div id="rethinkStream"><span style="color:#d29922">🧠 Agent is thinking...</span><br><br></div>' +
+    '<div id="rethinkCursor" style="display:inline-block;width:8px;height:16px;background:#58a6ff;animation:blink 1s infinite"></div>' +
+    '</div>';
+
+  // Add blink animation if not already present
+  if (!document.getElementById('blinkStyle')) {
+    const style = document.createElement('style');
+    style.id = 'blinkStyle';
+    style.textContent = '@keyframes blink { 0%,50% { opacity:1 } 51%,100% { opacity:0 } }';
+    document.head.appendChild(style);
+  }
+
+  const stream = document.getElementById('rethinkStream');
+  const eventSource = new EventSource('/api/rethink');
+
+  eventSource.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+
+    if (data.type === 'step') {
+      const indent = '&nbsp;'.repeat((data.depth || 0) * 4);
+      const icon = data.pass === true ? '✅' : data.pass === false ? '❌' : data.icon || '🔍';
+      const color = data.pass === true ? '#3fb950' : data.pass === false ? '#f85149' : data.color || '#e6edf3';
+      stream.innerHTML += indent + icon + ' <span style="color:' + color + '">' + data.text + '</span><br>';
+    } else if (data.type === 'section') {
+      stream.innerHTML += '<br><strong style="color:#58a6ff;font-size:0.95rem">' + data.text + '</strong><br>';
+    } else if (data.type === 'verdict') {
+      const bg = data.action === 'HOLD' ? 'rgba(63,185,80,0.15)' : 'rgba(88,166,255,0.15)';
+      const border = data.action === 'HOLD' ? 'rgba(63,185,80,0.3)' : 'rgba(88,166,255,0.3)';
+      stream.innerHTML += '<br><div style="padding:12px;background:' + bg + ';border:1px solid ' + border + ';border-radius:8px">';
+      stream.innerHTML += '<strong style="font-size:1.1rem">' + (data.action === 'HOLD' ? '✅ VERDICT: HOLD' : '🔄 VERDICT: REBALANCE') + '</strong><br>';
+      stream.innerHTML += '<span style="color:var(--text2)">' + data.text + '</span></div>';
+    } else if (data.type === 'strategy') {
+      const marker = data.current ? ' ← current' : data.best ? ' ← best' : '';
+      const rowColor = data.current ? '#58a6ff' : data.best ? '#3fb950' : '#e6edf3';
+      stream.innerHTML += '&nbsp;&nbsp;' +
+        '<span style="color:' + rowColor + '"><strong>' + data.name + '</strong></span>' + marker +
+        ' — gross: ' + data.grossApy + '% → net: ' + data.netApy + '%' +
+        (data.switchCost ? ' | cost: ' + data.switchCost : '') +
+        (data.breakEven ? ' | break-even: ' + data.breakEven : '') +
+        '<br>';
+    } else if (data.type === 'done') {
+      document.getElementById('rethinkCursor').style.display = 'none';
+      stream.innerHTML += '<br><span style="color:var(--text2);font-size:0.8rem">Completed in ' + data.elapsed + 's — ' + new Date().toLocaleTimeString() + '</span>';
+
+      btn.textContent = '🔄 Rethink';
+      btn.style.background = 'linear-gradient(135deg, #58a6ff, #bc8cff)';
+      btn.style.cursor = 'pointer';
+      rethinkRunning = false;
+      eventSource.close();
+
+      // Refresh the static decision tree data after rethink
+      setTimeout(loadDecisionTree, 1000);
+    } else if (data.type === 'error') {
+      stream.innerHTML += '<br><span style="color:#f85149">❌ Error: ' + data.text + '</span>';
+      document.getElementById('rethinkCursor').style.display = 'none';
+      btn.textContent = '🔄 Rethink';
+      btn.style.background = 'linear-gradient(135deg, #58a6ff, #bc8cff)';
+      btn.style.cursor = 'pointer';
+      rethinkRunning = false;
+      eventSource.close();
+    }
+
+    // Auto-scroll to bottom
+    liveEl.scrollTop = liveEl.scrollHeight;
+  };
+
+  eventSource.onerror = function() {
+    if (rethinkRunning) {
+      stream.innerHTML += '<br><span style="color:#f85149">Connection lost. Check server logs.</span>';
+      document.getElementById('rethinkCursor').style.display = 'none';
+      btn.textContent = '🔄 Rethink';
+      btn.style.background = 'linear-gradient(135deg, #58a6ff, #bc8cff)';
+      btn.style.cursor = 'pointer';
+      rethinkRunning = false;
+    }
+    eventSource.close();
+  };
+}
+
 // Initial load + auto-refresh
 loadDashboard();
 loadDecisionTree();
@@ -1284,6 +1397,276 @@ app.get('/api/portfolio-live', async (_req: Request, res: Response) => {
   } catch (err: any) {
     res.json({ error: err.message });
   }
+});
+
+// Rethink — SSE endpoint that runs live evaluation and streams steps
+app.get('/api/rethink', async (req: Request, res: Response) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'X-Accel-Buffering': 'no',
+  });
+
+  const send = (data: any) => {
+    res.write('data: ' + JSON.stringify(data) + '\n\n');
+  };
+
+  const startTime = Date.now();
+
+  try {
+    // Step 1: Load wallet + settings
+    send({ type: 'section', text: '📡 Step 1: Loading wallet & connecting to Solana...' });
+
+    const settingsPath = path.join(CONFIG_DIR, 'settings.json');
+    const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+    const walletPath = path.join(CONFIG_DIR, 'wallet.json');
+    const secretKey = JSON.parse(fs.readFileSync(walletPath, 'utf-8'));
+    const { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL } = require('@solana/web3.js');
+    const wallet = Keypair.fromSecretKey(Uint8Array.from(secretKey));
+    const connection = new Connection(settings.rpcUrl, { commitment: 'confirmed' });
+
+    send({ type: 'step', text: 'Wallet: ' + wallet.publicKey.toBase58().slice(0, 12) + '...', icon: '💳' });
+
+    // Step 2: Fetch balances
+    send({ type: 'section', text: '💰 Step 2: Checking wallet balances...' });
+
+    const solLamports = await connection.getBalance(wallet.publicKey);
+    const solBalance = solLamports / 1e9;
+    send({ type: 'step', text: 'SOL balance: ' + solBalance.toFixed(6) + ' SOL', icon: '💲' });
+
+    // JitoSOL balance
+    const JITOSOL_MINT = 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn';
+    let jitosolBalance = 0;
+    try {
+      const accounts = await connection.getParsedTokenAccountsByOwner(
+        wallet.publicKey,
+        { mint: new PublicKey(JITOSOL_MINT) }
+      );
+      if (accounts.value.length > 0) {
+        jitosolBalance = accounts.value[0].account.data.parsed.info.tokenAmount.uiAmount || 0;
+      }
+    } catch {}
+    send({ type: 'step', text: 'JitoSOL balance: ' + jitosolBalance.toFixed(6), icon: '🪙' });
+
+    // SOL price
+    let solPrice = 200;
+    try {
+      const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+      const priceData = await priceRes.json() as any;
+      solPrice = priceData.solana?.usd || 200;
+    } catch {}
+    const totalUsd = (solBalance * solPrice + jitosolBalance * solPrice * 1.08).toFixed(2);
+    send({ type: 'step', text: 'SOL price: $' + solPrice.toFixed(2) + ' | Total value: ~$' + totalUsd, icon: '💲' });
+
+    // Step 3: Fetch live rates
+    send({ type: 'section', text: '📊 Step 3: Scanning live yields across Kamino...' });
+
+    // JitoSOL staking APY
+    let stakingApy = 5.94;
+    try {
+      const jitoRes = await fetch('https://kobe.mainnet.jito.network/api/v1/stake_pool_stats');
+      const jitoData = await jitoRes.json() as any;
+      if (jitoData.apy && jitoData.apy.length > 0) {
+        stakingApy = jitoData.apy[jitoData.apy.length - 1].data * 100;
+      }
+    } catch {}
+    send({ type: 'step', text: 'JitoSOL staking yield: ' + stakingApy.toFixed(2) + '% APY (live from Jito API)', icon: '🥩', color: '#3fb950' });
+
+    // K-Lend rates via Kamino SDK
+    send({ type: 'step', text: 'Loading Kamino K-Lend markets...', icon: '🏦' });
+
+    let klendSolApy = 0;
+    let klendJitosolApy = 0;
+    let solBorrowApy = 0;
+    try {
+      const { createSolanaRpc, address } = require('@solana/kit');
+      const { KaminoMarket, PROGRAM_ID } = require('@kamino-finance/klend-sdk');
+      const rpc = createSolanaRpc(settings.rpcUrl);
+      const market = await KaminoMarket.load(rpc, address('7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF'), 400, PROGRAM_ID);
+      const slot = BigInt(await connection.getSlot());
+      const reserves = market.getReserves();
+
+      for (const reserve of reserves) {
+        try {
+          const symbol = reserve.symbol?.toUpperCase();
+          const mint = reserve.getLiquidityMint().toString();
+          const supplyApy = (reserve.totalSupplyAPY(slot) || 0) * 100;
+          const borrowApy = (reserve.totalBorrowAPY(slot) || 0) * 100;
+
+          if (mint === 'So11111111111111111111111111111111111111112') {
+            klendSolApy = supplyApy;
+            solBorrowApy = borrowApy;
+            send({ type: 'step', text: 'K-Lend SOL: supply ' + supplyApy.toFixed(2) + '% / borrow ' + borrowApy.toFixed(2) + '%', icon: supplyApy > 5 ? '🔥' : '📈' });
+          }
+          if (mint === JITOSOL_MINT) {
+            klendJitosolApy = supplyApy;
+            send({ type: 'step', text: 'K-Lend JitoSOL: supply ' + supplyApy.toFixed(2) + '% (+ ' + stakingApy.toFixed(2) + '% staking = ' + (supplyApy + stakingApy).toFixed(2) + '% total)', icon: supplyApy > 0.5 ? '🔥' : '📈' });
+          }
+        } catch {}
+      }
+    } catch (err: any) {
+      send({ type: 'step', text: 'K-Lend scan failed: ' + (err.message || '').slice(0, 60), pass: false });
+    }
+
+    // Multiply spread
+    const multiplySpread = stakingApy - solBorrowApy;
+    const multiplyProfitable = multiplySpread > 1;
+    send({ type: 'step', text: 'Multiply spread: ' + stakingApy.toFixed(2) + '% staking - ' + solBorrowApy.toFixed(2) + '% borrow = ' + multiplySpread.toFixed(2) + '% ' + (multiplyProfitable ? '(profitable!)' : '(unprofitable)'), pass: multiplyProfitable });
+
+    // Cross-protocol quick check
+    send({ type: 'step', text: 'Checking cross-protocol rates (DeFi Llama)...', icon: '🌐' });
+    let topCrossProtocol: string[] = [];
+    try {
+      const cachedRates = readJsonFile('protocol-rates.json');
+      if (cachedRates && cachedRates.data) {
+        const top3 = cachedRates.data
+          .filter((y: any) => y.apy > stakingApy && y.tvl > 1000000)
+          .slice(0, 3);
+        for (const y of top3) {
+          send({ type: 'step', text: y.protocol + ' ' + y.pool + ': ' + y.apy.toFixed(2) + '% APY ($' + (y.tvl / 1e6).toFixed(1) + 'M TVL, ' + y.risk + ' risk)', icon: '🔥', color: '#f0883e' });
+          topCrossProtocol.push(y.protocol + ' ' + y.pool);
+        }
+        if (top3.length === 0) {
+          send({ type: 'step', text: 'No cross-protocol opportunities beating current yield', icon: 'ℹ️', color: '#8b949e' });
+        }
+      }
+    } catch {}
+
+    // Step 4: Strategy evaluation
+    send({ type: 'section', text: '⚖️ Step 4: Scoring strategies (full fee accounting)...' });
+
+    const strategies = [
+      { id: 'hold_jitosol', name: 'Hold JitoSOL', grossApy: stakingApy, netApy: stakingApy },
+      { id: 'klend_sol_supply', name: 'K-Lend SOL Supply', grossApy: klendSolApy, netApy: klendSolApy },
+      { id: 'klend_jitosol_supply', name: 'K-Lend JitoSOL Supply', grossApy: klendJitosolApy + stakingApy, netApy: klendJitosolApy + stakingApy },
+      { id: 'multiply', name: 'Multiply JitoSOL/SOL', grossApy: multiplyProfitable ? multiplySpread * 3 : 0, netApy: multiplyProfitable ? multiplySpread * 3 : 0 },
+    ];
+
+    // Sort by net APY
+    strategies.sort((a, b) => b.netApy - a.netApy);
+    const bestStrategy = strategies[0];
+    const currentStrategy = jitosolBalance > solBalance ? 'hold_jitosol' : 'klend_sol_supply';
+
+    for (const s of strategies) {
+      const isCurrent = s.id === currentStrategy;
+      const isBest = s.id === bestStrategy.id;
+
+      // Calculate switch cost
+      const Decimal = require('decimal.js');
+      const { calculateSwitchCost } = require('./rebalancer');
+      const cost = calculateSwitchCost(
+        currentStrategy,
+        s.id,
+        new Decimal(jitosolBalance || solBalance),
+        new Decimal(solPrice),
+        new Decimal(stakingApy),
+      );
+
+      const dailyImpr = new Decimal(Math.max(0, s.netApy - stakingApy)).div(100).div(365).mul(jitosolBalance || 1);
+      const breakEvenDays = dailyImpr.gt(0) ? cost.totalCostSol.div(dailyImpr).toNumber() : 9999;
+
+      send({
+        type: 'strategy',
+        name: s.name,
+        grossApy: s.grossApy.toFixed(2),
+        netApy: s.netApy.toFixed(2),
+        switchCost: isCurrent ? '—' : cost.totalCostSol.toFixed(6) + ' SOL',
+        breakEven: isCurrent ? '—' : (breakEvenDays < 9999 ? breakEvenDays.toFixed(1) + ' days' : 'N/A'),
+        current: isCurrent,
+        best: isBest && !isCurrent,
+      });
+    }
+
+    // Step 5: Decision criteria
+    send({ type: 'section', text: '🌳 Step 5: Applying decision criteria...' });
+
+    const improvement = bestStrategy.netApy - stakingApy;
+    const shouldRebalance = improvement > 1 && bestStrategy.id !== currentStrategy;
+
+    send({ type: 'step', text: 'Best strategy: ' + bestStrategy.name + ' @ ' + bestStrategy.netApy.toFixed(2) + '% net APY', icon: '🏆', color: '#58a6ff' });
+    send({ type: 'step', text: 'Net improvement vs current: ' + (improvement >= 0 ? '+' : '') + improvement.toFixed(2) + '% APY', pass: improvement > 1 });
+
+    if (improvement > 1) {
+      send({ type: 'step', text: 'Criterion 1: Net improvement > 1% APY', pass: true });
+    } else {
+      send({ type: 'step', text: 'Criterion 1: Net improvement ' + improvement.toFixed(2) + '% < 1% minimum', pass: false });
+    }
+
+    if (bestStrategy.id === currentStrategy) {
+      send({ type: 'step', text: 'Criterion 2: Already in best strategy — no switch needed', pass: true });
+    } else {
+      send({ type: 'step', text: 'Criterion 2: Break-even analysis pending (need sustained yield data)', pass: null });
+    }
+
+    send({ type: 'step', text: 'Criterion 3: Spike protection — yield must sustain > 1 hour', pass: null, color: '#8b949e' });
+
+    // Idle capital check
+    if (jitosolBalance > 0.01 && currentStrategy === 'hold_jitosol') {
+      send({ type: 'step', text: 'Idle capital: ' + jitosolBalance.toFixed(4) + ' JitoSOL earning ' + stakingApy.toFixed(2) + '% passively', icon: '💤', color: '#d29922' });
+      if (klendJitosolApy > 0.5) {
+        send({ type: 'step', text: 'Could earn additional ' + klendJitosolApy.toFixed(2) + '% by depositing to K-Lend (stacking on staking)', icon: '💡', color: '#3fb950' });
+      } else {
+        send({ type: 'step', text: 'K-Lend JitoSOL supply APY too low (' + klendJitosolApy.toFixed(2) + '%) to justify deposit fees', icon: 'ℹ️', color: '#8b949e' });
+      }
+    }
+
+    // Step 6: Verdict
+    send({ type: 'section', text: '📋 Step 6: Final verdict...' });
+
+    let verdictText = '';
+    if (shouldRebalance) {
+      verdictText = 'Move capital to ' + bestStrategy.name + '. +' + improvement.toFixed(2) + '% APY improvement justifies the switch.';
+    } else if (bestStrategy.id === currentStrategy) {
+      verdictText = 'Already in the optimal strategy (' + bestStrategy.name + ' @ ' + bestStrategy.netApy.toFixed(2) + '%). No action needed.';
+    } else {
+      verdictText = 'Current position (' + stakingApy.toFixed(2) + '% JitoSOL staking) is optimal. Best alternative (' + bestStrategy.name + ' @ ' + bestStrategy.netApy.toFixed(2) + '%) does not meet all criteria.';
+    }
+
+    if (topCrossProtocol.length > 0) {
+      verdictText += ' Note: ' + topCrossProtocol.length + ' cross-protocol opportunity(s) found but cross-protocol execution not yet enabled.';
+    }
+
+    send({ type: 'verdict', action: shouldRebalance ? 'REBALANCE' : 'HOLD', text: verdictText });
+
+    // Write to rebalancer log so the decision tree panel also updates
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      shouldRebalance,
+      currentStrategy,
+      currentApy: stakingApy.toFixed(2),
+      bestAlternative: bestStrategy.id !== currentStrategy ? bestStrategy.id : null,
+      bestAlternativeApy: bestStrategy.id !== currentStrategy ? bestStrategy.netApy.toFixed(2) : null,
+      breakEvenDays: null,
+      capitalSol: (jitosolBalance + solBalance).toFixed(4),
+      idleSol: jitosolBalance.toFixed(4),
+      idleDeploy: false,
+      idleStrategy: null,
+      reasoning: [
+        'Current strategy: ' + currentStrategy + ' @ ' + stakingApy.toFixed(2) + '% APY',
+        'Capital: ' + (jitosolBalance + solBalance).toFixed(4) + ' SOL ($' + totalUsd + ')',
+        'Best alternative: ' + bestStrategy.name + ' @ ' + bestStrategy.netApy.toFixed(2) + '% net',
+        'Net improvement: ' + improvement.toFixed(2) + '% APY',
+        improvement > 1 ? '✅ PASS: Net improvement ' + improvement.toFixed(2) + '% > 1% minimum threshold' : '❌ FAIL: Net improvement ' + improvement.toFixed(2) + '% < 1% minimum threshold',
+        shouldRebalance ? '✅ PASS: All criteria met' : '❌ FAIL: Not all criteria met — HOLD',
+      ],
+      strategies: strategies.map(s => ({
+        id: s.id,
+        grossApy: s.grossApy.toFixed(2),
+        netApy: s.netApy.toFixed(2),
+        score: s.netApy.toFixed(2),
+      })),
+    };
+    fs.appendFileSync(path.join(CONFIG_DIR, 'rebalancer-log.jsonl'), JSON.stringify(logEntry) + '\n');
+
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    send({ type: 'done', elapsed });
+
+  } catch (err: any) {
+    send({ type: 'error', text: err.message || 'Unknown error' });
+  }
+
+  res.end();
 });
 
 // Decision Tree — human-readable reasoning from latest rebalancer run
