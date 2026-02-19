@@ -1,0 +1,270 @@
+{
+  "SLendK7ySfcEzyaFqy93gDnD3RtrpXJcnRwb6zFHJSh": [
+    {
+      "lendingMarket": "6WVSwDQXrBZeQVnu6hpnsRZhodaJTZBUaC334SiiBKdb",
+      "isPrimary": false,
+      "name": "Primary market on staging",
+      "description": "Staging pool",
+      "lookupTable": "9FLD8H4MVzmccLZ5Fy8yAk8G3e5zaHj6UvV9z9AEPr4o",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "2rijnwAvXohjrv3Kwr62xTxhVQ9F6Aqgki7kWDT5VKSj",
+      "isPrimary": false,
+      "name": "Secondary market on staging",
+      "description": "Secondary pool",
+      "lookupTable": "86wnyzvFA3q5RbRQQsvz9tft6icnNqCdkMfzXvrSimc4",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "38G32NPcqB5iWMzqw6Q7cgYXPDNxUqwxkCSnmUJeD4nK",
+      "isPrimary": false,
+      "name": "JITO market on staging",
+      "description": "Secondary pool",
+      "lookupTable": "h78a6mFWDr7J1L2yCyVfPscsWRfjnHvuufeH9qUteBT",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "z4vyfP7dvKhaJo29L8iFqF9igFcZ8Me1meU68Nt2mhH",
+      "isPrimary": false,
+      "name": "xStocks market on staging",
+      "description": "Secondary pool",
+      "lookupTable": "AL7NqwD8mUQyHW814v1Wh9NXd6f41hs9WoAjU9jZQDpy",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "FvPV1kJMiWRmunFpkrcsY1ecoPRTw6bmQXeA4vQ6Xn2Y",
+      "isPrimary": false,
+      "name": "Fixed Markets on staging",
+      "description": "Secondary pool",
+      "lookupTable": "3dpTFdGRbm168KnBcswGNYJNwoFHw5pBDWCPf9DoCW7L",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "BCz69aNk49ndLEZXQX2Kb73qeEP3eno8mcH8DqigMQhc",
+      "isPrimary": false,
+      "name": "Prime market on staging",
+      "description": "Secondary pool",
+      "lookupTable": "9vxFG7KaZW5AHUJ6uviWDEH26beAxcBaRMgveKUikDN4",
+      "isCurated": false
+    }
+  ],
+  "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD": [
+    {
+      "lendingMarket": "7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF",
+      "isPrimary": true,
+      "name": "Main Market",
+      "description": "Primary market on mainnet",
+      "lookupTable": "FGMSBiyVE8TvZcdQnZETAAKw28tkQJ2ccZy6pyp95URb",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "DxXdAyU3kCjnyggvHmY5nAwg5cRbbmdyX3npfDMjjMek",
+      "isPrimary": false,
+      "name": "JLP Market",
+      "description": "Isolated JLP pool",
+      "lookupTable": "GprZNyWk67655JhX6Rq9KoebQ6WkQYRhATWzkx2P2LNc",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "ByYiZxp8QrdN9qbdtaAiePN8AAr3qvTPppNJDpf5DVJ5",
+      "isPrimary": false,
+      "name": "Altcoins Market",
+      "description": "Ecosystem pool",
+      "lookupTable": "x2uEQSaqrZs5UnyXjiNktRhrAy6iNFeSKai9VNYFFuy",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "BJnbcRHqvppTyGesLzWASGKnmnF1wq9jZu6ExrjT7wvF",
+      "isPrimary": false,
+      "name": "Ethena Market",
+      "description": "USDe/stables pool",
+      "lookupTable": "5Cx8pxA2LuCPnt8RZG9LKjKc7PnzWwvCx6xJZis7MTwm",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "H6rHXmXoCQvq8Ue81MqNh7ow5ysPa1dSozwW3PU1dDH6",
+      "isPrimary": false,
+      "name": "Jito Market",
+      "description": "JitoSOL-SOL 10x leverage pool",
+      "lookupTable": "7J58uyRavy93zY3NMStRJCKHd7G2kt7wu3mpscAUGte1",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "4UwtBqa8DDtcWV6nWFregeMVkGdfWfiYeFxoHaR2hm9c",
+      "isPrimary": false,
+      "name": "Fartcoin Market",
+      "description": "Fartcoin leverage pool",
+      "lookupTable": "BxHAiZXuTGxH1uT43e64679t5Z6QDtw1KHxJSqVTnXYr",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "GMqmFygF5iSm5nkckYU6tieggFcR42SyjkkhK5rswFRs",
+      "isPrimary": false,
+      "name": "Bitcoin Market",
+      "description": "Bitcoin isolated pool",
+      "lookupTable": "Do7GVz5YQtyhG8ZaPPVXAQGxFHiyMEuw2m2WvxYDtr4n",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "3EZEy7vBTJ8Q9PWxKwdLVULRdsvVLT51rpBG3gH1TSJ5",
+      "isPrimary": false,
+      "name": "Jupiter Market",
+      "description": "JUP isolated pool",
+      "lookupTable": "2M9kp24x79L6vBwfppH4xEXNYCF9AaxxLm4USR6U52ap",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "9wmqLq3n3KdQBbNfwqrF3PwcLgZ9edZ7hW5TsaC3o6uj",
+      "isPrimary": false,
+      "name": "JTO Market",
+      "description": "JTO isolated pool",
+      "lookupTable": "6CCxvN4KXbJWeG3jV8HyPAThhqjX9o4uUyey5a5qnARf",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "GVDUXFwS8uvBG35RjZv6Y8S1AkV5uASiMJ9qTUKqb5PL",
+      "isPrimary": false,
+      "name": "Marinade Market",
+      "description": "MSOL-SOL 10x leverage pool",
+      "lookupTable": "9JLvnXRXEQTdqZjNUFpSZqh4WjNozQpmoM47XX8tY8Ua",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "F4Pn9mAvbUazDmWET5yYATTiyLHLaCRTWgGex4tiMXAs",
+      "isPrimary": false,
+      "name": "Exponent PT-SOL Market",
+      "description": "Exponent PT-SOL/SOL leverage pool",
+      "lookupTable": "CZ4WMyfH8BzkRsc6oXmhmj6ntjkBhdWB32aHrck3H8WM",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "7WQeTuLsFrZsgnHW7ddFdNfhfJAViqH4mvcFZPQ5zuQ9",
+      "isPrimary": false,
+      "name": "Bonk Market",
+      "description": "Bonk leverage pool",
+      "lookupTable": "HUZH4YfFJFmB8srDgcwBKcjjTkdKxESXVxAEJUsayPyv",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "SZ8MbzSojH84K41jYGUvMJDSCTCWgemh3vanWtCx181",
+      "isPrimary": false,
+      "name": "rstSOL/bbSOL Leverage Market",
+      "description": "rstSOL/bbSOL leverage pool",
+      "lookupTable": "7hmm3mTCKWpuMzfUVf1CBcFUpJrXnoJTN49Fg9Tsnq1n",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "6WEGfej9B9wjxRs6t4BYpb9iCXd8CpTpJ8fVSNzHCC5y",
+      "isPrimary": false,
+      "name": "Maple Market",
+      "description": "syrupUSDC leverage pool",
+      "lookupTable": "CC6dR5rz9tuhdxzvePGvVhqJPnBu9BFyc1qdRjxbquWZ",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "52FSGeeokLpgvgAMdqxyt5Hoc2TbUYj5b8yxrEdZ37Vf",
+      "isPrimary": false,
+      "name": "Huma Market",
+      "description": "PST leverage pool",
+      "lookupTable": "HL5NDn96NtGvHmd1N3rV512Z1FD4gAU8JiKEGtWUfxhC",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "3koBPZPPV4Ag4DPWCyTdAVGxzxABWw9vEZ9vX8sjbbM2",
+      "isPrimary": false,
+      "name": "Apollo Market",
+      "description": "sACRED leverage pool",
+      "lookupTable": "CLKJQ4UjRDtDpfAvJAGaKKjL2YW5e2oRHGQ2KikrENxW",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "5wJeMrUYECGq41fxRESKALVcHnNX26TAWy4W98yULsua",
+      "isPrimary": false,
+      "name": "xStocks Market",
+      "description": "xStocks leverage pool",
+      "lookupTable": "8ofreL6hKfEet1DnhHVGvCTnSdz4pg85PpbuCUHnEcKm",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "E6Tq3XV4Dgqx1QwEUT1u4goM7794sPmb1cGvr7V4Xf6J",
+      "isPrimary": false,
+      "name": "Zeus Bitcoin Market",
+      "description": "zBTC leverage pool",
+      "lookupTable": "E82PkPY2yaKnVgg36xeWHqvP8VbFvTco59tRmEJAzgfV",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "47tfyEG9SsdEnUm9cw5kY9BXngQGqu3LBoop9j5uTAv8",
+      "isPrimary": false,
+      "name": "OnRe Market",
+      "description": "ONYC leverage pool",
+      "lookupTable": "6D8Roriqv9yeDotBSFFKwDdHtvvn4eXYopdFx2zpBbDP",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "J21qWrb66pvEYhk24P98JYNHamxGFDcGZB4pYuSuMCBr",
+      "isPrimary": false,
+      "name": "PUMP Market",
+      "description": "PUMP leverage pool",
+      "lookupTable": "EHLe5YcpXKi73Sw6VVsERUDBbCm5JFwQWU1Y1h1G5er6",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "9Y7uwXgQ68mGqRtZfuFaP4hc4fxeJ7cE9zTtqTxVhfGU",
+      "isPrimary": false,
+      "name": "Solstice Market",
+      "description": "eUSX leverage pool",
+      "lookupTable": "BwR37YKGzrAx6C6G7gk3UvmRKVHBTsD2DgD4R4stDGJ9",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "CqAoLuqWtavaVE8deBjMKe8ZfSt9ghR6Vb8nfsyabyHA",
+      "isPrimary": false,
+      "name": "Figure Market",
+      "description": "PRIME leverage pool",
+      "lookupTable": "44QQVDfvjD7CH1akKrkLcDHDjWpDvd1PKo4YT6xkXfUz",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "CF32kn7AY8X1bW7ZkGcHc4X9ZWTxqKGCJk6QwrQkDcdw",
+      "isPrimary": false,
+      "name": "Superstate Opening Bell Market",
+      "description": "Superstate stocks leverage pool",
+      "lookupTable": "EDGGH4ZrHDgX44F7ZmipZ2SdGKiJR7Jc8jm2ZfvHj8MD",
+      "isCurated": false
+    },
+    {
+      "lendingMarket": "eNLm5e5KVDX2vEcCkt75PpZ2GMfXcZES3QrFshgpVzp",
+      "isPrimary": false,
+      "name": "GM-Sanctum",
+      "description": "Allez-Labs INF/SOL isolated pool",
+      "lookupTable": "EZgA8QnSfXLVhijCho5DYGakiSA9kyz5FDB4dbgt1xri",
+      "isCurated": true
+    },
+    {
+      "lendingMarket": "C7h9YnjPrDvNhe2cWWDhCu4CZEB1XTTH4RzjmsHuengV",
+      "isPrimary": false,
+      "name": "GM-Solblaze",
+      "description": "Allez-Labs BSOL/SOL isolated pool",
+      "lookupTable": "CPM1EHHTqYMoR4Kyp2fZTwrSWc9bXvoki8MgiaTR1ciu",
+      "isCurated": true
+    },
+    {
+      "lendingMarket": "CTthJu49dgPkCgu9TKQProuaQnkHsRPQV33sSJ96vxpG",
+      "isPrimary": false,
+      "name": "Adrena Market",
+      "description": "Adrena leverage pool",
+      "lookupTable": "21panSyApMiGzwPAMMu6NY3tkvjq9PDcZ2dR93PUVKpN",
+      "isCurated": true
+    },
+    {
+      "lendingMarket": "EyV4jxSMd6vpuRgrxMFem7CKRhcB4Vv6WMRDtxPQNP4",
+      "isPrimary": false,
+      "name": "Flash Trade Market",
+      "description": "FLP leverage pool",
+      "lookupTable": "BWE9oW8E3uDaBTbgH7mxEoSBpaQcJngEeLVwsMAy5sq5",
+      "isCurated": true
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "timestamp": 1771343353686,
+  "data": [
+    {
+      "reserve": "DdTmCCjv7zHRD1hJv3E8bpnSEQBzdKkzB1j9ApXX5QoP",
+      "liquidityToken": "JLP",
+      "liquidityTokenMint": "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4",
+      "maxLtv": 0.84,
+      "supplyApy": 0,
+      "borrowApy": 0,
+      "totalSupplyUsd": 106161197.58210717,
+      "totalBorrowUsd": 0
+    },
+    {
+      "reserve": "8rM1AY8M4YP4xNVmxhKnEUnj5CRWrcbcHpcgMoDfgqVi",
+      "liquidityToken": "USDG",
+      "liquidityTokenMint": "2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH",
+      "maxLtv": 0,
+      "supplyApy": 1.777076993537463,
+      "borrowApy": 3.409340324401189,
+      "totalSupplyUsd": 1084624.9376591279,
+      "totalBorrowUsd": 633202.5865701268
+    },
+    {
+      "reserve": "2ov3CMqPBYG3jNBmmpXgK9KMW5GmU5GWZNGcwf7w3BC1",
+      "liquidityToken": "USDT",
+      "liquidityTokenMint": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+      "maxLtv": 0,
+      "supplyApy": 1.2102121834360435,
+      "borrowApy": 2.952971323011311,
+      "totalSupplyUsd": 5849227.7250557775,
+      "totalBorrowUsd": 2686447.450339413
+    },
+    {
+      "reserve": "6ekGhgbrVyL86SkFUjvoMyVNY4sFrfDbu6KCRhWkTUwS",
+      "liquidityToken": "USD1",
+      "liquidityTokenMint": "USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB",
+      "maxLtv": 0,
+      "supplyApy": 1.9696893142470806,
+      "borrowApy": 2.5302777427692824,
+      "totalSupplyUsd": 2805.6441474462317,
+      "totalBorrowUsd": 2433.4070768958527
+    },
+    {
+      "reserve": "Ga4rZytCpq1unD4DbEJ5bkHeUz9g3oh9AAFEi6vSauXp",
+      "liquidityToken": "USDC",
+      "liquidityTokenMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "maxLtv": 0,
+      "supplyApy": 2.5309655487246507,
+      "borrowApy": 3.9195233655493267,
+      "totalSupplyUsd": 68788319.5915962,
+      "totalBorrowUsd": 49689162.04971495
+    },
+    {
+      "reserve": "FswUCVjvfAuzHCgPDF95eLKscGsLHyJmD6hzkhq26CLe",
+      "liquidityToken": "PYUSD",
+      "liquidityTokenMint": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+      "maxLtv": 0,
+      "supplyApy": 1.9264452588560133,
+      "borrowApy": 3.5176157215692783,
+      "totalSupplyUsd": 6804541.312712528,
+      "totalBorrowUsd": 4172952.855487877
+    }
+  ]
+}

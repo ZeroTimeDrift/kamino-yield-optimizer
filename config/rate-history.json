@@ -1,302 +1,2502 @@
 [
   {
-    "timestamp": 1770400543895,
+    "timestamp": 1771100686758,
     "strategyId": "hold_jitosol",
-    "apy": 5.583295669646171
+    "apy": 6.059721436721821
   },
   {
-    "timestamp": 1770400543895,
+    "timestamp": 1771100686758,
     "strategyId": "lp_vault",
-    "apy": 12.157572370036261
+    "apy": 1.4859680416978824
   },
   {
-    "timestamp": 1770400543895,
+    "timestamp": 1771100686758,
     "strategyId": "klend_sol_supply",
-    "apy": 8.478358331484404
+    "apy": 4.237168299777627
   },
   {
-    "timestamp": 1770400569054,
+    "timestamp": 1771100686758,
+    "strategyId": "multiply",
+    "apy": 7.507047940907263
+  },
+  {
+    "timestamp": 1771100702636,
     "strategyId": "hold_jitosol",
-    "apy": 5.583295669646171
+    "apy": 6.059721436721821
   },
   {
-    "timestamp": 1770400569054,
+    "timestamp": 1771100702636,
     "strategyId": "lp_vault",
-    "apy": 12.157571543056363
+    "apy": 1.4859680416978824
   },
   {
-    "timestamp": 1770400569054,
+    "timestamp": 1771100702636,
     "strategyId": "klend_sol_supply",
-    "apy": 8.478364408354254
+    "apy": 4.237168299777627
   },
   {
-    "timestamp": 1770402633348,
+    "timestamp": 1771100702636,
+    "strategyId": "multiply",
+    "apy": 7.507047940907263
+  },
+  {
+    "timestamp": 1771106452060,
     "strategyId": "hold_jitosol",
-    "apy": 5.5951697643521925
+    "apy": 6.059748019146549
   },
   {
-    "timestamp": 1770402633348,
+    "timestamp": 1771106452060,
     "strategyId": "lp_vault",
-    "apy": 10.378980755512238
+    "apy": 1.2844724566469345
   },
   {
-    "timestamp": 1770402633348,
+    "timestamp": 1771106452060,
     "strategyId": "klend_sol_supply",
-    "apy": 8.031372420683391
+    "apy": 4.236215041405833
   },
   {
-    "timestamp": 1770402651338,
+    "timestamp": 1771106452060,
+    "strategyId": "multiply",
+    "apy": 7.50754332263238
+  },
+  {
+    "timestamp": 1771106468959,
     "strategyId": "hold_jitosol",
-    "apy": 5.5951697643521925
+    "apy": 6.059748019146549
   },
   {
-    "timestamp": 1770402651338,
+    "timestamp": 1771106468959,
     "strategyId": "lp_vault",
-    "apy": 10.350823810528745
+    "apy": 1.284472461307144
   },
   {
-    "timestamp": 1770402651338,
+    "timestamp": 1771106468959,
     "strategyId": "klend_sol_supply",
-    "apy": 8.031373933640863
+    "apy": 4.236215041405833
   },
   {
-    "timestamp": 1770409908972,
+    "timestamp": 1771106468959,
+    "strategyId": "multiply",
+    "apy": 7.50754332263238
+  },
+  {
+    "timestamp": 1771108186958,
     "strategyId": "hold_jitosol",
-    "apy": 5.6014904179449765
+    "apy": 6.059748019146549
   },
   {
-    "timestamp": 1770409908972,
+    "timestamp": 1771108186958,
     "strategyId": "lp_vault",
-    "apy": 9.499852741573845
+    "apy": 1.284335335435725
   },
   {
-    "timestamp": 1770409908972,
+    "timestamp": 1771108186958,
     "strategyId": "klend_sol_supply",
-    "apy": 8.806955843334553
+    "apy": 4.248326304363803
   },
   {
-    "timestamp": 1770417060035,
+    "timestamp": 1771108186958,
+    "strategyId": "multiply",
+    "apy": 7.50125172997666
+  },
+  {
+    "timestamp": 1771108203710,
     "strategyId": "hold_jitosol",
-    "apy": 5.6107134041053275
+    "apy": 6.059748019146549
   },
   {
-    "timestamp": 1770417060035,
+    "timestamp": 1771108203710,
     "strategyId": "lp_vault",
-    "apy": 8.743084782464368
+    "apy": 1.284335335435725
   },
   {
-    "timestamp": 1770417060035,
+    "timestamp": 1771108203710,
     "strategyId": "klend_sol_supply",
-    "apy": 9.73273406382451
+    "apy": 4.248326304363803
   },
   {
-    "timestamp": 1770417077021,
+    "timestamp": 1771108203710,
+    "strategyId": "multiply",
+    "apy": 7.50125172997666
+  },
+  {
+    "timestamp": 1771113655028,
     "strategyId": "hold_jitosol",
-    "apy": 5.6107134041053275
+    "apy": 6.059748813965893
   },
   {
-    "timestamp": 1770417077021,
+    "timestamp": 1771113655028,
     "strategyId": "lp_vault",
-    "apy": 7.2603811811172
+    "apy": 1.2210384180077272
   },
   {
-    "timestamp": 1770417077021,
+    "timestamp": 1771113655028,
     "strategyId": "klend_sol_supply",
-    "apy": 9.732738674178698
+    "apy": 4.245203461019731
   },
   {
-    "timestamp": 1770424255194,
+    "timestamp": 1771113655028,
+    "strategyId": "multiply",
+    "apy": 7.502874012510928
+  },
+  {
+    "timestamp": 1771113672136,
     "strategyId": "hold_jitosol",
-    "apy": 5.621760585145452
+    "apy": 6.059748813965893
   },
   {
-    "timestamp": 1770424255194,
+    "timestamp": 1771113672136,
     "strategyId": "lp_vault",
-    "apy": 6.8040822249277415
+    "apy": 1.2210384180077272
   },
   {
-    "timestamp": 1770424255194,
+    "timestamp": 1771113672136,
     "strategyId": "klend_sol_supply",
-    "apy": 9.71843214073691
+    "apy": 4.245203461019731
   },
   {
-    "timestamp": 1770424271582,
+    "timestamp": 1771113672136,
+    "strategyId": "multiply",
+    "apy": 7.502874012510928
+  },
+  {
+    "timestamp": 1771115583724,
     "strategyId": "hold_jitosol",
-    "apy": 5.621760585145452
+    "apy": 6.059748813974708
   },
   {
-    "timestamp": 1770424271582,
+    "timestamp": 1771115583724,
     "strategyId": "lp_vault",
-    "apy": 6.8040822249277415
+    "apy": 1.2086169177832369
   },
   {
-    "timestamp": 1770424271582,
+    "timestamp": 1771115583724,
     "strategyId": "klend_sol_supply",
-    "apy": 9.718438287074704
+    "apy": 4.247202128381544
   },
   {
-    "timestamp": 1770431455531,
+    "timestamp": 1771115583724,
+    "strategyId": "multiply",
+    "apy": 7.501835354107057
+  },
+  {
+    "timestamp": 1771115599925,
     "strategyId": "hold_jitosol",
-    "apy": 5.621760732447978
+    "apy": 6.059748813974708
   },
   {
-    "timestamp": 1770431455531,
+    "timestamp": 1771115599925,
     "strategyId": "lp_vault",
-    "apy": 6.180126278483808
+    "apy": 1.2079745851500485
   },
   {
-    "timestamp": 1770431455531,
+    "timestamp": 1771115599925,
     "strategyId": "klend_sol_supply",
-    "apy": 8.847928391649607
+    "apy": 4.247202128381544
   },
   {
-    "timestamp": 1770431470828,
+    "timestamp": 1771115599925,
+    "strategyId": "multiply",
+    "apy": 7.501835354107057
+  },
+  {
+    "timestamp": 1771121133528,
     "strategyId": "hold_jitosol",
-    "apy": 5.621760732447978
+    "apy": 6.059748813983523
   },
   {
-    "timestamp": 1770431470828,
+    "timestamp": 1771121133528,
     "strategyId": "lp_vault",
-    "apy": 6.180126278483808
+    "apy": 1.2203619404699018
   },
   {
-    "timestamp": 1770431470828,
+    "timestamp": 1771121133528,
     "strategyId": "klend_sol_supply",
-    "apy": 8.847936013615731
+    "apy": 4.253986787623543
   },
   {
-    "timestamp": 1770438647930,
+    "timestamp": 1771121133528,
+    "strategyId": "multiply",
+    "apy": 7.498313307065961
+  },
+  {
+    "timestamp": 1771121148585,
     "strategyId": "hold_jitosol",
-    "apy": 5.6217607325308006
+    "apy": 6.059748813983523
   },
   {
-    "timestamp": 1770438647930,
+    "timestamp": 1771121148585,
     "strategyId": "lp_vault",
-    "apy": 4.369800342362307
+    "apy": 1.2203710176583205
   },
   {
-    "timestamp": 1770438647930,
+    "timestamp": 1771121148585,
     "strategyId": "klend_sol_supply",
-    "apy": 8.983261188534165
+    "apy": 4.253986787623543
   },
   {
-    "timestamp": 1770438667659,
+    "timestamp": 1771121148585,
+    "strategyId": "multiply",
+    "apy": 7.498313307065961
+  },
+  {
+    "timestamp": 1771122804899,
     "strategyId": "hold_jitosol",
-    "apy": 5.6217607325308006
+    "apy": 6.059748813983523
   },
   {
-    "timestamp": 1770438667659,
+    "timestamp": 1771122804899,
     "strategyId": "lp_vault",
-    "apy": 4.369800342362307
+    "apy": 0.8991453760908386
   },
   {
-    "timestamp": 1770438667659,
+    "timestamp": 1771122804899,
     "strategyId": "klend_sol_supply",
-    "apy": 8.983267293688257
+    "apy": 4.254630674287596
   },
   {
-    "timestamp": 1770445850279,
+    "timestamp": 1771122804899,
+    "strategyId": "multiply",
+    "apy": 7.497978726102077
+  },
+  {
+    "timestamp": 1771122820206,
     "strategyId": "hold_jitosol",
-    "apy": 5.621760732696401
+    "apy": 6.059748813983523
   },
   {
-    "timestamp": 1770445850279,
+    "timestamp": 1771122820206,
     "strategyId": "lp_vault",
-    "apy": 3.2964929362953526
+    "apy": 0.8991423929764962
   },
   {
-    "timestamp": 1770445850279,
+    "timestamp": 1771122820206,
     "strategyId": "klend_sol_supply",
-    "apy": 8.965972764015161
+    "apy": 4.254630674287596
   },
   {
-    "timestamp": 1770445866873,
+    "timestamp": 1771122820206,
+    "strategyId": "multiply",
+    "apy": 7.497978726102077
+  },
+  {
+    "timestamp": 1771128131676,
     "strategyId": "hold_jitosol",
-    "apy": 5.621760732696401
+    "apy": 6.059748814177546
   },
   {
-    "timestamp": 1770445866873,
+    "timestamp": 1771128131676,
     "strategyId": "lp_vault",
-    "apy": 3.2964929362953526
+    "apy": 0.851769178849461
   },
   {
-    "timestamp": 1770445866873,
+    "timestamp": 1771128131676,
     "strategyId": "klend_sol_supply",
-    "apy": 8.965977342154341
+    "apy": 4.2596402775606945
   },
   {
-    "timestamp": 1770453054129,
+    "timestamp": 1771128131676,
+    "strategyId": "multiply",
+    "apy": 7.495378743960737
+  },
+  {
+    "timestamp": 1771128146795,
     "strategyId": "hold_jitosol",
-    "apy": 5.621760734243519
+    "apy": 6.059748814177546
   },
   {
-    "timestamp": 1770453054129,
+    "timestamp": 1771128146795,
     "strategyId": "lp_vault",
-    "apy": 3.204106488978249
+    "apy": 0.851769178849461
   },
   {
-    "timestamp": 1770453054129,
+    "timestamp": 1771128146795,
     "strategyId": "klend_sol_supply",
-    "apy": 9.132409803054786
+    "apy": 4.2596402775606945
   },
   {
-    "timestamp": 1770453071308,
+    "timestamp": 1771128146795,
+    "strategyId": "multiply",
+    "apy": 7.495378743960737
+  },
+  {
+    "timestamp": 1771130109175,
     "strategyId": "hold_jitosol",
-    "apy": 5.621760734243519
+    "apy": 6.059748814177546
   },
   {
-    "timestamp": 1770453071308,
+    "timestamp": 1771130109175,
     "strategyId": "lp_vault",
-    "apy": 3.204106488978249
+    "apy": 0.8544040354331849
   },
   {
-    "timestamp": 1770453071308,
+    "timestamp": 1771130109175,
     "strategyId": "klend_sol_supply",
-    "apy": 9.132414388186726
+    "apy": 4.26796776075784
   },
   {
-    "timestamp": 1770460252989,
+    "timestamp": 1771130109175,
+    "strategyId": "multiply",
+    "apy": 7.491059042758504
+  },
+  {
+    "timestamp": 1771130128287,
     "strategyId": "hold_jitosol",
-    "apy": 5.621760734400394
+    "apy": 6.059748814177546
   },
   {
-    "timestamp": 1770460252989,
+    "timestamp": 1771130128287,
     "strategyId": "lp_vault",
-    "apy": 2.9654982147839073
+    "apy": 0.8552827488572221
   },
   {
-    "timestamp": 1770460252989,
+    "timestamp": 1771130128287,
     "strategyId": "klend_sol_supply",
-    "apy": 8.8835165936908
+    "apy": 4.26796776075784
   },
   {
-    "timestamp": 1770710786104,
+    "timestamp": 1771130128287,
+    "strategyId": "multiply",
+    "apy": 7.491059042758504
+  },
+  {
+    "timestamp": 1771135254677,
     "strategyId": "hold_jitosol",
-    "apy": 6.28782492180171
+    "apy": 6.05974881419078
   },
   {
-    "timestamp": 1770710786104,
+    "timestamp": 1771135254677,
     "strategyId": "lp_vault",
-    "apy": 1.155048974772884
+    "apy": 0.9559142777549523
   },
   {
-    "timestamp": 1770710786104,
+    "timestamp": 1771135254677,
     "strategyId": "klend_sol_supply",
-    "apy": 4.648580295598803
+    "apy": 4.266193569970622
   },
   {
-    "timestamp": 1770710806357,
+    "timestamp": 1771135254677,
+    "strategyId": "multiply",
+    "apy": 7.491979435576192
+  },
+  {
+    "timestamp": 1771135269343,
     "strategyId": "hold_jitosol",
-    "apy": 6.28782492180171
+    "apy": 6.05974881419078
   },
   {
-    "timestamp": 1770710806357,
+    "timestamp": 1771135269343,
     "strategyId": "lp_vault",
-    "apy": 1.1512449202589778
+    "apy": 0.9559142777549523
   },
   {
-    "timestamp": 1770710806357,
+    "timestamp": 1771135269343,
     "strategyId": "klend_sol_supply",
-    "apy": 4.648564174196346
+    "apy": 4.266193569970622
+  },
+  {
+    "timestamp": 1771135269343,
+    "strategyId": "multiply",
+    "apy": 7.491979435576192
+  },
+  {
+    "timestamp": 1771137497130,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748814230459
+  },
+  {
+    "timestamp": 1771137497130,
+    "strategyId": "lp_vault",
+    "apy": 0.8294758493521869
+  },
+  {
+    "timestamp": 1771137497130,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.305903239131803
+  },
+  {
+    "timestamp": 1771137497130,
+    "strategyId": "multiply",
+    "apy": 7.471406101762747
+  },
+  {
+    "timestamp": 1771137512753,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748814230459
+  },
+  {
+    "timestamp": 1771137512753,
+    "strategyId": "lp_vault",
+    "apy": 0.8294758493521869
+  },
+  {
+    "timestamp": 1771137512753,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.305903239131803
+  },
+  {
+    "timestamp": 1771137512753,
+    "strategyId": "multiply",
+    "apy": 7.471406101762747
+  },
+  {
+    "timestamp": 1771142582599,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748814265742
+  },
+  {
+    "timestamp": 1771142582599,
+    "strategyId": "lp_vault",
+    "apy": 0.5317451503831503
+  },
+  {
+    "timestamp": 1771142582599,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.310802820496562
+  },
+  {
+    "timestamp": 1771142582599,
+    "strategyId": "multiply",
+    "apy": 7.468871369908712
+  },
+  {
+    "timestamp": 1771142600012,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748814265742
+  },
+  {
+    "timestamp": 1771142600012,
+    "strategyId": "lp_vault",
+    "apy": 0.5317451513195808
+  },
+  {
+    "timestamp": 1771142600012,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.310802820496562
+  },
+  {
+    "timestamp": 1771142600012,
+    "strategyId": "multiply",
+    "apy": 7.468871369908712
+  },
+  {
+    "timestamp": 1771144798601,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748814278976
+  },
+  {
+    "timestamp": 1771144798601,
+    "strategyId": "lp_vault",
+    "apy": 0.5339134396041537
+  },
+  {
+    "timestamp": 1771144798601,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.394954045056387
+  },
+  {
+    "timestamp": 1771144798601,
+    "strategyId": "multiply",
+    "apy": 7.425449670226694
+  },
+  {
+    "timestamp": 1771144818270,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748814278976
+  },
+  {
+    "timestamp": 1771144818270,
+    "strategyId": "lp_vault",
+    "apy": 0.5339134396041537
+  },
+  {
+    "timestamp": 1771144818270,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.394954045056387
+  },
+  {
+    "timestamp": 1771144818270,
+    "strategyId": "multiply",
+    "apy": 7.425449670226694
+  },
+  {
+    "timestamp": 1771149652903,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748832125078
+  },
+  {
+    "timestamp": 1771149652903,
+    "strategyId": "lp_vault",
+    "apy": 0.5261044360922318
+  },
+  {
+    "timestamp": 1771149652903,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3980097328353285
+  },
+  {
+    "timestamp": 1771149652903,
+    "strategyId": "multiply",
+    "apy": 7.423877365302294
+  },
+  {
+    "timestamp": 1771149670713,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748832125078
+  },
+  {
+    "timestamp": 1771149670713,
+    "strategyId": "lp_vault",
+    "apy": 0.5261044360922318
+  },
+  {
+    "timestamp": 1771149670713,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3980097328353285
+  },
+  {
+    "timestamp": 1771149670713,
+    "strategyId": "multiply",
+    "apy": 7.423877365302294
+  },
+  {
+    "timestamp": 1771152195445,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748832125078
+  },
+  {
+    "timestamp": 1771152195445,
+    "strategyId": "lp_vault",
+    "apy": 0.48744699580962714
+  },
+  {
+    "timestamp": 1771152195445,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.397666146253676
+  },
+  {
+    "timestamp": 1771152195445,
+    "strategyId": "multiply",
+    "apy": 7.4240546904250015
+  },
+  {
+    "timestamp": 1771152211639,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748832125078
+  },
+  {
+    "timestamp": 1771152211639,
+    "strategyId": "lp_vault",
+    "apy": 0.48744699580962714
+  },
+  {
+    "timestamp": 1771152211639,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.397666146253676
+  },
+  {
+    "timestamp": 1771152211639,
+    "strategyId": "multiply",
+    "apy": 7.4240546904250015
+  },
+  {
+    "timestamp": 1771156852538,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748983907287
+  },
+  {
+    "timestamp": 1771156852538,
+    "strategyId": "lp_vault",
+    "apy": 0.48325205093169465
+  },
+  {
+    "timestamp": 1771156852538,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.39827583045429
+  },
+  {
+    "timestamp": 1771156852538,
+    "strategyId": "multiply",
+    "apy": 7.4237404941335825
+  },
+  {
+    "timestamp": 1771156869407,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748983907287
+  },
+  {
+    "timestamp": 1771156869407,
+    "strategyId": "lp_vault",
+    "apy": 0.48325205104635455
+  },
+  {
+    "timestamp": 1771156869407,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.39827583045429
+  },
+  {
+    "timestamp": 1771156869407,
+    "strategyId": "multiply",
+    "apy": 7.4237404941335825
+  },
+  {
+    "timestamp": 1771159648546,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748983920521
+  },
+  {
+    "timestamp": 1771159648546,
+    "strategyId": "lp_vault",
+    "apy": 0.48484484243561027
+  },
+  {
+    "timestamp": 1771159648546,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.399618025486118
+  },
+  {
+    "timestamp": 1771159648546,
+    "strategyId": "multiply",
+    "apy": 7.4230500641780015
+  },
+  {
+    "timestamp": 1771159664766,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059748983920521
+  },
+  {
+    "timestamp": 1771159664766,
+    "strategyId": "lp_vault",
+    "apy": 0.4848003983462578
+  },
+  {
+    "timestamp": 1771159664766,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.399618025486118
+  },
+  {
+    "timestamp": 1771159664766,
+    "strategyId": "multiply",
+    "apy": 7.4230500641780015
+  },
+  {
+    "timestamp": 1771164180344,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059749219928201
+  },
+  {
+    "timestamp": 1771164180344,
+    "strategyId": "lp_vault",
+    "apy": 0.4888001770650568
+  },
+  {
+    "timestamp": 1771164180344,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.39328003393149
+  },
+  {
+    "timestamp": 1771164180344,
+    "strategyId": "multiply",
+    "apy": 7.4263113146944795
+  },
+  {
+    "timestamp": 1771164196331,
+    "strategyId": "hold_jitosol",
+    "apy": 6.059749219928201
+  },
+  {
+    "timestamp": 1771164196331,
+    "strategyId": "lp_vault",
+    "apy": 0.4888001770650568
+  },
+  {
+    "timestamp": 1771164196331,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.39328003393149
+  },
+  {
+    "timestamp": 1771164196331,
+    "strategyId": "multiply",
+    "apy": 7.4263113146944795
+  },
+  {
+    "timestamp": 1771167073032,
+    "strategyId": "hold_jitosol",
+    "apy": 6.06023704662757
+  },
+  {
+    "timestamp": 1771167073032,
+    "strategyId": "lp_vault",
+    "apy": 0.4827942497100252
+  },
+  {
+    "timestamp": 1771167073032,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.405063011077881
+  },
+  {
+    "timestamp": 1771167073032,
+    "strategyId": "multiply",
+    "apy": 7.4202484621236735
+  },
+  {
+    "timestamp": 1771171251397,
+    "strategyId": "hold_jitosol",
+    "apy": 6.060246199604924
+  },
+  {
+    "timestamp": 1771171251397,
+    "strategyId": "lp_vault",
+    "apy": 0.4712716236773929
+  },
+  {
+    "timestamp": 1771171251397,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3998724304113335
+  },
+  {
+    "timestamp": 1771171251397,
+    "strategyId": "multiply",
+    "apy": 7.422919258949706
+  },
+  {
+    "timestamp": 1771171264207,
+    "strategyId": "hold_jitosol",
+    "apy": 6.060246199604924
+  },
+  {
+    "timestamp": 1771171264207,
+    "strategyId": "lp_vault",
+    "apy": 0.4712716236773929
+  },
+  {
+    "timestamp": 1771171264207,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3998724304113335
+  },
+  {
+    "timestamp": 1771171264207,
+    "strategyId": "multiply",
+    "apy": 7.422919258949706
+  },
+  {
+    "timestamp": 1771174567836,
+    "strategyId": "hold_jitosol",
+    "apy": 6.0748133125449355
+  },
+  {
+    "timestamp": 1771174567836,
+    "strategyId": "lp_vault",
+    "apy": 0.34105065364811504
+  },
+  {
+    "timestamp": 1771174567836,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.350840759414631
+  },
+  {
+    "timestamp": 1771174567836,
+    "strategyId": "multiply",
+    "apy": 7.222073751135264
+  },
+  {
+    "timestamp": 1771174584799,
+    "strategyId": "hold_jitosol",
+    "apy": 6.0748133125449355
+  },
+  {
+    "timestamp": 1771174584799,
+    "strategyId": "lp_vault",
+    "apy": 0.34086224606765003
+  },
+  {
+    "timestamp": 1771174584799,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.350840759414631
+  },
+  {
+    "timestamp": 1771174584799,
+    "strategyId": "multiply",
+    "apy": 7.222073751135264
+  },
+  {
+    "timestamp": 1771178452070,
+    "strategyId": "hold_jitosol",
+    "apy": 6.0748133125449355
+  },
+  {
+    "timestamp": 1771178452070,
+    "strategyId": "lp_vault",
+    "apy": 0.4085745100228713
+  },
+  {
+    "timestamp": 1771178452070,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.372286266550218
+  },
+  {
+    "timestamp": 1771178452070,
+    "strategyId": "multiply",
+    "apy": 7.209861792689518
+  },
+  {
+    "timestamp": 1771178469980,
+    "strategyId": "hold_jitosol",
+    "apy": 6.0748133125449355
+  },
+  {
+    "timestamp": 1771178469980,
+    "strategyId": "lp_vault",
+    "apy": 0.4085745100228713
+  },
+  {
+    "timestamp": 1771178469980,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.372286266550218
+  },
+  {
+    "timestamp": 1771178469980,
+    "strategyId": "multiply",
+    "apy": 7.209861792689518
+  },
+  {
+    "timestamp": 1771181898477,
+    "strategyId": "hold_jitosol",
+    "apy": 6.0748133174404195
+  },
+  {
+    "timestamp": 1771181898477,
+    "strategyId": "lp_vault",
+    "apy": 0.3861329330043124
+  },
+  {
+    "timestamp": 1771181898477,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3820787393711536
+  },
+  {
+    "timestamp": 1771181898477,
+    "strategyId": "multiply",
+    "apy": 7.204812729695151
+  },
+  {
+    "timestamp": 1771181914531,
+    "strategyId": "hold_jitosol",
+    "apy": 6.0748133174404195
+  },
+  {
+    "timestamp": 1771181914531,
+    "strategyId": "lp_vault",
+    "apy": 0.3861329330043124
+  },
+  {
+    "timestamp": 1771181914531,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3820787393711536
+  },
+  {
+    "timestamp": 1771181914531,
+    "strategyId": "multiply",
+    "apy": 7.204812729695151
+  },
+  {
+    "timestamp": 1771185820833,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07481331745805
+  },
+  {
+    "timestamp": 1771185820833,
+    "strategyId": "lp_vault",
+    "apy": 0.4919559607010918
+  },
+  {
+    "timestamp": 1771185820833,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3849761659978
+  },
+  {
+    "timestamp": 1771185820833,
+    "strategyId": "multiply",
+    "apy": 7.20332015491644
+  },
+  {
+    "timestamp": 1771185833180,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07481331745805
+  },
+  {
+    "timestamp": 1771185833180,
+    "strategyId": "lp_vault",
+    "apy": 0.49204603187208684
+  },
+  {
+    "timestamp": 1771185833180,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3849761659978
+  },
+  {
+    "timestamp": 1771185833180,
+    "strategyId": "multiply",
+    "apy": 7.20332015491644
+  },
+  {
+    "timestamp": 1771189219494,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813543809565
+  },
+  {
+    "timestamp": 1771189219494,
+    "strategyId": "lp_vault",
+    "apy": 0.4860965789712237
+  },
+  {
+    "timestamp": 1771189219494,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.378546969869657
+  },
+  {
+    "timestamp": 1771189219494,
+    "strategyId": "multiply",
+    "apy": 7.2066335543249505
+  },
+  {
+    "timestamp": 1771189236474,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813543809565
+  },
+  {
+    "timestamp": 1771189236474,
+    "strategyId": "lp_vault",
+    "apy": 0.4860965789712237
+  },
+  {
+    "timestamp": 1771189236474,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.378546969869657
+  },
+  {
+    "timestamp": 1771189236474,
+    "strategyId": "multiply",
+    "apy": 7.2066335543249505
+  },
+  {
+    "timestamp": 1771192855939,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07481369531333
+  },
+  {
+    "timestamp": 1771192855939,
+    "strategyId": "lp_vault",
+    "apy": 0.4723120205116529
+  },
+  {
+    "timestamp": 1771192855939,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.379388970292752
+  },
+  {
+    "timestamp": 1771192855939,
+    "strategyId": "multiply",
+    "apy": 7.206198746854367
+  },
+  {
+    "timestamp": 1771192871603,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07481369531333
+  },
+  {
+    "timestamp": 1771192871603,
+    "strategyId": "lp_vault",
+    "apy": 0.4723120205116529
+  },
+  {
+    "timestamp": 1771192871603,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.379388970292752
+  },
+  {
+    "timestamp": 1771192871603,
+    "strategyId": "multiply",
+    "apy": 7.206198746854367
+  },
+  {
+    "timestamp": 1771196605912,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07481369531333
+  },
+  {
+    "timestamp": 1771196605912,
+    "strategyId": "lp_vault",
+    "apy": 0.5003285154600762
+  },
+  {
+    "timestamp": 1771196605912,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.387436556593305
+  },
+  {
+    "timestamp": 1771196605912,
+    "strategyId": "multiply",
+    "apy": 7.202051362548492
+  },
+  {
+    "timestamp": 1771196622747,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07481369531333
+  },
+  {
+    "timestamp": 1771196622747,
+    "strategyId": "lp_vault",
+    "apy": 0.5003509049232219
+  },
+  {
+    "timestamp": 1771196622747,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.387436556593305
+  },
+  {
+    "timestamp": 1771196622747,
+    "strategyId": "multiply",
+    "apy": 7.202051362548492
+  },
+  {
+    "timestamp": 1771200055120,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695335379
+  },
+  {
+    "timestamp": 1771200055120,
+    "strategyId": "lp_vault",
+    "apy": 0.4963778587054012
+  },
+  {
+    "timestamp": 1771200055120,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.388034485586156
+  },
+  {
+    "timestamp": 1771200055120,
+    "strategyId": "multiply",
+    "apy": 7.201743260737045
+  },
+  {
+    "timestamp": 1771200075444,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695335379
+  },
+  {
+    "timestamp": 1771200075444,
+    "strategyId": "lp_vault",
+    "apy": 0.4963778587054012
+  },
+  {
+    "timestamp": 1771200075444,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.388034485586156
+  },
+  {
+    "timestamp": 1771200075444,
+    "strategyId": "multiply",
+    "apy": 7.201743260737045
+  },
+  {
+    "timestamp": 1771204106777,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695348613
+  },
+  {
+    "timestamp": 1771204106777,
+    "strategyId": "lp_vault",
+    "apy": 0.4609159353476221
+  },
+  {
+    "timestamp": 1771204106777,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.385272930177675
+  },
+  {
+    "timestamp": 1771204106777,
+    "strategyId": "multiply",
+    "apy": 7.203166445400285
+  },
+  {
+    "timestamp": 1771204121675,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695348613
+  },
+  {
+    "timestamp": 1771204121675,
+    "strategyId": "lp_vault",
+    "apy": 0.46091530848804213
+  },
+  {
+    "timestamp": 1771204121675,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.385272930177675
+  },
+  {
+    "timestamp": 1771204121675,
+    "strategyId": "multiply",
+    "apy": 7.203166445400285
+  },
+  {
+    "timestamp": 1771207398048,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695370662
+  },
+  {
+    "timestamp": 1771207398048,
+    "strategyId": "lp_vault",
+    "apy": 0.4659782083716771
+  },
+  {
+    "timestamp": 1771207398048,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.386011189556149
+  },
+  {
+    "timestamp": 1771207398048,
+    "strategyId": "multiply",
+    "apy": 7.202786214488427
+  },
+  {
+    "timestamp": 1771207416799,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695370662
+  },
+  {
+    "timestamp": 1771207416799,
+    "strategyId": "lp_vault",
+    "apy": 0.4654759991159758
+  },
+  {
+    "timestamp": 1771207416799,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.386011189556149
+  },
+  {
+    "timestamp": 1771207416799,
+    "strategyId": "multiply",
+    "apy": 7.202786214488427
+  },
+  {
+    "timestamp": 1771211445744,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695392711
+  },
+  {
+    "timestamp": 1771211445744,
+    "strategyId": "lp_vault",
+    "apy": 0.42063977597494046
+  },
+  {
+    "timestamp": 1771211445744,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.380413705665309
+  },
+  {
+    "timestamp": 1771211445744,
+    "strategyId": "multiply",
+    "apy": 7.205671579661125
+  },
+  {
+    "timestamp": 1771211460777,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695392711
+  },
+  {
+    "timestamp": 1771211460777,
+    "strategyId": "lp_vault",
+    "apy": 0.42063977597494046
+  },
+  {
+    "timestamp": 1771211460777,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.380413705665309
+  },
+  {
+    "timestamp": 1771211460777,
+    "strategyId": "multiply",
+    "apy": 7.205671579661125
+  },
+  {
+    "timestamp": 1771214510937,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695419179
+  },
+  {
+    "timestamp": 1771214510937,
+    "strategyId": "lp_vault",
+    "apy": 0.42137927199375
+  },
+  {
+    "timestamp": 1771214510937,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.383683862853971
+  },
+  {
+    "timestamp": 1771214510937,
+    "strategyId": "multiply",
+    "apy": 7.2039855496607945
+  },
+  {
+    "timestamp": 1771214528064,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695419179
+  },
+  {
+    "timestamp": 1771214528064,
+    "strategyId": "lp_vault",
+    "apy": 0.42137927199375
+  },
+  {
+    "timestamp": 1771214528064,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.383683862853971
+  },
+  {
+    "timestamp": 1771214528064,
+    "strategyId": "multiply",
+    "apy": 7.2039855496607945
+  },
+  {
+    "timestamp": 1771221730506,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695573544
+  },
+  {
+    "timestamp": 1771221730506,
+    "strategyId": "lp_vault",
+    "apy": 0.47593263036153977
+  },
+  {
+    "timestamp": 1771221730506,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.372162021043469
+  },
+  {
+    "timestamp": 1771221730506,
+    "strategyId": "multiply",
+    "apy": 7.209925829473041
+  },
+  {
+    "timestamp": 1771221746024,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695573544
+  },
+  {
+    "timestamp": 1771221746024,
+    "strategyId": "lp_vault",
+    "apy": 0.4759326311817661
+  },
+  {
+    "timestamp": 1771221746024,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.372162021043469
+  },
+  {
+    "timestamp": 1771221746024,
+    "strategyId": "multiply",
+    "apy": 7.209925829473041
+  },
+  {
+    "timestamp": 1771225922553,
+    "strategyId": "hold_jitosol",
+    "apy": 6.0748136956044085
+  },
+  {
+    "timestamp": 1771225922553,
+    "strategyId": "lp_vault",
+    "apy": 0.4622792792679431
+  },
+  {
+    "timestamp": 1771225922553,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.371995386125427
+  },
+  {
+    "timestamp": 1771225922553,
+    "strategyId": "multiply",
+    "apy": 7.210012110478219
+  },
+  {
+    "timestamp": 1771225937799,
+    "strategyId": "hold_jitosol",
+    "apy": 6.0748136956044085
+  },
+  {
+    "timestamp": 1771225937799,
+    "strategyId": "lp_vault",
+    "apy": 0.4622792792679431
+  },
+  {
+    "timestamp": 1771225937799,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.371995386125427
+  },
+  {
+    "timestamp": 1771225937799,
+    "strategyId": "multiply",
+    "apy": 7.210012110478219
+  },
+  {
+    "timestamp": 1771229209108,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695622061
+  },
+  {
+    "timestamp": 1771229209108,
+    "strategyId": "lp_vault",
+    "apy": 0.4018645935768227
+  },
+  {
+    "timestamp": 1771229209108,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.372094782360314
+  },
+  {
+    "timestamp": 1771229209108,
+    "strategyId": "multiply",
+    "apy": 7.20996020707958
+  },
+  {
+    "timestamp": 1771229226338,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813695622061
+  },
+  {
+    "timestamp": 1771229226338,
+    "strategyId": "lp_vault",
+    "apy": 0.40193374292649403
+  },
+  {
+    "timestamp": 1771229226338,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.372094782360314
+  },
+  {
+    "timestamp": 1771229226338,
+    "strategyId": "multiply",
+    "apy": 7.20996020707958
+  },
+  {
+    "timestamp": 1771233170858,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813713563287
+  },
+  {
+    "timestamp": 1771233170858,
+    "strategyId": "lp_vault",
+    "apy": 0.39832840290128796
+  },
+  {
+    "timestamp": 1771233170858,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.37202754372048
+  },
+  {
+    "timestamp": 1771233170858,
+    "strategyId": "multiply",
+    "apy": 7.209995932801526
+  },
+  {
+    "timestamp": 1771233186912,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813713563287
+  },
+  {
+    "timestamp": 1771233186912,
+    "strategyId": "lp_vault",
+    "apy": 0.39832842163672477
+  },
+  {
+    "timestamp": 1771233186912,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.37202754372048
+  },
+  {
+    "timestamp": 1771233186912,
+    "strategyId": "multiply",
+    "apy": 7.209995932801526
+  },
+  {
+    "timestamp": 1771236053601,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07481371485552
+  },
+  {
+    "timestamp": 1771236053601,
+    "strategyId": "lp_vault",
+    "apy": 0.4102829167575006
+  },
+  {
+    "timestamp": 1771236053601,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3795863151244285
+  },
+  {
+    "timestamp": 1771236053601,
+    "strategyId": "multiply",
+    "apy": 7.206097628275029
+  },
+  {
+    "timestamp": 1771236069706,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07481371485552
+  },
+  {
+    "timestamp": 1771236069706,
+    "strategyId": "lp_vault",
+    "apy": 0.4102829167575006
+  },
+  {
+    "timestamp": 1771236069706,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3795863151244285
+  },
+  {
+    "timestamp": 1771236069706,
+    "strategyId": "multiply",
+    "apy": 7.206097628275029
+  },
+  {
+    "timestamp": 1771240449741,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813867651496
+  },
+  {
+    "timestamp": 1771240449741,
+    "strategyId": "lp_vault",
+    "apy": 0.42437640505809154
+  },
+  {
+    "timestamp": 1771240449741,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.377343915078535
+  },
+  {
+    "timestamp": 1771240449741,
+    "strategyId": "multiply",
+    "apy": 7.207253738029161
+  },
+  {
+    "timestamp": 1771240466435,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074813867651496
+  },
+  {
+    "timestamp": 1771240466435,
+    "strategyId": "lp_vault",
+    "apy": 0.42147111722886715
+  },
+  {
+    "timestamp": 1771240466435,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.377343915078535
+  },
+  {
+    "timestamp": 1771240466435,
+    "strategyId": "multiply",
+    "apy": 7.207253738029161
+  },
+  {
+    "timestamp": 1771243258853,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074814020496011
+  },
+  {
+    "timestamp": 1771243258853,
+    "strategyId": "lp_vault",
+    "apy": 0.5081408981468993
+  },
+  {
+    "timestamp": 1771243258853,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.37735853291501
+  },
+  {
+    "timestamp": 1771243258853,
+    "strategyId": "multiply",
+    "apy": 7.2072463228364185
+  },
+  {
+    "timestamp": 1771243271981,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074814020496011
+  },
+  {
+    "timestamp": 1771243271981,
+    "strategyId": "lp_vault",
+    "apy": 0.5081408981468993
+  },
+  {
+    "timestamp": 1771243271981,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.37735853291501
+  },
+  {
+    "timestamp": 1771243271981,
+    "strategyId": "multiply",
+    "apy": 7.2072463228364185
+  },
+  {
+    "timestamp": 1771247794949,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074814020496011
+  },
+  {
+    "timestamp": 1771247794949,
+    "strategyId": "lp_vault",
+    "apy": 0.5114355823309961
+  },
+  {
+    "timestamp": 1771247794949,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.378137666561832
+  },
+  {
+    "timestamp": 1771247794949,
+    "strategyId": "multiply",
+    "apy": 7.206844552503769
+  },
+  {
+    "timestamp": 1771247807518,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074814020496011
+  },
+  {
+    "timestamp": 1771247807518,
+    "strategyId": "lp_vault",
+    "apy": 0.5109665139620665
+  },
+  {
+    "timestamp": 1771247807518,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.378137666561832
+  },
+  {
+    "timestamp": 1771247807518,
+    "strategyId": "multiply",
+    "apy": 7.206844552503769
+  },
+  {
+    "timestamp": 1771250748078,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074814050190769
+  },
+  {
+    "timestamp": 1771250748078,
+    "strategyId": "lp_vault",
+    "apy": 0.5327334277657493
+  },
+  {
+    "timestamp": 1771250748078,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.377415542496843
+  },
+  {
+    "timestamp": 1771250748078,
+    "strategyId": "multiply",
+    "apy": 7.207216662054033
+  },
+  {
+    "timestamp": 1771250765477,
+    "strategyId": "hold_jitosol",
+    "apy": 6.074814050190769
+  },
+  {
+    "timestamp": 1771250765477,
+    "strategyId": "lp_vault",
+    "apy": 0.5327334277657493
+  },
+  {
+    "timestamp": 1771250765477,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.377415542496843
+  },
+  {
+    "timestamp": 1771250765477,
+    "strategyId": "multiply",
+    "apy": 7.207216662054033
+  },
+  {
+    "timestamp": 1771255088751,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075327033411559
+  },
+  {
+    "timestamp": 1771255088751,
+    "strategyId": "lp_vault",
+    "apy": 0.5969880543687442
+  },
+  {
+    "timestamp": 1771255088751,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.374483243881877
+  },
+  {
+    "timestamp": 1771255088751,
+    "strategyId": "multiply",
+    "apy": 7.208728664565036
+  },
+  {
+    "timestamp": 1771255107332,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075327033411559
+  },
+  {
+    "timestamp": 1771255107332,
+    "strategyId": "lp_vault",
+    "apy": 0.5976031809882049
+  },
+  {
+    "timestamp": 1771255107332,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.374483243881877
+  },
+  {
+    "timestamp": 1771255107332,
+    "strategyId": "multiply",
+    "apy": 7.208728664565036
+  },
+  {
+    "timestamp": 1771257654736,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075327033680589
+  },
+  {
+    "timestamp": 1771257654736,
+    "strategyId": "lp_vault",
+    "apy": 0.7248249135251371
+  },
+  {
+    "timestamp": 1771257654736,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.371438476619205
+  },
+  {
+    "timestamp": 1771257654736,
+    "strategyId": "multiply",
+    "apy": 7.210299263334612
+  },
+  {
+    "timestamp": 1771257668079,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075327033680589
+  },
+  {
+    "timestamp": 1771257668079,
+    "strategyId": "lp_vault",
+    "apy": 0.7245406875098592
+  },
+  {
+    "timestamp": 1771257668079,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.371438476619205
+  },
+  {
+    "timestamp": 1771257668079,
+    "strategyId": "multiply",
+    "apy": 7.210299263334612
+  },
+  {
+    "timestamp": 1771262395527,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075328576678296
+  },
+  {
+    "timestamp": 1771262395527,
+    "strategyId": "lp_vault",
+    "apy": 0.7795729531554758
+  },
+  {
+    "timestamp": 1771262395527,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.336078615882877
+  },
+  {
+    "timestamp": 1771262395527,
+    "strategyId": "multiply",
+    "apy": 7.228556240409718
+  },
+  {
+    "timestamp": 1771262412943,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075328576678296
+  },
+  {
+    "timestamp": 1771262412943,
+    "strategyId": "lp_vault",
+    "apy": 0.7795729531554758
+  },
+  {
+    "timestamp": 1771262412943,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.336078615882877
+  },
+  {
+    "timestamp": 1771262412943,
+    "strategyId": "multiply",
+    "apy": 7.228556240409718
+  },
+  {
+    "timestamp": 1771264851995,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075328586495732
+  },
+  {
+    "timestamp": 1771264851995,
+    "strategyId": "lp_vault",
+    "apy": 1.4497849540924526
+  },
+  {
+    "timestamp": 1771264851995,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3363153314640135
+  },
+  {
+    "timestamp": 1771264851995,
+    "strategyId": "multiply",
+    "apy": 7.228433606825784
+  },
+  {
+    "timestamp": 1771264865645,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075328586495732
+  },
+  {
+    "timestamp": 1771264865645,
+    "strategyId": "lp_vault",
+    "apy": 1.4497849540924526
+  },
+  {
+    "timestamp": 1771264865645,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3363153314640135
+  },
+  {
+    "timestamp": 1771264865645,
+    "strategyId": "multiply",
+    "apy": 7.228433606825784
+  },
+  {
+    "timestamp": 1771269839444,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075328586504547
+  },
+  {
+    "timestamp": 1771269839444,
+    "strategyId": "lp_vault",
+    "apy": 1.471495411776141
+  },
+  {
+    "timestamp": 1771269839444,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.345473129819766
+  },
+  {
+    "timestamp": 1771269839444,
+    "strategyId": "multiply",
+    "apy": 7.223702541869249
+  },
+  {
+    "timestamp": 1771269911006,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075328586504547
+  },
+  {
+    "timestamp": 1771269911006,
+    "strategyId": "lp_vault",
+    "apy": 1.4440355402850225
+  },
+  {
+    "timestamp": 1771269911006,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.345473129819766
+  },
+  {
+    "timestamp": 1771269911006,
+    "strategyId": "multiply",
+    "apy": 7.223702541869249
+  },
+  {
+    "timestamp": 1771272353798,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075328586504547
+  },
+  {
+    "timestamp": 1771272353798,
+    "strategyId": "lp_vault",
+    "apy": 0.8364582722125853
+  },
+  {
+    "timestamp": 1771272353798,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3449923509880195
+  },
+  {
+    "timestamp": 1771272353798,
+    "strategyId": "multiply",
+    "apy": 7.223950528340495
+  },
+  {
+    "timestamp": 1771272370493,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075328586504547
+  },
+  {
+    "timestamp": 1771272370493,
+    "strategyId": "lp_vault",
+    "apy": 0.8364582758664555
+  },
+  {
+    "timestamp": 1771272370493,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3449923509880195
+  },
+  {
+    "timestamp": 1771272370493,
+    "strategyId": "multiply",
+    "apy": 7.223950528340495
+  },
+  {
+    "timestamp": 1771277345405,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075631765513889
+  },
+  {
+    "timestamp": 1771277345405,
+    "strategyId": "lp_vault",
+    "apy": 0.8150092883557153
+  },
+  {
+    "timestamp": 1771277345405,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.286676724275473
+  },
+  {
+    "timestamp": 1771277345405,
+    "strategyId": "multiply",
+    "apy": 7.25412996574597
+  },
+  {
+    "timestamp": 1771277365474,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075631765513889
+  },
+  {
+    "timestamp": 1771277365474,
+    "strategyId": "lp_vault",
+    "apy": 0.8158787872690463
+  },
+  {
+    "timestamp": 1771277365474,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.286676724275473
+  },
+  {
+    "timestamp": 1771277365474,
+    "strategyId": "multiply",
+    "apy": 7.25412996574597
+  },
+  {
+    "timestamp": 1771279252925,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075631765527101
+  },
+  {
+    "timestamp": 1771279252925,
+    "strategyId": "lp_vault",
+    "apy": 0.8061084391940586
+  },
+  {
+    "timestamp": 1771279252925,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.277620471633359
+  },
+  {
+    "timestamp": 1771279252925,
+    "strategyId": "multiply",
+    "apy": 7.258826389854608
+  },
+  {
+    "timestamp": 1771279264945,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075631765527101
+  },
+  {
+    "timestamp": 1771279264945,
+    "strategyId": "lp_vault",
+    "apy": 0.8061084391940586
+  },
+  {
+    "timestamp": 1771279264945,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.277620471633359
+  },
+  {
+    "timestamp": 1771279264945,
+    "strategyId": "multiply",
+    "apy": 7.258826389854608
+  },
+  {
+    "timestamp": 1771284737864,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075631765535938
+  },
+  {
+    "timestamp": 1771284737864,
+    "strategyId": "lp_vault",
+    "apy": 0.7726128463545718
+  },
+  {
+    "timestamp": 1771284737864,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.27761463008578
+  },
+  {
+    "timestamp": 1771284737864,
+    "strategyId": "multiply",
+    "apy": 7.258829083398996
+  },
+  {
+    "timestamp": 1771284753258,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075631765535938
+  },
+  {
+    "timestamp": 1771284753258,
+    "strategyId": "lp_vault",
+    "apy": 0.7721424359638244
+  },
+  {
+    "timestamp": 1771284753258,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.27761463008578
+  },
+  {
+    "timestamp": 1771284753258,
+    "strategyId": "multiply",
+    "apy": 7.258829083398996
+  },
+  {
+    "timestamp": 1771292046193,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075631773474588
+  },
+  {
+    "timestamp": 1771292046193,
+    "strategyId": "lp_vault",
+    "apy": 0.750174643983067
+  },
+  {
+    "timestamp": 1771292046193,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.291646971070384
+  },
+  {
+    "timestamp": 1771292046193,
+    "strategyId": "multiply",
+    "apy": 7.251553269793647
+  },
+  {
+    "timestamp": 1771292065605,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075631773474588
+  },
+  {
+    "timestamp": 1771292065605,
+    "strategyId": "lp_vault",
+    "apy": 0.750174643983067
+  },
+  {
+    "timestamp": 1771292065605,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.291646971070384
+  },
+  {
+    "timestamp": 1771292065605,
+    "strategyId": "multiply",
+    "apy": 7.251553269793647
+  },
+  {
+    "timestamp": 1771299485771,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07563178110011
+  },
+  {
+    "timestamp": 1771299485771,
+    "strategyId": "lp_vault",
+    "apy": 0.7682595224364195
+  },
+  {
+    "timestamp": 1771299485771,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.29277746873149
+  },
+  {
+    "timestamp": 1771299485771,
+    "strategyId": "multiply",
+    "apy": 7.25096733168734
+  },
+  {
+    "timestamp": 1771299500801,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07563178110011
+  },
+  {
+    "timestamp": 1771299500801,
+    "strategyId": "lp_vault",
+    "apy": 0.7679926216520279
+  },
+  {
+    "timestamp": 1771299500801,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.29277746873149
+  },
+  {
+    "timestamp": 1771299500801,
+    "strategyId": "multiply",
+    "apy": 7.25096733168734
+  },
+  {
+    "timestamp": 1771300991449,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07563178110011
+  },
+  {
+    "timestamp": 1771300991449,
+    "strategyId": "lp_vault",
+    "apy": 0.8382399783565948
+  },
+  {
+    "timestamp": 1771300991449,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.292530627757163
+  },
+  {
+    "timestamp": 1771300991449,
+    "strategyId": "multiply",
+    "apy": 7.2510952957911385
+  },
+  {
+    "timestamp": 1771301007282,
+    "strategyId": "hold_jitosol",
+    "apy": 6.07563178110011
+  },
+  {
+    "timestamp": 1771301007282,
+    "strategyId": "lp_vault",
+    "apy": 0.8389081098329205
+  },
+  {
+    "timestamp": 1771301007282,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.292530627757163
+  },
+  {
+    "timestamp": 1771301007282,
+    "strategyId": "multiply",
+    "apy": 7.2510952957911385
+  },
+  {
+    "timestamp": 1771306770278,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043450785
+  },
+  {
+    "timestamp": 1771306770278,
+    "strategyId": "lp_vault",
+    "apy": 0.8218442879794117
+  },
+  {
+    "timestamp": 1771306770278,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.291549112030024
+  },
+  {
+    "timestamp": 1771306770278,
+    "strategyId": "multiply",
+    "apy": 7.251603781365118
+  },
+  {
+    "timestamp": 1771306790234,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043450785
+  },
+  {
+    "timestamp": 1771306790234,
+    "strategyId": "lp_vault",
+    "apy": 0.8218366156895349
+  },
+  {
+    "timestamp": 1771306790234,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.291549112030024
+  },
+  {
+    "timestamp": 1771306790234,
+    "strategyId": "multiply",
+    "apy": 7.251603781365118
+  },
+  {
+    "timestamp": 1771308056275,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043450785
+  },
+  {
+    "timestamp": 1771308056275,
+    "strategyId": "lp_vault",
+    "apy": 0.8135683534470067
+  },
+  {
+    "timestamp": 1771308056275,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.289456119016477
+  },
+  {
+    "timestamp": 1771308056275,
+    "strategyId": "multiply",
+    "apy": 7.25268875711088
+  },
+  {
+    "timestamp": 1771308073072,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043450785
+  },
+  {
+    "timestamp": 1771308073072,
+    "strategyId": "lp_vault",
+    "apy": 0.8135683534470067
+  },
+  {
+    "timestamp": 1771308073072,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.289456119016477
+  },
+  {
+    "timestamp": 1771308073072,
+    "strategyId": "multiply",
+    "apy": 7.25268875711088
+  },
+  {
+    "timestamp": 1771314126838,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043468415
+  },
+  {
+    "timestamp": 1771314126838,
+    "strategyId": "lp_vault",
+    "apy": 0.7818500154074188
+  },
+  {
+    "timestamp": 1771314126838,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.289645991039648
+  },
+  {
+    "timestamp": 1771314126838,
+    "strategyId": "multiply",
+    "apy": 7.252590430087992
+  },
+  {
+    "timestamp": 1771314139177,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043468415
+  },
+  {
+    "timestamp": 1771314139177,
+    "strategyId": "lp_vault",
+    "apy": 0.7818500154074188
+  },
+  {
+    "timestamp": 1771314139177,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.289645991039648
+  },
+  {
+    "timestamp": 1771314139177,
+    "strategyId": "multiply",
+    "apy": 7.252590430087992
+  },
+  {
+    "timestamp": 1771321494761,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043516932
+  },
+  {
+    "timestamp": 1771321494761,
+    "strategyId": "lp_vault",
+    "apy": 0.7698368229361499
+  },
+  {
+    "timestamp": 1771321494761,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3091622969930965
+  },
+  {
+    "timestamp": 1771321494761,
+    "strategyId": "multiply",
+    "apy": 7.242480531059211
+  },
+  {
+    "timestamp": 1771321511320,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043516932
+  },
+  {
+    "timestamp": 1771321511320,
+    "strategyId": "lp_vault",
+    "apy": 0.7698368219265808
+  },
+  {
+    "timestamp": 1771321511320,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3091622969930965
+  },
+  {
+    "timestamp": 1771321511320,
+    "strategyId": "multiply",
+    "apy": 7.242480531059211
+  },
+  {
+    "timestamp": 1771322448834,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043516932
+  },
+  {
+    "timestamp": 1771322448834,
+    "strategyId": "lp_vault",
+    "apy": 0.7643655401087908
+  },
+  {
+    "timestamp": 1771322448834,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.309306919132272
+  },
+  {
+    "timestamp": 1771322448834,
+    "strategyId": "multiply",
+    "apy": 7.2424050861161104
+  },
+  {
+    "timestamp": 1771322465314,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043516932
+  },
+  {
+    "timestamp": 1771322465314,
+    "strategyId": "lp_vault",
+    "apy": 0.7647942860159926
+  },
+  {
+    "timestamp": 1771322465314,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.309306919132272
+  },
+  {
+    "timestamp": 1771322465314,
+    "strategyId": "multiply",
+    "apy": 7.2424050861161104
+  },
+  {
+    "timestamp": 1771328728403,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043618384
+  },
+  {
+    "timestamp": 1771328728403,
+    "strategyId": "lp_vault",
+    "apy": 0.7918150908523882
+  },
+  {
+    "timestamp": 1771328728403,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.31508466456576
+  },
+  {
+    "timestamp": 1771328728403,
+    "strategyId": "multiply",
+    "apy": 7.239414811337339
+  },
+  {
+    "timestamp": 1771328744846,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043618384
+  },
+  {
+    "timestamp": 1771328744846,
+    "strategyId": "lp_vault",
+    "apy": 0.7918637875014253
+  },
+  {
+    "timestamp": 1771328744846,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.31508466456576
+  },
+  {
+    "timestamp": 1771328744846,
+    "strategyId": "multiply",
+    "apy": 7.239414811337339
+  },
+  {
+    "timestamp": 1771329653014,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043618384
+  },
+  {
+    "timestamp": 1771329653014,
+    "strategyId": "lp_vault",
+    "apy": 0.7075997925668202
+  },
+  {
+    "timestamp": 1771329653014,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.323194500181482
+  },
+  {
+    "timestamp": 1771329653014,
+    "strategyId": "multiply",
+    "apy": 7.235219086523978
+  },
+  {
+    "timestamp": 1771329670132,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043618384
+  },
+  {
+    "timestamp": 1771329670132,
+    "strategyId": "lp_vault",
+    "apy": 0.7075999557286361
+  },
+  {
+    "timestamp": 1771329670132,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.323194500181482
+  },
+  {
+    "timestamp": 1771329670132,
+    "strategyId": "multiply",
+    "apy": 7.235219086523978
+  },
+  {
+    "timestamp": 1771336094962,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043653667
+  },
+  {
+    "timestamp": 1771336094962,
+    "strategyId": "lp_vault",
+    "apy": 0.6980151269923576
+  },
+  {
+    "timestamp": 1771336094962,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.313201566488045
+  },
+  {
+    "timestamp": 1771336094962,
+    "strategyId": "multiply",
+    "apy": 7.240389584542886
+  },
+  {
+    "timestamp": 1771336112435,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043653667
+  },
+  {
+    "timestamp": 1771336112435,
+    "strategyId": "lp_vault",
+    "apy": 0.6980151269923576
+  },
+  {
+    "timestamp": 1771336112435,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.313201566488045
+  },
+  {
+    "timestamp": 1771336112435,
+    "strategyId": "multiply",
+    "apy": 7.240389584542886
+  },
+  {
+    "timestamp": 1771337165408,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043653667
+  },
+  {
+    "timestamp": 1771337165408,
+    "strategyId": "lp_vault",
+    "apy": 0.7004547337782016
+  },
+  {
+    "timestamp": 1771337165408,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.312241769297742
+  },
+  {
+    "timestamp": 1771337165408,
+    "strategyId": "multiply",
+    "apy": 7.2408860578433565
+  },
+  {
+    "timestamp": 1771337178929,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043653667
+  },
+  {
+    "timestamp": 1771337178929,
+    "strategyId": "lp_vault",
+    "apy": 0.7004547337782016
+  },
+  {
+    "timestamp": 1771337178929,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.312241769297742
+  },
+  {
+    "timestamp": 1771337178929,
+    "strategyId": "multiply",
+    "apy": 7.2408860578433565
+  },
+  {
+    "timestamp": 1771343369069,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043680113
+  },
+  {
+    "timestamp": 1771343369069,
+    "strategyId": "lp_vault",
+    "apy": 0.6631817013886175
+  },
+  {
+    "timestamp": 1771343369069,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3119992648603
+  },
+  {
+    "timestamp": 1771343369069,
+    "strategyId": "multiply",
+    "apy": 7.187548520586786
+  },
+  {
+    "timestamp": 1771343381878,
+    "strategyId": "hold_jitosol",
+    "apy": 6.075632043680113
+  },
+  {
+    "timestamp": 1771343381878,
+    "strategyId": "lp_vault",
+    "apy": 0.6631817013886175
+  },
+  {
+    "timestamp": 1771343381878,
+    "strategyId": "klend_sol_supply",
+    "apy": 4.3119992648603
+  },
+  {
+    "timestamp": 1771343381878,
+    "strategyId": "multiply",
+    "apy": 7.187548520586786
   }
 ]
