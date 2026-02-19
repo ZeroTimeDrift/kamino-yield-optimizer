@@ -28,6 +28,7 @@ import { JupiterClient } from './jupiter-client';
 import { LiquidityClient, LiquidityPosition, LiquidityVaultInfo } from './liquidity-client';
 import { fetchLiveJitoStakingApy } from './scanner';
 import { scanAllProtocols, ProtocolYield } from './multi-protocol-scanner';
+import { fetchReserves, fetchUserObligations } from './kamino-api';
 import {
   Settings,
   StrategyType,
@@ -123,6 +124,9 @@ function estimateTxCount(from: StrategyId, to: StrategyId): number {
   if (from === 'hold_jitosol') return 1;                // just deposit
   if (to === 'hold_jitosol') return 1;                  // just withdraw
   if (from === to) return 0;                             // no-op
+  // Multiply involves multiple looped txs (deposit + N*(borrow+swap+deposit))
+  if (to === 'multiply') return 8;                       // ~3 loop iterations × (borrow+swap+deposit) + initial deposit
+  if (from === 'multiply') return 8;                     // ~3 loop iterations × (withdraw+swap+repay)
   return 2;                                              // withdraw + deposit
 }
 
@@ -131,6 +135,7 @@ function estimateTxCount(from: StrategyId, to: StrategyId): number {
  * LP vault deposits can be single-sided (JitoSOL → vault handles internal swap).
  * K-Lend SOL supply requires JitoSOL → SOL swap first.
  * Going to hold_jitosol from LP returns mixed tokens (need swap SOL→JitoSOL).
+ * Multiply involves internal swaps (SOL↔LST) handled by the multiply client.
  */
 function requiresSwap(from: StrategyId, to: StrategyId): boolean {
   // LP vault withdraw returns SOL + JitoSOL. If going to hold, need to swap SOL portion.
@@ -139,6 +144,8 @@ function requiresSwap(from: StrategyId, to: StrategyId): boolean {
   if ((to as string) === 'klend_sol_supply') return true;
   // Going from K-Lend SOL to JitoSOL-based strategies.
   if ((from as string) === 'klend_sol_supply' && (to as string) !== 'klend_sol_supply') return true;
+  // Multiply handles its own swaps internally — don't add external swap step
+  if (to === 'multiply' || from === 'multiply') return false;
   return false;
 }
 
@@ -458,11 +465,13 @@ export async function scoreStrategies(
 
   // 3. Kamino LP Vault — fetch best JitoSOL-SOL vault
   //    (CAREFUL: this makes several RPC calls via the Kamino SDK)
+  const MIN_TVL_USD = 1_000_000; // $1M minimum TVL floor
   try {
     const lpVaults = await liquidityClient.listJitoSolVaults();
-    if (lpVaults.length > 0) {
-      // Pick the best one that's in range
-      const bestInRange = lpVaults.find(v => !v.outOfRange) || lpVaults[0];
+    const eligibleVaults = lpVaults.filter(v => v.tvlUsd.gte(MIN_TVL_USD));
+    if (eligibleVaults.length > 0) {
+      // Pick the best one that's in range and above TVL floor
+      const bestInRange = eligibleVaults.find(v => !v.outOfRange) || eligibleVaults[0];
       strategies.push({
         id: 'lp_vault',
         name: `LP Vault ${bestInRange.name}`,
@@ -521,22 +530,69 @@ export async function scoreStrategies(
     console.log(`   ⚠️  K-Lend scan failed: ${err.message}`);
   }
 
-  // 5. Multiply — only if spread is positive
+  // 5. Multiply — scans ALL LSTs via Sanctum + all markets via REST API
   try {
     const multiplyCheck = await multiplyClient.shouldOpenPosition();
-    if (multiplyCheck.profitable) {
-      const rates = multiplyCheck.rates;
+
+    // Prefer the best multi-LST opportunity from Sanctum if available
+    if (multiplyCheck.bestOpportunity) {
+      const bestOpp = multiplyCheck.bestOpportunity;
       strategies.push({
         id: 'multiply',
-        name: 'Multiply JitoSOL/SOL',
+        name: `Multiply ${bestOpp.symbol}/SOL (${bestOpp.market})`,
         type: StrategyType.MULTIPLY,
-        grossApy: rates.netApyAt5x.gt(0) ? rates.netApyAt5x : new Decimal(0),
-        available: multiplyCheck.profitable,
-        address: KAMINO_MARKETS.JITO,
+        grossApy: new Decimal(bestOpp.bestNetApy > 0 ? bestOpp.bestNetApy : 0),
+        available: true,
+        address: bestOpp.marketAddress,
         meta: {
-          spread: rates.spread.toNumber(),
-          borrowApy: rates.solBorrowApy.toNumber(),
-          stakingApy: rates.jitosolSupplyApy.toNumber(),
+          lstSymbol: bestOpp.symbol,
+          lstMint: bestOpp.mint,
+          spread: bestOpp.spread,
+          borrowApy: bestOpp.solBorrowApy,
+          nativeYield: bestOpp.nativeYield,
+          market: bestOpp.market,
+          maxLeverage: bestOpp.maxLeverage,
+          safeLeverage: bestOpp.maxLeverage * 0.8,
+          source: 'sanctum',
+          topOpportunities: (multiplyCheck.multiLstOpportunities || [])
+            .filter(o => o.profitable)
+            .slice(0, 5)
+            .map(o => ({
+              symbol: o.symbol,
+              market: o.market,
+              nativeYield: o.nativeYield,
+              spread: o.spread,
+              bestNetApy: o.bestNetApy,
+            })),
+          allMarkets: multiplyCheck.allMarketRates.map(r => ({
+            market: r.market,
+            spread: r.spread.toNumber(),
+            netApyAt5x: r.netApyAt5x.toNumber(),
+          })),
+        },
+      });
+    } else if (multiplyCheck.profitable && multiplyCheck.bestMarket) {
+      // Fall back to legacy JitoSOL-only analysis
+      const best = multiplyCheck.bestMarket;
+      strategies.push({
+        id: 'multiply',
+        name: `Multiply JitoSOL/SOL (${best.market})`,
+        type: StrategyType.MULTIPLY,
+        grossApy: best.netApyAt5x.gt(0) ? best.netApyAt5x : new Decimal(0),
+        available: true,
+        address: best.marketAddress,
+        meta: {
+          lstSymbol: 'JitoSOL',
+          spread: best.spread.toNumber(),
+          borrowApy: best.solBorrowApy.toNumber(),
+          stakingApy: best.jitosolStakingApy.toNumber(),
+          market: best.market,
+          source: 'jito-api',
+          allMarkets: multiplyCheck.allMarketRates.map(r => ({
+            market: r.market,
+            spread: r.spread.toNumber(),
+            netApyAt5x: r.netApyAt5x.toNumber(),
+          })),
         },
       });
     }
@@ -891,6 +947,26 @@ export async function executeRebalance(
       }
       steps.push(`✅ Withdrew from K-Lend JitoSOL`);
 
+    } else if (fromStrategy === 'multiply') {
+      // ─── Close multiply position first ─────────────────────
+      steps.push(`Closing multiply position...`);
+
+      const multiplyClient = new MultiplyClient(settings.rpcUrl, settings.multiply);
+      const positions = await multiplyClient.getUserMultiplyPositions(wallet.publicKey);
+
+      if (positions.length > 0) {
+        const pos = positions[0];
+        const closeResult = await multiplyClient.closePosition(wallet, pos, dryRun);
+        txSignatures.push(...closeResult.txSignatures);
+
+        if (!closeResult.success) {
+          return { success: false, message: `Multiply close failed: ${closeResult.message}`, txSignatures };
+        }
+        steps.push(`✅ Multiply position closed`);
+      } else {
+        steps.push(`No multiply position found to close`);
+      }
+
     } else if (fromStrategy === 'hold_jitosol') {
       steps.push(`Using idle JitoSOL (no withdrawal needed)`);
     }
@@ -971,6 +1047,104 @@ export async function executeRebalance(
       }
       steps.push(`✅ Deposited to K-Lend JitoSOL`);
 
+    } else if (toStrategy === 'multiply') {
+      // ─── Open a multiply position ──────────────────────────
+      // Retrieve the best opportunity from scored strategies metadata
+      const multiplyClient = new MultiplyClient(settings.rpcUrl, settings.multiply);
+      const multiplyCheck = await multiplyClient.shouldOpenPosition();
+
+      let lstSymbol: string;
+      let lstMint: string;
+      let targetMarket: string;
+      let targetLeverage: number;
+
+      if (multiplyCheck.bestOpportunity) {
+        lstSymbol = multiplyCheck.bestOpportunity.symbol;
+        lstMint = multiplyCheck.bestOpportunity.mint;
+        targetMarket = multiplyCheck.bestOpportunity.marketAddress;
+        targetLeverage = multiplyCheck.bestOpportunity.maxLeverage * 0.8; // 80% of max for safety
+      } else if (multiplyCheck.bestMarket) {
+        lstSymbol = 'JitoSOL';
+        lstMint = TOKEN_MINTS.JitoSOL;
+        targetMarket = multiplyCheck.bestMarket.marketAddress;
+        targetLeverage = Math.min(5, 1 / (1 - multiplyCheck.bestMarket.maxLtv) * 0.8);
+      } else {
+        return { success: false, message: 'No profitable multiply opportunity found', txSignatures };
+      }
+
+      // If coming from a non-LST strategy, we may need to swap to the target LST first
+      // For now, assume we have the LST in wallet (from previous withdraw + swap steps)
+      // The amountSol is in SOL-equivalent terms; we need to figure out the LST amount
+      // If the LST is JitoSOL and we hold JitoSOL, use it directly
+      // Otherwise, we need to swap SOL → target LST first
+
+      let lstAmount = amountSol; // approximate: LST ≈ SOL in value
+
+      // Check what we actually hold — find the best source token to swap from
+      const walletLstBalance = await kaminoClient.getTokenBalance(wallet.publicKey, lstMint);
+      const walletJitosolBalance = await kaminoClient.getTokenBalance(wallet.publicKey, TOKEN_MINTS.JitoSOL);
+      const walletSolBalance = new Decimal(await kaminoClient.getSolBalance(wallet.publicKey));
+
+      if (walletLstBalance.gte(lstAmount.mul(0.5))) {
+        // Already have the target LST
+        lstAmount = Decimal.min(walletLstBalance, lstAmount);
+        steps.push(`Using ${lstAmount.toFixed(6)} ${lstSymbol} from wallet`);
+
+      } else if (lstMint === TOKEN_MINTS.JitoSOL && walletJitosolBalance.gte(lstAmount.mul(0.5))) {
+        // Target IS JitoSOL and we have it
+        lstAmount = Decimal.min(walletJitosolBalance, lstAmount);
+        steps.push(`Using ${lstAmount.toFixed(6)} JitoSOL from wallet`);
+
+      } else if (walletJitosolBalance.gt(walletSolBalance)) {
+        // More JitoSOL than SOL → swap JitoSOL → target LST
+        const swapAmount = Decimal.min(walletJitosolBalance, lstAmount);
+        steps.push(`Swap ${swapAmount.toFixed(4)} JitoSOL → ${lstSymbol} via Jupiter`);
+        const swapResult = await jupiterClient.executeSwap(
+          TOKEN_MINTS.JitoSOL, lstMint, swapAmount, wallet, dryRun
+        );
+        if (swapResult.signature) txSignatures.push(swapResult.signature);
+        const outDecimals = 9;
+        lstAmount = new Decimal(swapResult.quote.outAmount).div(new Decimal(10).pow(outDecimals));
+        steps.push(`✅ Got ${lstAmount.toFixed(6)} ${lstSymbol}`);
+
+        if (!dryRun) await new Promise(r => setTimeout(r, 2000));
+
+      } else if (walletSolBalance.gt(0.01)) {
+        // Swap SOL → target LST
+        const swapAmount = Decimal.min(walletSolBalance.minus(0.005), lstAmount); // keep gas
+        steps.push(`Swap ${swapAmount.toFixed(4)} SOL → ${lstSymbol} via Jupiter`);
+        const swapResult = await jupiterClient.executeSwap(
+          'SOL', lstMint, swapAmount, wallet, dryRun
+        );
+        if (swapResult.signature) txSignatures.push(swapResult.signature);
+        const outDecimals = 9;
+        lstAmount = new Decimal(swapResult.quote.outAmount).div(new Decimal(10).pow(outDecimals));
+        steps.push(`✅ Got ${lstAmount.toFixed(6)} ${lstSymbol}`);
+
+        if (!dryRun) await new Promise(r => setTimeout(r, 2000));
+
+      } else {
+        return { success: false, message: `Insufficient funds: ${walletSolBalance.toFixed(4)} SOL, ${walletJitosolBalance.toFixed(4)} JitoSOL — need ~${lstAmount.toFixed(4)} to swap`, txSignatures };
+      }
+
+      steps.push(`Opening ${targetLeverage.toFixed(1)}x ${lstSymbol}/SOL multiply position`);
+
+      const multiplyResult = await multiplyClient.openPosition(
+        wallet,
+        lstSymbol,
+        lstMint,
+        lstAmount,
+        targetLeverage,
+        targetMarket,
+        dryRun,
+      );
+
+      txSignatures.push(...multiplyResult.txSignatures);
+      if (!multiplyResult.success) {
+        return { success: false, message: `Multiply open failed: ${multiplyResult.message}`, txSignatures };
+      }
+      steps.push(`✅ Multiply position opened at ${multiplyResult.finalLeverage.toFixed(2)}x`);
+
     } else if (toStrategy === 'hold_jitosol') {
       steps.push(`Holding JitoSOL in wallet (no deposit needed)`);
     }
@@ -1049,43 +1223,135 @@ export async function runRebalancer(
 
   console.log(`💲 SOL price: $${solPrice.toFixed(2)}`);
 
-  // Detect current position
-  // Check LP positions first (our main strategy)
-  const lpPositions = await liquidityClient.getUserPositions(wallet.publicKey);
-  const jitosolBalance = await kaminoClient.getTokenBalance(wallet.publicKey, TOKEN_MINTS.JitoSOL);
+  // ─── Detect ALL positions and assets ──────────────────────
+  console.log('\n📊 Scanning all positions and assets...');
 
+  // Wallet balances
+  const solBalance = await kaminoClient.getSolBalance(wallet.publicKey);
+  const jitosolBalance = await kaminoClient.getTokenBalance(wallet.publicKey, TOKEN_MINTS.JitoSOL);
+  console.log(`   Wallet: ${solBalance.toFixed(6)} SOL ($${solBalance.mul(solPrice).toFixed(2)})`);
+  console.log(`   Wallet: ${jitosolBalance.toFixed(6)} JitoSOL ($${jitosolBalance.mul(solPrice).mul(1.26).toFixed(2)})`);
+
+  // LP positions (filter dust < $1)
+  const lpPositions = await liquidityClient.getUserPositions(wallet.publicKey);
+  const activeLpPositions = lpPositions.filter(p => p.valueUsd.gt(1));
+  let lpTotalUsd = new Decimal(0);
+  let lpApy = new Decimal(0);
+  for (const lp of activeLpPositions) {
+    lpTotalUsd = lpTotalUsd.plus(lp.valueUsd);
+    lpApy = lp.currentApy; // use latest
+    console.log(`   LP: ${lp.name} $${lp.valueUsd.toFixed(2)} @ ${lp.currentApy.toFixed(2)}% APY`);
+  }
+
+  // K-Lend obligations across all markets
+  const MARKETS_TO_SCAN = [
+    { name: 'Main', address: KAMINO_MARKETS.MAIN },
+    { name: 'Jito', address: KAMINO_MARKETS.JITO },
+    { name: 'Altcoins', address: KAMINO_MARKETS.ALTCOINS },
+  ];
+  let klendTotalDepositUsd = new Decimal(0);
+  let klendTotalBorrowUsd = new Decimal(0);
+  let klendNetUsd = new Decimal(0);
+  let klendApy = new Decimal(0);
+  let klendStrategy: StrategyId | null = null;
+
+  for (const market of MARKETS_TO_SCAN) {
+    try {
+      const { fetchUserObligations } = await import('./kamino-api');
+      const obligs = await fetchUserObligations(market.address, wallet.publicKey.toBase58());
+      for (const o of obligs) {
+        if (o.depositedValue > 1) { // filter dust
+          klendTotalDepositUsd = klendTotalDepositUsd.plus(o.depositedValue);
+          klendTotalBorrowUsd = klendTotalBorrowUsd.plus(o.borrowedValue);
+          klendNetUsd = klendNetUsd.plus(o.netAccountValue);
+          
+          // Determine strategy from deposits
+          for (const d of o.deposits) {
+            if (d.symbol.toUpperCase() === 'SOL') klendStrategy = 'klend_sol_supply';
+            else if (d.symbol.toUpperCase() === 'JITOSOL') klendStrategy = 'klend_jitosol_supply';
+          }
+
+          const leverage = o.depositedValue > 0 && o.netAccountValue > 0
+            ? o.depositedValue / o.netAccountValue : 1;
+          console.log(`   K-Lend (${market.name}): Deposited $${o.depositedValue.toFixed(2)}, Borrowed $${o.borrowedValue.toFixed(2)}, Net $${o.netAccountValue.toFixed(2)}, Leverage ${leverage.toFixed(2)}x`);
+        }
+      }
+    } catch {}
+  }
+
+  // K-Lend APY from reserves (if we have positions)
+  if (klendTotalDepositUsd.gt(1)) {
+    try {
+      const reserves = await kaminoClient.getReserves();
+      const primary = klendStrategy === 'klend_sol_supply'
+        ? reserves.find(r => r.token === 'SOL')
+        : reserves.find(r => r.token === 'JitoSOL' || r.token === 'JITOSOL');
+      if (primary) klendApy = primary.apy;
+    } catch {}
+  }
+
+  // Compute total portfolio value
+  const walletUsd = solBalance.mul(solPrice).plus(jitosolBalance.mul(solPrice).mul(1.26));
+  const totalPortfolioUsd = walletUsd.plus(lpTotalUsd).plus(klendNetUsd);
+  const totalCapitalSol = totalPortfolioUsd.div(solPrice);
+
+  console.log(`\n   📋 PORTFOLIO SUMMARY:`);
+  console.log(`   Wallet:    $${walletUsd.toFixed(2)}`);
+  if (lpTotalUsd.gt(0)) console.log(`   LP Vaults: $${lpTotalUsd.toFixed(2)}`);
+  if (klendNetUsd.gt(0)) console.log(`   K-Lend:    $${klendNetUsd.toFixed(2)} (deposits $${klendTotalDepositUsd.toFixed(2)}, borrows $${klendTotalBorrowUsd.toFixed(2)})`);
+  console.log(`   TOTAL:     $${totalPortfolioUsd.toFixed(2)} (${totalCapitalSol.toFixed(4)} SOL)`);
+
+  // Determine primary strategy — largest position wins
   let currentStrategyId: StrategyId = 'hold_jitosol';
-  let currentApy = new Decimal(5.57); // default staking yield
-  let capitalSol = jitosolBalance;
+  let currentApy = new Decimal(5.57); // default staking yield for JitoSOL holding
+  let capitalSol = totalCapitalSol;
   let idleCapitalSol = new Decimal(0);
 
-  if (lpPositions.length > 0) {
-    const primaryLP = lpPositions[0];
-    currentStrategyId = 'lp_vault';
-    currentApy = primaryLP.currentApy;
-    // LP value in SOL terms
-    capitalSol = primaryLP.valueUsd.div(solPrice);
+  // Check if multiply (K-Lend with borrows)
+  if (klendTotalBorrowUsd.gt(1) && klendTotalDepositUsd.gt(1)) {
+    currentStrategyId = 'multiply';
+    // Multiply APY = collateralStakingYield × leverage - borrowRate × (leverage - 1)
+    const leverage = klendTotalDepositUsd.div(klendNetUsd.gt(0) ? klendNetUsd : new Decimal(1));
+    // Get actual staking yield for the collateral (from Sanctum scanner or default)
+    let collateralStakingApy = new Decimal(6.29); // default JitoSOL rate
+    try {
+      const multiplyClient = new MultiplyClient(settings.rpcUrl, settings.multiply);
+      const multiplyCheck = await multiplyClient.shouldOpenPosition();
+      if (multiplyCheck.bestOpportunity) {
+        collateralStakingApy = new Decimal(multiplyCheck.bestOpportunity.nativeYield);
+      }
+    } catch {}
+    // Borrow rate from K-Lend SOL
+    let borrowRate = new Decimal(6.37); // default
+    try {
+      const mainReserves = await fetchReserves(KAMINO_MARKETS.MAIN);
+      const solRes = mainReserves.find(r => r.liquidityToken === 'SOL');
+      if (solRes) borrowRate = new Decimal(solRes.borrowApy);
+    } catch {}
+    currentApy = collateralStakingApy.mul(leverage).minus(borrowRate.mul(leverage.minus(1)));
+    capitalSol = klendNetUsd.div(solPrice);
     idleCapitalSol = jitosolBalance;
-
-    console.log(`📍 Current position: LP Vault @ ${currentApy.toFixed(2)}% APY`);
-    console.log(`   LP value: $${primaryLP.valueUsd.toFixed(2)} (${capitalSol.toFixed(4)} SOL equiv)`);
-    console.log(`   Idle JitoSOL: ${idleCapitalSol.toFixed(4)}`);
+    console.log(`\n📍 Primary: Multiply position (${leverage.toFixed(2)}x) @ est ${currentApy.toFixed(2)}% APY`);
+  } else if (lpTotalUsd.gt(walletUsd) && lpTotalUsd.gt(klendNetUsd)) {
+    // LP is largest
+    currentStrategyId = 'lp_vault';
+    currentApy = lpApy;
+    capitalSol = lpTotalUsd.div(solPrice);
+    idleCapitalSol = jitosolBalance;
+    console.log(`\n📍 Primary: LP Vault @ ${currentApy.toFixed(2)}% APY`);
+  } else if (klendNetUsd.gt(1) && klendNetUsd.gt(walletUsd)) {
+    // K-Lend is largest (no borrows = supply only)
+    currentStrategyId = klendStrategy || 'klend_sol_supply';
+    currentApy = klendApy;
+    capitalSol = klendNetUsd.div(solPrice);
+    idleCapitalSol = jitosolBalance;
+    console.log(`\n📍 Primary: K-Lend supply @ ${currentApy.toFixed(2)}% APY`);
   } else {
-    // Check K-Lend positions
-    const klendPositions = await kaminoClient.getUserPositions(wallet.publicKey);
-    if (klendPositions.length > 0) {
-      const primary = klendPositions[0];
-      currentStrategyId = primary.token === 'SOL' ? 'klend_sol_supply' : 'klend_jitosol_supply';
-      currentApy = primary.currentApy;
-      capitalSol = primary.tokenAmount.div(LAMPORTS_PER_SOL);
-      idleCapitalSol = jitosolBalance;
-
-      console.log(`📍 Current position: K-Lend ${primary.token} @ ${currentApy.toFixed(2)}% APY`);
-    } else {
-      console.log(`📍 Current position: Holding JitoSOL @ ${currentApy.toFixed(2)}% staking yield`);
-      capitalSol = jitosolBalance;
-      idleCapitalSol = new Decimal(0); // all capital IS idle
-    }
+    // Wallet is largest = holding
+    currentApy = new Decimal(jitosolBalance.gt(0) ? 5.57 : 0);
+    capitalSol = totalCapitalSol;
+    idleCapitalSol = new Decimal(0); // all capital IS idle when holding
+    console.log(`\n📍 Primary: Holding (${jitosolBalance.toFixed(4)} JitoSOL, ${solBalance.toFixed(4)} SOL) @ ${currentApy.toFixed(2)}% staking yield`);
   }
 
   // Run the decision engine
@@ -1169,6 +1435,55 @@ export async function runRebalancer(
         jupiterClient,
       );
       console.log(`   ${result.success ? '✅' : '❌'} ${result.message}`);
+    }
+  }
+
+  // Lever-up check: if already in multiply but under target leverage, run more loops
+  if (currentStrategyId === 'multiply' && !recommendation.shouldRebalance) {
+    try {
+      const multiplyClient = new MultiplyClient(settings.rpcUrl, settings.multiply);
+      const positions = await multiplyClient.getUserMultiplyPositions(wallet.publicKey);
+      if (positions.length > 0) {
+        const pos = positions[0];
+        const currentLev = pos.leverage.toNumber();
+        // Determine target leverage from opportunity data
+        const multiplyCheck = await multiplyClient.shouldOpenPosition();
+        let targetLev = 1.5; // default safe target
+        if (multiplyCheck.bestOpportunity) {
+          targetLev = Math.min(multiplyCheck.bestOpportunity.maxLeverage * 0.8, 1.5);
+        }
+
+        if (currentLev < targetLev * 0.95) {
+          console.log(`\n📈 Multiply position under-leveraged: ${currentLev.toFixed(2)}x / ${targetLev.toFixed(2)}x target`);
+          recommendation.shouldRebalance = true;
+          recommendation.reasoning.push(`📈 Leverage ${currentLev.toFixed(2)}x below target ${targetLev.toFixed(2)}x — levering up`);
+
+          if (!settings.dryRun) {
+            console.log(`⚡ Levering up existing position...`);
+            // Run openPosition with zero initial deposit — it will borrow+swap+deposit on the existing obligation
+            const lstSymbol = pos.collateralToken;
+            const lstMint = pos.collateralMint || TOKEN_MINTS[lstSymbol] || lstSymbol;
+            const marketAddress = pos.marketAddress;
+            const result = await multiplyClient.openPosition(
+              wallet,
+              lstSymbol,
+              lstMint,
+              new Decimal(0), // no initial deposit — just lever up existing
+              targetLev,
+              marketAddress,
+              false,
+            );
+            console.log(`   ${result.success ? '✅' : '❌'} Lever-up: ${result.message || ''}`);
+            console.log(`   Final leverage: ${result.finalLeverage.toFixed(2)}x`);
+          } else {
+            console.log('🧪 DRY RUN — Would lever up to ' + targetLev.toFixed(2) + 'x');
+          }
+        } else {
+          console.log(`\n✅ Multiply leverage on target: ${currentLev.toFixed(2)}x / ${targetLev.toFixed(2)}x`);
+        }
+      }
+    } catch (err: any) {
+      console.log(`   ⚠️  Lever-up check failed: ${err.message}`);
     }
   }
 

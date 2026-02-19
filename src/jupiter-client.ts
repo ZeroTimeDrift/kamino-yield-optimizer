@@ -20,7 +20,7 @@ import {
   JupiterSettings,
 } from './types';
 
-const JUPITER_API = 'https://quote-api.jup.ag/v6';
+const JUPITER_API = 'https://public.jupiterapi.com';
 
 /** Retry helper – mirrors the pattern from kamino-client.ts */
 async function retry<T>(fn: () => Promise<T>, maxRetries = 3, delayMs = 2000): Promise<T> {
@@ -60,8 +60,9 @@ export class JupiterClient {
     amountUi: Decimal,
     slippageBps?: number
   ): Promise<JupiterQuote> {
-    const inputMint = TOKEN_MINTS[inputToken];
-    const outputMint = TOKEN_MINTS[outputToken];
+    // Accept token symbols (lookup in TOKEN_MINTS) or raw mint addresses
+    const inputMint = TOKEN_MINTS[inputToken] || (inputToken.length > 30 ? inputToken : null);
+    const outputMint = TOKEN_MINTS[outputToken] || (outputToken.length > 30 ? outputToken : null);
     if (!inputMint) throw new Error(`Unknown input token: ${inputToken}`);
     if (!outputMint) throw new Error(`Unknown output token: ${outputToken}`);
 

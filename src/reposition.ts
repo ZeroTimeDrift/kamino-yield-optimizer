@@ -46,7 +46,7 @@ async function setup() {
   return { rpc, rpcSubscriptions, signer, sendAndConfirm };
 }
 
-async function buildAndSend(rpc, signer, sendAndConfirm, instructions, label) {
+async function buildAndSend(rpc: any, signer: any, sendAndConfirm: any, instructions: any[], label: string) {
   const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
   
   // Prepend compute budget
@@ -59,9 +59,9 @@ async function buildAndSend(rpc, signer, sendAndConfirm, instructions, label) {
   
   const txMessage = pipe(
     createTransactionMessage({ version: 0 }),
-    m => setTransactionMessageFeePayer(signer.address, m),
-    m => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, m),
-    m => appendTransactionMessageInstructions(allIxs, m),
+    (m: any) => setTransactionMessageFeePayer(signer.address, m),
+    (m: any) => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, m),
+    (m: any) => appendTransactionMessageInstructions(allIxs, m),
   );
   
   // Sign
@@ -75,13 +75,13 @@ async function buildAndSend(rpc, signer, sendAndConfirm, instructions, label) {
   return sig;
 }
 
-async function step1_withdraw(rpc, signer, sendAndConfirm) {
+async function step1_withdraw(rpc: any, signer: any, sendAndConfirm: any) {
   console.log('\n=== STEP 1: Withdraw JitoSOL from Ethena Market ===');
   
   const market = await KaminoMarket.load(rpc, ETHENA_MARKET_ADDR, 400, PROGRAM_ID);
   if (!market) throw new Error('Failed to load Ethena market');
   
-  const jitosolReserve = market.getReserves().find(r => r.getTokenSymbol() === 'JITOSOL');
+  const jitosolReserve = market.getReserves().find((r: any) => r.getTokenSymbol() === 'JITOSOL');
   if (!jitosolReserve) throw new Error('JitoSOL reserve not found');
   console.log('JitoSOL reserve:', jitosolReserve.address);
   
@@ -91,7 +91,7 @@ async function step1_withdraw(rpc, signer, sendAndConfirm) {
   console.log('Obligation:', obligation.obligationAddress);
   
   const deposits = obligation.getDeposits();
-  const jitosolDep = deposits.find(d => d.mintAddress === JITOSOL_MINT);
+  const jitosolDep = deposits.find((d: any) => d.mintAddress === JITOSOL_MINT);
   if (!jitosolDep) throw new Error('No JitoSOL deposit found');
   
   // Use the raw amount (cToken amount from the position)
@@ -123,13 +123,13 @@ async function step1_withdraw(rpc, signer, sendAndConfirm) {
   return sig;
 }
 
-async function step2_deposit(rpc, signer, sendAndConfirm) {
+async function step2_deposit(rpc: any, signer: any, sendAndConfirm: any) {
   console.log('\n=== STEP 2: Deposit JitoSOL into Main Market ===');
   
   const market = await KaminoMarket.load(rpc, MAIN_MARKET_ADDR, 400, PROGRAM_ID);
   if (!market) throw new Error('Failed to load Main market');
   
-  const jitosolReserve = market.getReserves().find(r => r.getTokenSymbol() === 'JITOSOL');
+  const jitosolReserve = market.getReserves().find((r: any) => r.getTokenSymbol() === 'JITOSOL');
   if (!jitosolReserve) throw new Error('JitoSOL reserve not found in Main market');
   console.log('JitoSOL reserve:', jitosolReserve.address);
   
@@ -171,7 +171,7 @@ async function step2_deposit(rpc, signer, sendAndConfirm) {
   return sig;
 }
 
-async function step3_borrow(rpc, signer, sendAndConfirm) {
+async function step3_borrow(rpc: any, signer: any, sendAndConfirm: any) {
   console.log('\n=== STEP 3: Borrow USDG at ~30% LTV ===');
   
   const market = await KaminoMarket.load(rpc, MAIN_MARKET_ADDR, 400, PROGRAM_ID);
@@ -191,7 +191,7 @@ async function step3_borrow(rpc, signer, sendAndConfirm) {
   console.log('Total deposit: $' + totalValue.toFixed(2));
   
   // Find USDG reserve
-  const usdgReserve = market.getReserves().find(r => r.getTokenSymbol() === 'USDG');
+  const usdgReserve = market.getReserves().find((r: any) => r.getTokenSymbol() === 'USDG');
   if (!usdgReserve) throw new Error('USDG reserve not found');
   console.log('USDG reserve:', usdgReserve.address);
   
@@ -241,7 +241,7 @@ async function main() {
     }
     
     console.log('\n🎉 Repositioning complete!');
-  } catch (err) {
+  } catch (err: any) {
     console.error('❌ Failed:', err.message);
     if (err.context) console.error('Context:', JSON.stringify(err.context).substring(0, 500));
     console.error(err.stack?.split('\n').slice(0, 5).join('\n'));

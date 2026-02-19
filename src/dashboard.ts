@@ -553,6 +553,20 @@ tr:hover { background: var(--bg3); }
 <script>
 const API_BASE = '';
 let yieldChart = null;
+let tokenImages = {};
+
+async function loadTokenImages() {
+  try {
+    tokenImages = await fetchJson('/api/token-images') || {};
+  } catch {}
+}
+
+function tokenIcon(symbol) {
+  const key = symbol.toUpperCase().replace(' (KLEND)', '');
+  const url = tokenImages[key];
+  if (!url) return '';
+  return '<img src="' + url + '" width="16" height="16" style="border-radius:50%;vertical-align:middle;margin-right:4px" onerror="this.style.display=\\'none\\'" />';
+}
 
 async function fetchJson(url) {
   try {
@@ -821,14 +835,14 @@ async function loadDashboard() {
         apy = '—';
       }
       const bal = h.balance < 1 ? h.balance.toFixed(6) : h.balance.toFixed(2);
-      html += '<tr><td><strong>' + h.symbol + '</strong></td><td style="font-family:monospace">' + bal + '</td>';
+      html += '<tr><td>' + tokenIcon(h.symbol) + '<strong>' + h.symbol + '</strong></td><td style="font-family:monospace">' + bal + '</td>';
       html += '<td style="font-family:monospace">$' + (h.usdValue || 0).toFixed(2) + '</td><td>' + apy + '</td><td>' + badge + '</td></tr>';
     }
     // Add staked KMNO as separate row
     const stakedKmno = livePortfolio.kmnoStaked || 0;
     if (stakedKmno > 0) {
       const stakedUsd = stakedKmno * (livePortfolio.prices?.kmno || 0.03);
-      html += '<tr><td><strong>KMNO (Staked)</strong></td><td style="font-family:monospace">' + stakedKmno.toFixed(2) + '</td>';
+      html += '<tr><td>' + tokenIcon('KMNO') + '<strong>KMNO (Staked)</strong></td><td style="font-family:monospace">' + stakedKmno.toFixed(2) + '</td>';
       html += '<td style="font-family:monospace">$' + stakedUsd.toFixed(2) + '</td>';
       html += '<td><span class="purple">~5%</span></td>';
       html += '<td><span class="badge badge-green">🥩 Staked</span></td></tr>';
@@ -1120,6 +1134,10 @@ async function loadDecisionTree() {
   html += '<div style="padding:16px;background:' + (tree.action === 'HOLD' ? 'rgba(63,185,80,0.15)' : 'rgba(88,166,255,0.15)') + ';border-radius:8px;border:1px solid ' + (tree.action === 'HOLD' ? 'rgba(63,185,80,0.3)' : 'rgba(88,166,255,0.3)') + '">';
   html += '<strong style="font-size:1.1rem">' + (tree.action === 'HOLD' ? '✅ VERDICT: HOLD' : '🔄 VERDICT: REBALANCE') + '</strong><br>';
   html += '<span style="color:var(--text2)">' + (tree.verdict || '') + '</span>';
+  // Show Execute button when verdict is REBALANCE
+  if (tree.action === 'REBALANCE') {
+    html += '<div style="margin-top:12px"><button id="executeBtnStatic" onclick="executeRebalance()" style="background:linear-gradient(135deg,#f85149,#f0883e);color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:700;font-size:1rem;box-shadow:0 2px 12px rgba(248,81,73,0.4);transition:all 0.3s" onmouseover="this.style.transform=\\'scale(1.05)\\'" onmouseout="this.style.transform=\\'scale(1)\\'">⚡ Execute Rebalance</button><span id="executeStatusStatic" style="margin-left:12px;font-size:0.9rem"></span></div>';
+  }
   html += '</div>';
 
   // Timestamp
@@ -1127,6 +1145,45 @@ async function loadDecisionTree() {
   html += '</div>';
 
   el.innerHTML = html;
+}
+
+// Execute rebalance — calls POST /api/execute
+async function executeRebalance() {
+  const btn = document.getElementById('executeBtn') || document.getElementById('executeBtnStatic');
+  const statusEl = document.getElementById('executeStatus') || document.getElementById('executeStatusStatic');
+  if (!btn) return;
+
+  if (!confirm('⚠️ This will execute a REAL on-chain transaction to rebalance your position. Proceed?')) return;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Executing...';
+  btn.style.background = '#666';
+  btn.style.cursor = 'not-allowed';
+  if (statusEl) statusEl.innerHTML = '<span style="color:#d29922">Executing... this may take 30-60 seconds</span>';
+
+  try {
+    const res = await fetch('/api/execute', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    const data = await res.json();
+    if (data.success) {
+      btn.textContent = '✅ Done';
+      btn.style.background = 'linear-gradient(135deg, #3fb950, #2ea043)';
+      if (statusEl) statusEl.innerHTML = '<span style="color:#3fb950">' + data.message + '</span>';
+      // Refresh dashboard after successful execution
+      setTimeout(() => { loadDashboard(); loadDecisionTree(); }, 3000);
+    } else {
+      btn.textContent = '⚡ Execute Rebalance';
+      btn.style.background = 'linear-gradient(135deg,#f85149,#f0883e)';
+      btn.style.cursor = 'pointer';
+      btn.disabled = false;
+      if (statusEl) statusEl.innerHTML = '<span style="color:#f85149">❌ ' + data.message + '</span>';
+    }
+  } catch (err) {
+    btn.textContent = '⚡ Execute Rebalance';
+    btn.style.background = 'linear-gradient(135deg,#f85149,#f0883e)';
+    btn.style.cursor = 'pointer';
+    btn.disabled = false;
+    if (statusEl) statusEl.innerHTML = '<span style="color:#f85149">❌ Network error: ' + err.message + '</span>';
+  }
 }
 
 // Rethink — real-time streaming evaluation
@@ -1176,7 +1233,12 @@ function runRethink() {
       const border = data.action === 'HOLD' ? 'rgba(63,185,80,0.3)' : 'rgba(88,166,255,0.3)';
       stream.innerHTML += '<br><div style="padding:12px;background:' + bg + ';border:1px solid ' + border + ';border-radius:8px">';
       stream.innerHTML += '<strong style="font-size:1.1rem">' + (data.action === 'HOLD' ? '✅ VERDICT: HOLD' : '🔄 VERDICT: REBALANCE') + '</strong><br>';
-      stream.innerHTML += '<span style="color:var(--text2)">' + data.text + '</span></div>';
+      stream.innerHTML += '<span style="color:var(--text2)">' + data.text + '</span>';
+      // Show Execute button when verdict is REBALANCE
+      if (data.action === 'REBALANCE') {
+        stream.innerHTML += '<div style="margin-top:12px"><button id="executeBtn" onclick="executeRebalance()" style="background:linear-gradient(135deg,#f85149,#f0883e);color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:700;font-size:1rem;box-shadow:0 2px 12px rgba(248,81,73,0.4);transition:all 0.3s" onmouseover="this.style.transform=\\'scale(1.05)\\'" onmouseout="this.style.transform=\\'scale(1)\\'">⚡ Execute Rebalance</button><span id="executeStatus" style="margin-left:12px;font-size:0.9rem"></span></div>';
+      }
+      stream.innerHTML += '</div>';
     } else if (data.type === 'strategy') {
       const marker = data.current ? ' ← current' : data.best ? ' ← best' : '';
       const rowColor = data.current ? '#58a6ff' : data.best ? '#3fb950' : '#e6edf3';
@@ -1226,12 +1288,17 @@ function runRethink() {
 }
 
 // Initial load + auto-refresh
+loadTokenImages(); // Load token logos from Kamino API
 loadDashboard();
 loadDecisionTree();
+// Auto-trigger rethink on first load so decision tree is always fresh
+setTimeout(() => { if (!rethinkRunning) triggerRethink(); }, 2000);
 setInterval(loadDashboard, 60000);
 setInterval(loadDecisionTree, 120000);
 // Prices refresh every 60s independently
 setInterval(loadPrices, 60000);
+// Token images refresh every 30 min
+setInterval(loadTokenImages, 30 * 60000);
 </script>
 </body>
 </html>`;
@@ -1399,6 +1466,116 @@ app.get('/api/portfolio-live', async (_req: Request, res: Response) => {
   }
 });
 
+// Token images from Kamino API
+app.get('/api/token-images', async (_req: Request, res: Response) => {
+  try {
+    const { fetchTokenMetadataCached } = require('./kamino-api');
+    const tokens = await fetchTokenMetadataCached();
+    // Return a map of symbol -> logoUri for relevant tokens
+    const imageMap: Record<string, string> = {};
+    for (const t of tokens) {
+      if (t.logoUri) {
+        imageMap[t.symbol.toUpperCase()] = t.logoUri;
+        // Also index by mint
+        if (t.mint) imageMap[t.mint] = t.logoUri;
+      }
+    }
+    res.json(imageMap);
+  } catch (err: any) {
+    res.json({});
+  }
+});
+
+// ─── Execute Rebalance Endpoint ─────────────────────────────────
+// Safety: lock to prevent double-execution, check recent decision recommended REBALANCE
+
+let executeRunning = false;
+let lastExecuteResult: any = null;
+
+app.post('/api/execute', express.json(), async (_req: any, res: Response) => {
+  // Prevent double-execution
+  if (executeRunning) {
+    return res.status(409).json({ success: false, message: 'Execution already in progress' });
+  }
+
+  try {
+    executeRunning = true;
+
+    // Safety: Check that a recent rethink/rebalancer decision recommended REBALANCE
+    const rebalancerLog = readJsonlFile('rebalancer-log.jsonl', 5);
+    const dashboardLog = readJsonlFile('dashboard-decisions.jsonl', 5);
+    const allDecisions = [...rebalancerLog, ...dashboardLog]
+      .filter((e: any) => e.timestamp)
+      .sort((a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+
+    const latestDecision = allDecisions.length > 0 ? allDecisions[allDecisions.length - 1] : null;
+
+    if (!latestDecision) {
+      executeRunning = false;
+      return res.json({ success: false, message: 'No recent analysis found. Run Rethink first.' });
+    }
+
+    // Check age — decision must be less than 1 hour old
+    const decisionAge = Date.now() - new Date(latestDecision.timestamp).getTime();
+    if (decisionAge > 3600_000) {
+      executeRunning = false;
+      return res.json({ success: false, message: `Latest analysis is ${(decisionAge / 60000).toFixed(0)} min old. Run Rethink first for fresh data.` });
+    }
+
+    if (!latestDecision.shouldRebalance) {
+      executeRunning = false;
+      return res.json({ success: false, message: 'Latest analysis recommends HOLD, not REBALANCE. No action needed.' });
+    }
+
+    // Load settings, force dryRun = false
+    const settingsPath = path.join(CONFIG_DIR, 'settings.json');
+    const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+    settings.dryRun = false;
+
+    // Load wallet
+    const walletPath = path.join(CONFIG_DIR, 'wallet.json');
+    const secretKey = JSON.parse(fs.readFileSync(walletPath, 'utf-8'));
+    const { Connection, Keypair } = require('@solana/web3.js');
+    const wallet = Keypair.fromSecretKey(Uint8Array.from(secretKey));
+    const connection = new Connection(settings.rpcUrl, { commitment: 'confirmed' });
+
+    // Run the rebalancer with dryRun: false — it will detect position, evaluate, and execute
+    const { runRebalancer } = require('./rebalancer');
+    const result = await runRebalancer(settings, wallet, connection);
+
+    lastExecuteResult = {
+      timestamp: new Date().toISOString(),
+      shouldRebalance: result.shouldRebalance,
+      currentStrategy: result.currentStrategy?.id || 'unknown',
+      bestAlternative: result.bestAlternative?.strategy?.id || null,
+      reasoning: result.reasoning || [],
+      capitalSol: result.capitalSol?.toFixed?.(4) || '0',
+    };
+
+    executeRunning = false;
+    res.json({
+      success: true,
+      message: result.shouldRebalance
+        ? `Rebalance executed: ${result.currentStrategy?.id} → ${result.bestAlternative?.strategy?.id}`
+        : 'Re-evaluation determined HOLD — no action taken (market may have shifted)',
+      result: lastExecuteResult,
+    });
+
+  } catch (err: any) {
+    executeRunning = false;
+    console.error('Execute failed:', err);
+    res.json({ success: false, message: `Execution failed: ${err.message}` });
+  }
+});
+
+// Check execution status
+app.get('/api/execute-status', (_req: Request, res: Response) => {
+  res.json({
+    running: executeRunning,
+    lastResult: lastExecuteResult,
+  });
+});
+
 // Rethink — SSE endpoint that runs live evaluation and streams steps
 app.get('/api/rethink', async (req: Request, res: Response) => {
   res.writeHead(200, {
@@ -1449,15 +1626,25 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
     } catch {}
     send({ type: 'step', text: 'JitoSOL balance: ' + jitosolBalance.toFixed(6), icon: '🪙' });
 
-    // SOL price
-    let solPrice = 200;
-    let jitosolPrice = 200;
+    // SOL price — reuse portfolio cache to avoid CoinGecko rate limits
+    let solPrice = 85;
+    let jitosolPrice = 107;
     try {
-      const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,jito-staked-sol&vs_currencies=usd');
-      const priceData = await priceRes.json() as any;
-      solPrice = priceData.solana?.usd || 200;
-      jitosolPrice = priceData['jito-staked-sol']?.usd || solPrice * 1.08;
+      const portfolio = await fetchLivePortfolio();
+      if (portfolio?.prices?.sol > 0) solPrice = portfolio.prices.sol;
+      if (portfolio?.prices?.jitoSol > 0) jitosolPrice = portfolio.prices.jitoSol;
     } catch {}
+    // Fallback: direct CoinGecko fetch if portfolio cache missed
+    if (solPrice <= 85) {
+      try {
+        const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,jito-staked-sol&vs_currencies=usd');
+        if (priceRes.ok) {
+          const priceData = await priceRes.json() as any;
+          if (priceData.solana?.usd > 0) solPrice = priceData.solana.usd;
+          if (priceData['jito-staked-sol']?.usd > 0) jitosolPrice = priceData['jito-staked-sol'].usd;
+        }
+      } catch {}
+    }
     const totalUsd = (solBalance * solPrice + jitosolBalance * jitosolPrice).toFixed(2);
     send({ type: 'step', text: 'SOL: $' + solPrice.toFixed(2) + ' | JitoSOL: $' + jitosolPrice.toFixed(2) + ' | Total value: ~$' + totalUsd, icon: '💲' });
 
@@ -1486,29 +1673,82 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
     }
 
     // LP Vaults — correlated (from /strategies/metrics, fee APY only)
-    const lpCorrelated = kaminoRates.lpVaults.filter((v: any) => v.isCorrelated && v.feeApy > 0);
+    const MIN_TVL_USD = 1_000_000; // $1M minimum TVL floor
+    const lpCorrelated = kaminoRates.lpVaults.filter((v: any) => v.isCorrelated && v.feeApy > 0 && v.tvlUsd >= MIN_TVL_USD);
     send({ type: 'step', text: 'LP Vaults (correlated, fee APY only): ' + lpCorrelated.length + ' pools', icon: '🏊' });
     for (const v of lpCorrelated.slice(0, 5)) {
       send({ type: 'step', text: v.symbol + ': ' + v.feeApy.toFixed(2) + '% fee APY (TVL: $' + (v.tvlUsd / 1e6).toFixed(1) + 'M)', icon: v.feeApy > stakingApy ? '🔥' : '📈', color: v.feeApy > stakingApy ? '#3fb950' : '#e6edf3' });
     }
 
-    // LP Vaults — SOL/stablecoin (medium IL, fee APY only)
+    // LP Vaults — SOL/stablecoin (medium IL, fee APY only) - REMOVED FOR SMALL PORTFOLIOS
+    // Medium IL risk pairs (SOL/stablecoin) should NOT be recommended for $200 portfolios
+    // Only showing for informational purposes but won't be included in strategy evaluation
     const lpSolStable = kaminoRates.lpVaults.filter((v: any) => v.risk === 'medium' && v.feeApy > 0);
-    send({ type: 'step', text: 'LP Vaults (SOL/stablecoin, fee APY only): ' + lpSolStable.length + ' pools', icon: '🔥' });
-    for (const v of lpSolStable.slice(0, 5)) {
-      send({ type: 'step', text: v.symbol + ': ' + v.feeApy.toFixed(2) + '% fee APY (TVL: $' + (v.tvlUsd / 1e6).toFixed(1) + 'M, medium IL)', icon: '🔥', color: '#f0883e' });
+    send({ type: 'step', text: 'LP Vaults (SOL/stablecoin, medium IL risk): ' + lpSolStable.length + ' pools - NOT RECOMMENDED for small portfolios', icon: '⚠️' });
+    for (const v of lpSolStable.slice(0, 3)) {
+      send({ type: 'step', text: v.symbol + ': ' + v.feeApy.toFixed(2) + '% fee APY (TVL: $' + (v.tvlUsd / 1e6).toFixed(1) + 'M, high IL risk)', icon: '⚠️', color: '#f85149' });
     }
 
-    // Multiply spread
-    send({ type: 'step', text: 'Multiply spread: ' + stakingApy.toFixed(2) + '% staking - ' + sm.klendSolBorrowApy.toFixed(2) + '% borrow = ' + sm.multiplySpread.toFixed(2) + '% ' + (sm.multiplySpread > 0 ? '(profitable)' : '(unprofitable)'), pass: sm.multiplySpread > 0 });
+    // Multiply spread — per-market analysis via REST API
+    const { MultiplyClient } = require('./multiply-client');
+    const multiplyClientDash = new MultiplyClient('https://api.kamino.finance'); // URL unused for REST reads
+    let multiplyMarketRates: any[] = [];
+    let bestMultiplyMarket: any = null;
+    let multiLstOpportunities: any[] = [];
+    let bestOpportunity: any = null;
+    try {
+      const multiplyAnalysis = await multiplyClientDash.shouldOpenPosition();
+      multiplyMarketRates = multiplyAnalysis.allMarketRates || [];
+      bestMultiplyMarket = multiplyAnalysis.bestMarket;
+      multiLstOpportunities = multiplyAnalysis.multiLstOpportunities || [];
+      bestOpportunity = multiplyAnalysis.bestOpportunity || null;
+
+      // Show legacy per-market JitoSOL rates
+      for (const mr of multiplyMarketRates) {
+        const spreadStr = mr.spread.toFixed(2);
+        const icon = mr.spread.gt(0) ? '✅' : '❌';
+        send({ type: 'step', text: `Multiply ${mr.market}: ${stakingApy.toFixed(2)}% staking - ${mr.solBorrowApy.toFixed(2)}% borrow = ${spreadStr}% spread (net @5x: ${mr.netApyAt5x.toFixed(2)}%)`, pass: mr.spread.gt(0), icon });
+      }
+    } catch (err: any) {
+      // Fall back to kamino-rates summary
+      send({ type: 'step', text: 'Multiply spread (Main only): ' + stakingApy.toFixed(2) + '% staking - ' + sm.klendSolBorrowApy.toFixed(2) + '% borrow = ' + sm.multiplySpread.toFixed(2) + '% ' + (sm.multiplySpread > 0 ? '(profitable)' : '(unprofitable)'), pass: sm.multiplySpread > 0 });
+    }
+
+    // Multi-LST opportunities from Sanctum
+    if (multiLstOpportunities.length > 0) {
+      send({ type: 'section', text: '🌐 Multi-LST Multiply Opportunities (Real Sanctum Yields)' });
+      const profitableOpps = multiLstOpportunities.filter((o: any) => o.profitable);
+      send({ type: 'step', text: `Found ${multiLstOpportunities.length} LST×market combos, ${profitableOpps.length} profitable`, icon: '📊', color: '#58a6ff' });
+
+      // Show top 5 opportunities
+      for (const o of multiLstOpportunities.slice(0, 5)) {
+        const profIcon = o.profitable ? '✅' : '❌';
+        send({
+          type: 'step',
+          text: `${o.symbol} (${o.market}): yield ${o.nativeYield.toFixed(2)}% - borrow ${o.solBorrowApy.toFixed(2)}% = ${o.spread.toFixed(2)}% spread → best ${o.bestNetApy.toFixed(2)}% @ ${(o.maxLeverage * 0.8).toFixed(1)}x (max ${o.maxLeverage.toFixed(1)}x)`,
+          pass: o.profitable,
+          icon: profIcon,
+        });
+      }
+
+      if (bestOpportunity) {
+        send({
+          type: 'step',
+          text: `🏆 Best opportunity: ${bestOpportunity.symbol} in ${bestOpportunity.market} — ${bestOpportunity.bestNetApy.toFixed(2)}% net APY at safe leverage`,
+          icon: '🏆',
+          color: '#3fb950',
+        });
+      }
+    } else if (multiLstOpportunities.length === 0 && multiplyMarketRates.length > 0) {
+      send({ type: 'step', text: 'No Sanctum multi-LST data available — using JitoSOL-only analysis', icon: 'ℹ️', color: '#d29922' });
+    }
 
     // Step 4: Strategy evaluation (fee APY only, no KMNO rewards)
     send({ type: 'section', text: '⚖️ Step 4: Strategy evaluation (fee APY only, no KMNO rewards)...' });
 
     const klendSolApy = sm.klendSolSupplyApy;
     const klendJitosolApy = sm.klendJitosolSupplyApy;
-    const bestLpLowIl = lpCorrelated[0];
-    const bestLpHighYield = lpSolStable[0];
+    const bestLpCorrelated = lpCorrelated[0];
 
     const strategies: any[] = [
       { id: 'hold_jitosol', name: 'Hold JitoSOL (staking)', grossApy: stakingApy, netApy: stakingApy },
@@ -1519,19 +1759,86 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
       strategies.push({ id: 'klend_jitosol_supply', name: 'K-Lend JitoSOL Supply', grossApy: klendJitosolApy + stakingApy, netApy: klendJitosolApy + stakingApy });
     }
 
-    if (bestLpLowIl) {
-      strategies.push({ id: 'lp_low_il', name: 'LP: ' + bestLpLowIl.symbol + ' (low IL)', grossApy: bestLpLowIl.feeApy, netApy: bestLpLowIl.feeApy * 0.99 });
+    // Only include correlated LP pairs - safe for small portfolios
+    if (bestLpCorrelated) {
+      strategies.push({ id: 'lp_vault', name: 'LP: ' + bestLpCorrelated.symbol + ' (correlated)', grossApy: bestLpCorrelated.feeApy, netApy: bestLpCorrelated.feeApy * 0.99 });
     }
 
-    if (bestLpHighYield) {
-      // Medium IL: deduct estimated 5% annual IL from fee APY
-      strategies.push({ id: 'lp_medium_il', name: 'LP: ' + bestLpHighYield.symbol + ' (medium IL)', grossApy: bestLpHighYield.feeApy, netApy: bestLpHighYield.feeApy - 5 });
+    // Multiply — prefer best multi-LST opportunity from Sanctum, fallback to JitoSOL-only
+    if (bestOpportunity && bestOpportunity.profitable) {
+      strategies.push({
+        id: 'multiply',
+        name: `Multiply ${bestOpportunity.symbol}/SOL (${bestOpportunity.market})`,
+        grossApy: bestOpportunity.bestNetApy > 0 ? bestOpportunity.bestNetApy : 0,
+        netApy: bestOpportunity.bestNetApy > 0 ? bestOpportunity.bestNetApy : 0,
+        meta: {
+          lstSymbol: bestOpportunity.symbol,
+          market: bestOpportunity.market,
+          spread: bestOpportunity.spread,
+          nativeYield: bestOpportunity.nativeYield,
+          borrowApy: bestOpportunity.solBorrowApy,
+          maxLeverage: bestOpportunity.maxLeverage,
+          source: 'sanctum',
+        },
+      });
+    } else if (bestMultiplyMarket && bestMultiplyMarket.spread.gt(0)) {
+      const bm = bestMultiplyMarket;
+      const multiplyNetApy = bm.netApyAt5x.toNumber();
+      strategies.push({
+        id: 'multiply',
+        name: `Multiply JitoSOL/SOL (${bm.market})`,
+        grossApy: multiplyNetApy > 0 ? multiplyNetApy : 0,
+        netApy: multiplyNetApy > 0 ? multiplyNetApy : 0,
+        meta: { market: bm.market, spread: bm.spread.toNumber(), borrowApy: bm.solBorrowApy.toNumber(), source: 'jito-api' },
+      });
+    } else if (sm.multiplySpread > 0) {
+      // Fallback to kamino-rates summary if REST multiply fetch failed
+      strategies.push({ id: 'multiply', name: 'Multiply (leveraged staking)', grossApy: stakingApy + sm.multiplySpread, netApy: stakingApy + sm.multiplySpread });
     }
 
     // Sort by net APY
     strategies.sort((a, b) => b.netApy - a.netApy);
     const bestStrategy = strategies[0];
-    const currentStrategy = jitosolBalance > solBalance ? 'hold_jitosol' : 'klend_sol_supply';
+    // Detect current strategy by scanning all positions
+    let currentStrategy = 'hold_jitosol';
+    let currentApy = stakingApy;
+    let totalCapitalSol = jitosolBalance + solBalance;
+    try {
+      const { fetchUserObligations } = require('./kamino-api');
+      const MARKETS = [
+        '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF', // Main
+        'DxXdAyU3gSgrR6VJmMd9LgrQZGsMFKFPLh5DNrmAhJsu', // Jito
+        'ByYiZxp8QrdN9qbdtaAiePN8AAr3qvTPppNJDpf5DVJ5', // Altcoins
+      ];
+      let largestPositionUsd = jitosolBalance * jitosolPrice;
+      for (const market of MARKETS) {
+        try {
+          const obligs = await fetchUserObligations(market, wallet.publicKey.toBase58());
+          for (const o of (obligs as any[])) {
+            if (o.depositedValue < 1) continue;
+            const posUsd = o.netAccountValue || o.depositedValue - o.borrowedValue;
+            // Has borrows > $1? It's a multiply position
+            if (o.borrowedValue > 1 && o.depositedValue > 1) {
+              if (posUsd > largestPositionUsd) {
+                const leverage = o.depositedValue / posUsd;
+                currentStrategy = 'multiply';
+                currentApy = stakingApy * leverage - (kaminoRates?.mainMarket?.solBorrowApy || 6.37) * (leverage - 1);
+                largestPositionUsd = posUsd;
+                totalCapitalSol = posUsd / solPrice;
+                send({ type: 'step', text: `Active multiply position: $${o.depositedValue.toFixed(0)} deposited, $${o.borrowedValue.toFixed(0)} borrowed, ${leverage.toFixed(2)}x leverage`, icon: '⚡' });
+              }
+            } else if (posUsd > largestPositionUsd) {
+              // Supply-only K-Lend
+              const hasJitosol = o.deposits.some((d: any) => d.symbol === 'JitoSOL' || d.symbol === 'JITOSOL');
+              currentStrategy = hasJitosol ? 'klend_jitosol_supply' : 'klend_sol_supply';
+              largestPositionUsd = posUsd;
+              totalCapitalSol = posUsd / solPrice;
+            }
+          }
+        } catch {}
+      }
+    } catch {}
+    send({ type: 'step', text: `Current strategy: ${currentStrategy} (capital: ${totalCapitalSol.toFixed(4)} SOL)`, icon: '📍' });
 
     for (const s of strategies) {
       const isCurrent = s.id === currentStrategy;
@@ -1550,6 +1857,7 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
 
       const dailyImpr = new Decimal(Math.max(0, s.netApy - stakingApy)).div(100).div(365).mul(jitosolBalance || 1);
       const breakEvenDays = dailyImpr.gt(0) ? cost.totalCostSol.div(dailyImpr).toNumber() : 9999;
+      s.breakEvenDays = breakEvenDays; // Store for later use
 
       send({
         type: 'strategy',
@@ -1567,7 +1875,6 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
     send({ type: 'section', text: '🌳 Step 5: Applying decision criteria...' });
 
     const improvement = bestStrategy.netApy - stakingApy;
-    const shouldRebalance = improvement > 1 && bestStrategy.id !== currentStrategy;
 
     send({ type: 'step', text: 'Best strategy: ' + bestStrategy.name + ' @ ' + bestStrategy.netApy.toFixed(2) + '% net APY', icon: '🏆', color: '#58a6ff' });
     send({ type: 'step', text: 'Net improvement vs current: ' + (improvement >= 0 ? '+' : '') + improvement.toFixed(2) + '% APY', pass: improvement > 1 });
@@ -1578,13 +1885,22 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
       send({ type: 'step', text: 'Criterion 1: Net improvement ' + improvement.toFixed(2) + '% < 1% minimum', pass: false });
     }
 
+    // Criterion 2: Break-even < 7 days
+    let breakEvenPass = true;
     if (bestStrategy.id === currentStrategy) {
-      send({ type: 'step', text: 'Criterion 2: Already in best strategy — no switch needed', pass: true });
+      send({ type: 'step', text: 'Criterion 2: Already in best strategy — no break-even analysis needed', pass: true });
     } else {
-      send({ type: 'step', text: 'Criterion 2: Break-even analysis pending (need sustained yield data)', pass: null });
+      const bestBreakEven = bestStrategy.breakEvenDays || 9999;
+      breakEvenPass = bestBreakEven < 7;
+      if (breakEvenPass) {
+        send({ type: 'step', text: 'Criterion 2: Break-even ' + bestBreakEven.toFixed(1) + ' days < 7 day maximum', pass: true });
+      } else {
+        send({ type: 'step', text: 'Criterion 2: Break-even ' + bestBreakEven.toFixed(1) + ' days > 7 day maximum', pass: false });
+      }
     }
 
-    send({ type: 'step', text: 'Criterion 3: Spike protection — yield must sustain > 1 hour', pass: null, color: '#8b949e' });
+    // Final shouldRebalance decision — criteria 1 (improvement > 1%) + criteria 2 (break-even < 7d)
+    const shouldRebalance = improvement > 1 && breakEvenPass && bestStrategy.id !== currentStrategy;
 
     // Idle capital check
     if (jitosolBalance > 0.01 && currentStrategy === 'hold_jitosol') {
@@ -1599,8 +1915,36 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
     // Step 6: Verdict
     send({ type: 'section', text: '📋 Step 6: Final verdict...' });
 
+    // Check if multiply position is under-leveraged and needs topping up
+    let needsLeverUp = false;
+    let currentLeverage = 0;
+    let targetLeverage = 0;
+    if (currentStrategy === 'multiply') {
+      try {
+        const { fetchUserObligations } = require('./kamino-api');
+        const MAIN_MARKET = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF';
+        const obligs = await fetchUserObligations(MAIN_MARKET, wallet.publicKey.toBase58());
+        for (const o of (obligs as any[])) {
+          if (o.depositedValue > 1 && o.borrowedValue > 1) {
+            currentLeverage = o.depositedValue / (o.depositedValue - o.borrowedValue);
+            // Target leverage from settings
+            const multiplySettings = settings.multiply || {};
+            const maxLtv = 0.45; // pSOL typical
+            targetLeverage = Math.min(multiplySettings.maxLeverage || 5, 1 / (1 - maxLtv * 0.8));
+            targetLeverage = Math.min(targetLeverage, 1.5); // cap at 1.5x for safety
+            if (currentLeverage < targetLeverage * 0.95) {
+              needsLeverUp = true;
+              send({ type: 'step', text: `Leverage ${currentLeverage.toFixed(2)}x is below target ${targetLeverage.toFixed(2)}x — can lever up`, icon: '📈', color: '#d29922' });
+            }
+          }
+        }
+      } catch {}
+    }
+
     let verdictText = '';
-    if (shouldRebalance) {
+    if (needsLeverUp) {
+      verdictText = `Already in multiply at ${currentLeverage.toFixed(2)}x but target is ${targetLeverage.toFixed(2)}x. Execute to lever up for more yield.`;
+    } else if (shouldRebalance) {
       verdictText = 'Move capital to ' + bestStrategy.name + '. +' + improvement.toFixed(2) + '% APY improvement justifies the switch.';
     } else if (bestStrategy.id === currentStrategy) {
       verdictText = 'Already in the optimal strategy (' + bestStrategy.name + ' @ ' + bestStrategy.netApy.toFixed(2) + '%). No action needed.';
@@ -1608,21 +1952,21 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
       verdictText = 'Current position (' + stakingApy.toFixed(2) + '% JitoSOL staking) is optimal. Best alternative (' + bestStrategy.name + ' @ ' + bestStrategy.netApy.toFixed(2) + '%) does not meet all criteria.';
     }
 
-    if (bestLpHighYield && bestLpHighYield.feeApy > stakingApy * 2) {
-      verdictText += ' Note: ' + bestLpHighYield.symbol + ' LP vault has ' + bestLpHighYield.feeApy.toFixed(0) + '% fee APY but carries medium IL risk.';
+    if (lpSolStable.length > 0 && lpSolStable[0].feeApy > stakingApy * 2) {
+      verdictText += ' Note: ' + lpSolStable[0].symbol + ' LP vault has ' + lpSolStable[0].feeApy.toFixed(0) + '% fee APY but carries high IL risk and was excluded.';
     }
 
-    send({ type: 'verdict', action: shouldRebalance ? 'REBALANCE' : 'HOLD', text: verdictText });
+    send({ type: 'verdict', action: (shouldRebalance || needsLeverUp) ? 'REBALANCE' : 'HOLD', text: verdictText });
 
-    // Write to rebalancer log so the decision tree panel also updates
+    // Write to SEPARATE dashboard log (not rebalancer log to avoid corruption)
     const logEntry = {
       timestamp: new Date().toISOString(),
-      shouldRebalance,
+      shouldRebalance: shouldRebalance || needsLeverUp,
       currentStrategy,
       currentApy: stakingApy.toFixed(2),
       bestAlternative: bestStrategy.id !== currentStrategy ? bestStrategy.id : null,
       bestAlternativeApy: bestStrategy.id !== currentStrategy ? bestStrategy.netApy.toFixed(2) : null,
-      breakEvenDays: null,
+      breakEvenDays: bestStrategy.id !== currentStrategy && bestStrategy.breakEvenDays < 9999 ? Math.round(bestStrategy.breakEvenDays * 10) / 10 : null,
       capitalSol: (jitosolBalance + solBalance).toFixed(4),
       idleSol: jitosolBalance.toFixed(4),
       idleDeploy: false,
@@ -1632,7 +1976,9 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
         'Capital: ' + (jitosolBalance + solBalance).toFixed(4) + ' SOL ($' + totalUsd + ')',
         'Best alternative: ' + bestStrategy.name + ' @ ' + bestStrategy.netApy.toFixed(2) + '% net',
         'Net improvement: ' + improvement.toFixed(2) + '% APY',
+        'Break-even: ' + (bestStrategy.breakEvenDays < 9999 ? bestStrategy.breakEvenDays.toFixed(1) + ' days' : 'N/A'),
         improvement > 1 ? '✅ PASS: Net improvement ' + improvement.toFixed(2) + '% > 1% minimum threshold' : '❌ FAIL: Net improvement ' + improvement.toFixed(2) + '% < 1% minimum threshold',
+        breakEvenPass ? '✅ PASS: Break-even ' + (bestStrategy.breakEvenDays < 9999 ? bestStrategy.breakEvenDays.toFixed(1) + ' days' : 'N/A') + ' < 7 days' : '❌ FAIL: Break-even ' + (bestStrategy.breakEvenDays < 9999 ? bestStrategy.breakEvenDays.toFixed(1) + ' days' : 'N/A') + ' > 7 days',
         shouldRebalance ? '✅ PASS: All criteria met' : '❌ FAIL: Not all criteria met — HOLD',
       ],
       strategies: strategies.map(s => ({
@@ -1640,9 +1986,11 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
         grossApy: s.grossApy.toFixed(2),
         netApy: s.netApy.toFixed(2),
         score: s.netApy.toFixed(2),
+        breakEvenDays: s.breakEvenDays < 9999 ? Math.round(s.breakEvenDays * 10) / 10 : null,
       })),
     };
-    fs.appendFileSync(path.join(CONFIG_DIR, 'rebalancer-log.jsonl'), JSON.stringify(logEntry) + '\n');
+    // Write to dashboard-specific log file to avoid corrupting the real rebalancer log
+    fs.appendFileSync(path.join(CONFIG_DIR, 'dashboard-decisions.jsonl'), JSON.stringify(logEntry) + '\n');
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     send({ type: 'done', elapsed });
@@ -1656,12 +2004,18 @@ app.get('/api/rethink', async (req: Request, res: Response) => {
 
 // Decision Tree — human-readable reasoning from latest rebalancer run
 app.get('/api/decision-tree', async (_req: Request, res: Response) => {
+  // Read from both log files, prefer most recent entry
   const rebalancerLog = readJsonlFile('rebalancer-log.jsonl', 5);
-  if (rebalancerLog.length === 0) {
-    return res.json({ error: 'No decision data yet' });
+  const dashboardLog = readJsonlFile('dashboard-decisions.jsonl', 5);
+  const allEntries = [...rebalancerLog, ...dashboardLog]
+    .filter((e: any) => e.timestamp)
+    .sort((a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  
+  if (allEntries.length === 0) {
+    return res.json({ error: 'No decision data yet — click Rethink to run analysis' });
   }
 
-  const latest = rebalancerLog[rebalancerLog.length - 1];
+  const latest = allEntries[allEntries.length - 1];
   const steps: { depth: number; text: string; pass?: boolean; type?: string }[] = [];
 
   // Build the decision tree from reasoning
@@ -1744,18 +2098,12 @@ app.get('/api/decision-tree', async (_req: Request, res: Response) => {
   }
 
   // Get live prices from cache or fetch
-  let solPrice = 200;
-  let jitosolPrice = 200;
+  let solPrice = 85;
+  let jitosolPrice = 107;
   try {
-    if (priceCache && priceCache.sol > 0) {
-      solPrice = priceCache.sol;
-      jitosolPrice = (priceCache as any).jitoSol || solPrice * 1.08;
-    } else {
-      const priceRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,jito-staked-sol&vs_currencies=usd');
-      const priceData = await priceRes.json() as any;
-      solPrice = priceData.solana?.usd || 200;
-      jitosolPrice = priceData['jito-staked-sol']?.usd || solPrice * 1.08;
-    }
+    const portfolio = await fetchLivePortfolio();
+    if (portfolio?.prices?.sol > 0) solPrice = portfolio.prices.sol;
+    if (portfolio?.prices?.jitoSol > 0) jitosolPrice = portfolio.prices.jitoSol;
   } catch {}
 
   res.json({

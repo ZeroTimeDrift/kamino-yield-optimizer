@@ -53,7 +53,7 @@ async function main() {
       console.log(`   📊 Positions: ${snapshot.positions.length}`);
       
       for (const position of snapshot.positions) {
-        console.log(`   🎯 ${position.strategy}: $${parseFloat(position.value).toFixed(2)} @ ${parseFloat(position.apy).toFixed(2)}% APY`);
+        console.log(`   🎯 ${position.strategy}: $${parseFloat(position.valueUsd).toFixed(2)} @ ${parseFloat(position.apy).toFixed(2)}% APY`);
       }
       
       if (snapshot.impermanentLoss) {
@@ -77,7 +77,7 @@ async function main() {
       const rangeMonitor = await createRangeMonitor(connection, wallet, settings);
       
       // Check position ranges
-      const alerts = await rangeMonitor.monitorPositions(wallet.publicKey.toString());
+      const alerts = await rangeMonitor.monitorPositions();
       
       console.log(`🔍 Range check completed: ${alerts.length} alerts`);
       
@@ -90,10 +90,8 @@ async function main() {
         console.log('   ✅ All positions are in acceptable range');
       }
       
-      // Get range summary
-      const rangeSummary = await rangeMonitor.getRangeSummary();
-      console.log('\n📊 Range Summary:');
-      console.log(rangeSummary);
+      // Range summary: just log the alerts count
+      console.log(`\n📊 Range Summary: ${alerts.length} total alerts`);
       
     } catch (error) {
       console.error('❌ Range Monitor failed:', error instanceof Error ? error.message : 'Unknown error');

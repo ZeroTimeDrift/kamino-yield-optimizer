@@ -17,6 +17,8 @@
     "@kamino-finance/farms-sdk": "^3.2.24",
     "@kamino-finance/klend-sdk": "^7.4.0-beta.14",
     "@kamino-finance/kliquidity-sdk": "^8.5.9",
+    "@solana/compat": "^6.0.1",
+    "@solana/kit": "^3.0.3",
     "@solana/web3.js": "^1.95.0",
     "@types/express": "^5.0.6",
     "bs58": "^5.0.0",

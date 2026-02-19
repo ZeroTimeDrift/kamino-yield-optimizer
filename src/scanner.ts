@@ -1,33 +1,27 @@
 /**
- * Kamino Rate Scanner v2
+ * Kamino Rate Scanner v3 — REST API
+ *
  * Scans and displays current rates across ALL Kamino products.
  * Per-market Multiply spread calculations with live JitoSOL staking yield.
+ *
+ * REFACTORED: Uses api.kamino.finance REST API instead of heavy SDK/RPC calls.
+ * Each market load used to do dozens of RPC calls; now it's a single HTTP GET.
+ *
  * Run standalone: npx ts-node src/scanner.ts
  */
 
-import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { createSolanaRpc, address } from '@solana/kit';
-import { KaminoMarket, PROGRAM_ID } from '@kamino-finance/klend-sdk';
-import Decimal from 'decimal.js';
 import * as fs from 'fs';
 import * as path from 'path';
+import {
+  fetchJitoApy,
+  fetchReserves,
+  findReserve,
+  findReserveByMint,
+  ApiReserve,
+  scanMultiplyOpportunities,
+  MultiplyOpportunity,
+} from './kamino-api';
 import { KAMINO_MARKETS, TOKEN_MINTS, Settings } from './types';
-
-// ─── Retry helper ───────────────────────────────────────────────
-async function retry<T>(fn: () => Promise<T>, maxRetries = 3, delayMs = 2000): Promise<T> {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await fn();
-    } catch (err: any) {
-      if (i === maxRetries - 1) throw err;
-      const isRateLimit = err.message?.includes('429') || err.message?.includes('Too Many');
-      const wait = isRateLimit ? delayMs * (i + 2) : delayMs;
-      console.log(`   ⏳ Retry ${i + 1}/${maxRetries} in ${wait}ms...`);
-      await new Promise(r => setTimeout(r, wait));
-    }
-  }
-  throw new Error('Max retries exceeded');
-}
 
 // ─── Types ──────────────────────────────────────────────────────
 interface ReserveRate {
@@ -56,38 +50,10 @@ interface MultiplyRate {
   marketAddress: string;
 }
 
-// ─── Live JitoSOL APY ──────────────────────────────────────────
-const JITO_STATS_URL = 'https://kobe.mainnet.jito.network/api/v1/stake_pool_stats';
+// ─── Live JitoSOL APY (re-exported for consumers) ──────────────
 
 async function fetchLiveJitoStakingApy(): Promise<{ apy: number; source: string }> {
-  try {
-    const res = await fetch(JITO_STATS_URL);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json() as any;
-
-    // The API returns an array of { data: number, date: string } entries
-    // data is the APY as a decimal (e.g., 0.0557 = 5.57%)
-    const apyEntries = data.apy;
-    if (!apyEntries || apyEntries.length === 0) {
-      throw new Error('No APY data in response');
-    }
-
-    // Get latest entry
-    const latest = apyEntries[apyEntries.length - 1];
-    const apyPercent = latest.data * 100; // Convert to percentage
-
-    // Also compute 7-day average for comparison
-    const recentEntries = apyEntries.slice(-7);
-    const avgApy = recentEntries.reduce((sum: number, e: any) => sum + e.data, 0) / recentEntries.length * 100;
-
-    console.log(`   📊 Jito API: latest=${apyPercent.toFixed(2)}%, 7d-avg=${avgApy.toFixed(2)}%, date=${latest.date}`);
-
-    return { apy: apyPercent, source: 'jito-api-live' };
-  } catch (err: any) {
-    console.log(`   ⚠️  Failed to fetch live Jito APY: ${err.message}, using fallback`);
-    // Fallback: use solanacompass data or hardcoded conservative estimate
-    return { apy: 5.94, source: 'fallback-solanacompass' };
-  }
+  return fetchJitoApy();
 }
 
 // ─── Settings ───────────────────────────────────────────────────
@@ -96,10 +62,8 @@ async function loadSettings(): Promise<Settings> {
   return JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
 }
 
-// ─── Market Scanner ─────────────────────────────────────────────
+// ─── Market Scanner (REST API) ──────────────────────────────────
 async function scanMarket(
-  rpc: ReturnType<typeof createSolanaRpc>,
-  connection: Connection,
   marketAddress: string,
   marketName: string
 ): Promise<{ reserves: ReserveRate[]; solBorrowApy: number; hasJitoSOL: boolean }> {
@@ -107,59 +71,37 @@ async function scanMarket(
   let solBorrowApy = 0;
   let hasJitoSOL = false;
 
-  let market: KaminoMarket | null = null;
+  let apiReserves: ApiReserve[];
   try {
-    market = await retry(
-      () => KaminoMarket.load(rpc, address(marketAddress), 400, PROGRAM_ID),
-      2, 3000
-    );
+    apiReserves = await fetchReserves(marketAddress);
   } catch (err: any) {
     console.log(`   ⚠️  Could not load ${marketName} market: ${err.message}`);
     return { reserves, solBorrowApy, hasJitoSOL };
   }
 
-  if (!market) return { reserves, solBorrowApy, hasJitoSOL };
+  for (const r of apiReserves) {
+    const symbol = r.liquidityToken.toUpperCase();
+    const utilization = r.totalSupplyUsd > 0 ? (r.totalBorrowUsd / r.totalSupplyUsd) * 100 : 0;
 
-  const slot = BigInt(await retry(() => connection.getSlot()));
-  const allReserves = market.getReserves();
+    reserves.push({
+      symbol,
+      mint: r.liquidityTokenMint,
+      supplyApy: r.supplyApy,
+      borrowApy: r.borrowApy,
+      totalSupply: r.totalSupplyUsd,
+      totalBorrow: r.totalBorrowUsd,
+      utilization,
+      market: marketName,
+    });
 
-  for (const reserve of allReserves) {
-    try {
-      const symbol = reserve.symbol?.toUpperCase() || 'UNKNOWN';
-      const mint = reserve.getLiquidityMint().toString();
-      const supplyApy = (reserve.totalSupplyAPY(slot) || 0) * 100;
-      const borrowApy = (reserve.totalBorrowAPY(slot) || 0) * 100;
-      const totalSupplyDec = new Decimal(reserve.getTotalSupply()?.toString() || '0');
-      const totalSupply = totalSupplyDec.toNumber();
-      let totalBorrow = 0;
-      try {
-        const borrowedAmount = (reserve as any).getBorrowedAmount?.() || (reserve as any).totalBorrow?.();
-        totalBorrow = borrowedAmount ? new Decimal(borrowedAmount.toString()).toNumber() : 0;
-      } catch { totalBorrow = 0; }
-      const utilization = totalSupply > 0 ? (totalBorrow / totalSupply) * 100 : 0;
+    // Track per-market SOL borrow rate
+    if (r.liquidityTokenMint === TOKEN_MINTS['SOL']) {
+      solBorrowApy = r.borrowApy;
+    }
 
-      reserves.push({
-        symbol,
-        mint,
-        supplyApy,
-        borrowApy,
-        totalSupply,
-        totalBorrow,
-        utilization,
-        market: marketName,
-      });
-
-      // Track per-market SOL borrow rate
-      if (mint === TOKEN_MINTS['SOL']) {
-        solBorrowApy = borrowApy;
-      }
-
-      // Check if JitoSOL exists in this market
-      if (mint === TOKEN_MINTS['JitoSOL']) {
-        hasJitoSOL = true;
-      }
-    } catch {
-      // Skip reserves that fail
+    // Check if JitoSOL exists in this market
+    if (r.liquidityTokenMint === TOKEN_MINTS['JitoSOL']) {
+      hasJitoSOL = true;
     }
   }
 
@@ -169,22 +111,19 @@ async function scanMarket(
 // ─── Main ───────────────────────────────────────────────────────
 async function main() {
   const startTime = Date.now();
-  const settings = await loadSettings();
 
   console.log('═══════════════════════════════════════════════════════════════');
-  console.log('       🔭 KAMINO RATE SCANNER v2 — Per-Market Spreads');
+  console.log('       🔭 KAMINO RATE SCANNER v3 — REST API');
   console.log(`       ${new Date().toISOString()}`);
   console.log('═══════════════════════════════════════════════════════════════');
-
-  const connection = new Connection(settings.rpcUrl, { commitment: 'confirmed' });
-  const rpc = createSolanaRpc(settings.rpcUrl);
 
   // ─── Fetch live JitoSOL staking APY ──────────────────────────
   console.log('\n📊 Fetching live JitoSOL staking APY...');
   const jitoApy = await fetchLiveJitoStakingApy();
   const stakingApy = jitoApy.apy;
+  console.log(`   📊 Jito API: ${stakingApy.toFixed(2)}% (${jitoApy.source})`);
 
-  // ─── Scan markets ────────────────────────────────────────────
+  // ─── Scan markets via REST API ───────────────────────────────
   const marketsToScan: [string, string][] = [
     [KAMINO_MARKETS.MAIN, 'Main'],
     [KAMINO_MARKETS.JITO, 'Jito'],
@@ -195,14 +134,11 @@ async function main() {
   const perMarketData: Map<string, { solBorrowApy: number; hasJitoSOL: boolean; address: string }> = new Map();
 
   for (const [addr, name] of marketsToScan) {
-    console.log(`\n📡 Scanning ${name} market (${addr.slice(0, 8)}...)...`);
-    const { reserves, solBorrowApy, hasJitoSOL } = await scanMarket(rpc, connection, addr, name);
+    console.log(`\n📡 Scanning ${name} market (${addr.slice(0, 8)}...) via REST API...`);
+    const { reserves, solBorrowApy, hasJitoSOL } = await scanMarket(addr, name);
     allReserves.push(...reserves);
     perMarketData.set(name, { solBorrowApy, hasJitoSOL, address: addr });
     console.log(`   Found ${reserves.length} reserves | SOL borrow: ${solBorrowApy.toFixed(2)}%`);
-
-    // Rate limit between market loads
-    await new Promise(r => setTimeout(r, 1000));
   }
 
   // ─── K-Lend Supply Rates ────────────────────────────────────
@@ -246,15 +182,10 @@ async function main() {
   // ─── Multiply Opportunities (Per-Market) ─────────────────────
   const allMultiply: MultiplyRate[] = [];
 
-  // Build Multiply opportunities for each market that has SOL borrowing
   for (const [name, data] of perMarketData) {
     if (data.solBorrowApy <= 0) continue;
 
     const spread = stakingApy - data.solBorrowApy;
-
-    // JitoSOL Multiply
-    // Note: Jito market has eMode with 90% LTV for JitoSOL/SOL
-    // Main market has ~85% LTV
     const maxLtv = name === 'Jito' ? 90 : 85;
 
     allMultiply.push({
@@ -278,8 +209,7 @@ async function main() {
   if (mainData && mainData.solBorrowApy > 0) {
     const msolReserve = allReserves.find(r => r.mint === TOKEN_MINTS['mSOL']);
     if (msolReserve) {
-      // mSOL staking yield is similar to JitoSOL (~5-6%)
-      const msolStaking = stakingApy * 0.95; // mSOL typically slightly lower
+      const msolStaking = stakingApy * 0.95;
       allMultiply.push({
         name: 'mSOL<>SOL',
         collateral: 'mSOL',
@@ -304,7 +234,6 @@ async function main() {
     console.log('│  Strategy        │ Stk APY│ Brw Cst│ Spread │ 3x APY │ LTV │  Market    │');
     console.log('├──────────────────┼────────┼────────┼────────┼────────┼─────┼────────────┤');
 
-    // Sort by spread descending (best first)
     allMultiply.sort((a, b) => b.spread - a.spread);
 
     for (const m of allMultiply) {
@@ -321,7 +250,6 @@ async function main() {
 
     console.log('└──────────────────┴────────┴────────┴────────┴────────┴─────┴────────────┘');
 
-    // Detailed breakdowns
     for (const m of allMultiply) {
       console.log(`\n   ${m.name} (${m.market} market):`);
       console.log(`     JitoSOL staking: ${m.stakingApy.toFixed(2)}% (${jitoApy.source})`);
@@ -333,6 +261,51 @@ async function main() {
         console.log(`     ⚠️  Only profitable at low leverage (< 3x)`);
       }
     }
+  }
+
+  // ─── Multi-LST Multiply Opportunities (Sanctum) ──────────────
+  console.log('\n📡 Fetching real LST staking yields from Sanctum...');
+  let sanctumOpportunities: MultiplyOpportunity[] = [];
+  try {
+    sanctumOpportunities = await scanMultiplyOpportunities();
+    console.log(`   Found ${sanctumOpportunities.length} LST×market combos`);
+
+    if (sanctumOpportunities.length > 0) {
+      console.log('\n┌──────────────────────────────────────────────────────────────────────────────────┐');
+      console.log('│              🌐 MULTI-LST MULTIPLY OPPORTUNITIES (Real Sanctum Yields)            │');
+      console.log('├──────────────┬────────┬────────┬────────┬────────┬────────┬──────┬────────────────┤');
+      console.log('│  LST         │ Yield% │ BrwCst%│ Spread │ 3x APY │BestAPY │MaxLev│  Market        │');
+      console.log('├──────────────┼────────┼────────┼────────┼────────┼────────┼──────┼────────────────┤');
+
+      const topOpps = sanctumOpportunities.slice(0, 15);
+      for (const o of topOpps) {
+        const profitable = o.profitable ? '✅' : o.spread > 0 ? '⚠️ ' : '❌';
+        const sym = o.symbol.padEnd(12);
+        const yld = o.nativeYield.toFixed(2).padStart(6);
+        const brw = o.solBorrowApy.toFixed(2).padStart(6);
+        const spread = o.spread.toFixed(2).padStart(6);
+        const net3x = o.netApy3x.toFixed(2).padStart(6);
+        const bestApy = o.bestNetApy.toFixed(2).padStart(6);
+        const maxLev = o.maxLeverage.toFixed(1).padStart(5);
+        const mkt = o.market.padEnd(13);
+        console.log(`│${profitable}${sym}│ ${yld}%│ ${brw}%│ ${spread}%│ ${net3x}%│ ${bestApy}%│${maxLev}│ ${mkt} │`);
+      }
+
+      console.log('└──────────────┴────────┴────────┴────────┴────────┴────────┴──────┴────────────────┘');
+
+      // Detailed breakdown for top 3
+      for (const o of sanctumOpportunities.filter(x => x.profitable).slice(0, 3)) {
+        console.log(`\n   ${o.symbol}<>SOL (${o.market} market):`);
+        console.log(`     Native yield: ${o.nativeYield.toFixed(2)}% (Sanctum)`);
+        console.log(`     SOL borrow: ${o.solBorrowApy.toFixed(2)}%  |  Spread: ${o.spread.toFixed(2)}%  |  Max LTV: ${(o.maxLtv * 100).toFixed(0)}%  |  Max Lev: ${o.maxLeverage.toFixed(1)}x`);
+        console.log(`     Net APY: 2x=${o.netApy2x.toFixed(2)}%  3x=${o.netApy3x.toFixed(2)}%  5x=${o.netApy5x.toFixed(2)}%  best(${(o.maxLeverage * 0.8).toFixed(1)}x)=${o.bestNetApy.toFixed(2)}%`);
+      }
+
+      const profitableCount = sanctumOpportunities.filter(o => o.profitable).length;
+      console.log(`\n   📊 ${profitableCount}/${sanctumOpportunities.length} combos are profitable`);
+    }
+  } catch (err: any) {
+    console.log(`   ⚠️  Sanctum multi-LST scan failed: ${err.message}`);
   }
 
   // ─── JitoSOL Staking Yield Summary ──────────────────────────
@@ -357,11 +330,16 @@ async function main() {
     }
   }
 
-  // Best Multiply
-  const bestMultiply = allMultiply[0]; // already sorted by spread
+  const bestMultiply = allMultiply[0];
   if (bestMultiply) {
     const tag = bestMultiply.spread > 0 ? '✅' : '❌';
     console.log(`│  Multiply → ${bestMultiply.spread.toFixed(2)}% spread in ${bestMultiply.market} market ${tag}       │`);
+  }
+
+  // Best Sanctum-based opportunity
+  const bestSanctum = sanctumOpportunities.find(o => o.profitable);
+  if (bestSanctum) {
+    console.log(`│  Best LST → ${bestSanctum.symbol} ${bestSanctum.bestNetApy.toFixed(2)}% in ${bestSanctum.market} (Sanctum) ✅   │`);
   }
 
   console.log('└───────────────────────────────────────────────────────────┘');
@@ -388,16 +366,16 @@ async function main() {
 
   // ─── Summary ────────────────────────────────────────────────
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-  console.log(`\n⏱  Scanned ${allReserves.length} reserves across ${marketsToScan.length} markets in ${elapsed}s`);
+  console.log(`\n⏱  Scanned ${allReserves.length} reserves across ${marketsToScan.length} markets in ${elapsed}s (REST API)`);
   console.log('═══════════════════════════════════════════════════════════════\n');
 
-  // Return structured data for programmatic use
   return {
     stakingApy,
     stakingApySource: jitoApy.source,
     markets: Object.fromEntries(perMarketData),
     multiply: allMultiply,
     reserves: allReserves,
+    sanctumOpportunities,
   };
 }
 
@@ -405,7 +383,7 @@ async function main() {
 export { main as runScanner, fetchLiveJitoStakingApy };
 export type { ReserveRate, MultiplyRate };
 
-// Allow standalone execution (only when run directly, not when imported)
+// Allow standalone execution
 if (require.main === module) {
   main()
     .then(() => process.exit(0))

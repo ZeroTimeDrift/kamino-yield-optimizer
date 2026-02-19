@@ -291,7 +291,7 @@ interface ExecuteContext {
   gasBuffer: number;
   solBalance: Decimal;
   settings: Settings;
-  multiplyCheck: { profitable: boolean; reason: string };
+  multiplyCheck: { profitable: boolean; reason: string; bestOpportunity?: any; bestMarket?: any };
 }
 
 async function executeAction(
@@ -353,10 +353,27 @@ async function executeAction(
         console.log(`   ⚠️  Skipping multiply open: ${ctx.multiplyCheck.reason}`);
         return;
       }
+
+      // Determine best LST and market from multiply analysis
+      let lstSymbol = 'JitoSOL';
+      let lstMint = 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn';
+      let targetMarket = ctx.settings.multiply?.preferredMarket ?? '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF';
+      let targetLeverage = ctx.settings.multiply?.maxLeverage ?? 5;
+
+      if (ctx.multiplyCheck.bestOpportunity) {
+        lstSymbol = ctx.multiplyCheck.bestOpportunity.symbol;
+        lstMint = ctx.multiplyCheck.bestOpportunity.mint;
+        targetMarket = ctx.multiplyCheck.bestOpportunity.marketAddress;
+        targetLeverage = ctx.multiplyCheck.bestOpportunity.maxLeverage * 0.8;
+      }
+
       const result = await ctx.multiplyClient.openPosition(
         ctx.wallet,
+        lstSymbol,
+        lstMint,
         action.amountUi,
-        ctx.settings.multiply?.maxLeverage ?? 5,
+        targetLeverage,
+        targetMarket,
         ctx.dryRun
       );
       console.log(`   ${result.success ? '✅' : '⚠️'} ${result.message}`);
@@ -364,7 +381,13 @@ async function executeAction(
     }
 
     case 'closeMultiply': {
-      console.log(`   🧪 DRY RUN — would close multiply position worth ${action.amountUi.toFixed(4)} SOL`);
+      const positions = await ctx.multiplyClient.getUserMultiplyPositions(ctx.wallet.publicKey);
+      if (positions.length > 0) {
+        const closeResult = await ctx.multiplyClient.closePosition(ctx.wallet, positions[0], ctx.dryRun);
+        console.log(`   ${closeResult.success ? '✅' : '⚠️'} ${closeResult.message}`);
+      } else {
+        console.log(`   ⚠️  No multiply position found to close`);
+      }
       break;
     }
 

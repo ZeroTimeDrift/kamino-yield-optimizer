@@ -1,9 +1,8 @@
 import fetch from 'node-fetch';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { Connection } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import { VaultInfo, Settings } from './types';
-import { KaminoClient } from './kamino-client';
+import { fetchReserves, ApiReserve, KAMINO_BASE } from './kamino-api';
 
 // ─── Interface Definitions ──────────────────────────────────────
 
@@ -150,7 +149,7 @@ async function fetchDefiLlamaYields(): Promise<ProtocolYield[]> {
     // Filter for Solana + our target tokens
     const relevantPools = pools.data.filter(pool => 
       pool.chain === 'Solana' && 
-      pool.tvlUsd > 10000 && // Minimum TVL filter
+      pool.tvlUsd > 100000 && // Minimum $100K TVL filter
       pool.apy !== null &&
       (
         pool.symbol.includes('SOL') ||
@@ -187,32 +186,31 @@ async function fetchDefiLlamaYields(): Promise<ProtocolYield[]> {
   }
 }
 
-// ─── Kamino Direct Integration ──────────────────────────────────
+// ─── Kamino Direct Integration (via REST API) ──────────────────
+
+const PRIMARY_MARKET = '7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF';
 
 async function fetchKaminoYields(): Promise<ProtocolYield[]> {
-  console.log('🔄 Fetching Kamino yields via SDK...');
+  console.log('🔄 Fetching Kamino yields via REST API...');
   
   try {
-    const settings: Settings = JSON.parse(readFileSync('/root/clawd/skills/kamino-yield/config/settings.json', 'utf-8'));
+    const reserves = await fetchReserves(PRIMARY_MARKET);
     
-    // Use KaminoClient to get reserves
-    const kaminoClient = new KaminoClient(settings.rpcUrl);
-    await kaminoClient.initialize();
-    const kaminoVaults = await kaminoClient.getReserves();
-    
-    const yields: ProtocolYield[] = kaminoVaults.map((vault: VaultInfo) => ({
-      protocol: 'kamino',
-      pool: `K-Lend ${vault.name}`,
-      type: vault.type === 'lp' ? 'lp' : 'lending',
-      tokenIn: vault.token.toUpperCase(),
-      apy: vault.apy.toNumber(),
-      apyBase: vault.apy.toNumber(), // K-Lend is mostly base yield
-      apyReward: 0,
-      tvl: vault.tvlUsd.toNumber(),
-      risk: 'low', // Kamino is well-audited with high TVL
-      url: 'https://app.kamino.finance/lending',
-      notes: `Deposit fee: ${vault.depositFeePercent.toNumber()}%, Withdrawal fee: ${vault.withdrawalFeePercent.toNumber()}%`
-    }));
+    const yields: ProtocolYield[] = reserves
+      .filter((r: ApiReserve) => r.supplyApy > 0.01)
+      .map((r: ApiReserve) => ({
+        protocol: 'kamino',
+        pool: `K-Lend ${r.liquidityToken} Supply`,
+        type: 'lending' as const,
+        tokenIn: r.liquidityToken.toUpperCase(),
+        apy: r.supplyApy,
+        apyBase: r.supplyApy,
+        apyReward: 0,
+        tvl: r.totalSupplyUsd,
+        risk: 'low' as const,
+        url: 'https://app.kamino.finance/lending',
+        notes: `Borrow APY: ${r.borrowApy.toFixed(2)}%, Max LTV: ${(r.maxLtv * 100).toFixed(0)}%`
+      }));
     
     console.log(`📊 Found ${yields.length} Kamino lending pools`);
     return yields;
