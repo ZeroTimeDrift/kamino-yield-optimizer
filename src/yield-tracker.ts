@@ -13,7 +13,7 @@ import Decimal from 'decimal.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { LiquidityClient, LiquidityVaultInfo, LiquidityPosition, JITOSOL_SOL_STRATEGIES } from './liquidity-client';
-import { Settings, TOKEN_MINTS } from './types';
+import { Settings, TOKEN_MINTS, TOKEN_DECIMALS } from './types';
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -68,20 +68,120 @@ interface TokenPrices {
   sol: Decimal;
   jitoSol: Decimal;
   kmno: Decimal;
+  /** All prices keyed by symbol (SOL, JitoSOL, mSOL, dSOL, pSOL, ORCA, PYTH, JUP, RAY, WIF, BONK, USDC, etc.) */
+  bySymbol: Record<string, Decimal>;
 }
 
+/** CoinGecko id → token symbol mapping for price lookups */
+const COINGECKO_IDS: Record<string, string> = {
+  'solana': 'SOL',
+  'jito-staked-sol': 'JitoSOL',
+  'marinade-staked-sol': 'mSOL',
+  'drift-staked-sol': 'dSOL',
+  'kamino': 'KMNO',
+  'orca': 'ORCA',
+  'pyth-network': 'PYTH',
+  'jupiter-exchange-solana': 'JUP',
+  'raydium': 'RAY',
+  'dogwifcoin': 'WIF',
+  'bonk': 'BONK',
+};
+
+/** Tokens NOT on CoinGecko — priced relative to SOL */
+const SOL_PEGGED_TOKENS: Record<string, number> = {
+  'pSOL': 1.04, // Sanctum pSOL — staked SOL, ~4% premium
+};
+
 async function getTokenPrices(): Promise<TokenPrices> {
+  const ids = Object.keys(COINGECKO_IDS).join(',');
+  const bySymbol: Record<string, Decimal> = {};
   try {
-    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana,jito-staked-sol,kamino&vs_currencies=usd');
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`);
     const data = await res.json() as any;
-    return {
-      sol: new Decimal(data.solana?.usd ?? 86),
-      jitoSol: new Decimal(data['jito-staked-sol']?.usd ?? data.solana?.usd ?? 86),
-      kmno: new Decimal(data.kamino?.usd ?? 0.04),
-    };
+    for (const [geckoId, symbol] of Object.entries(COINGECKO_IDS)) {
+      if (data[geckoId]?.usd) {
+        bySymbol[symbol] = new Decimal(data[geckoId].usd);
+      }
+    }
   } catch {
-    return { sol: new Decimal(86), jitoSol: new Decimal(100), kmno: new Decimal(0.04) };
+    // Fallback prices
+    bySymbol['SOL'] = new Decimal(80);
+    bySymbol['JitoSOL'] = new Decimal(90);
   }
+
+  // Ensure core prices exist with sensible fallbacks
+  if (!bySymbol['SOL']) bySymbol['SOL'] = new Decimal(80);
+  if (!bySymbol['JitoSOL']) bySymbol['JitoSOL'] = bySymbol['SOL'].mul(1.08);
+  if (!bySymbol['mSOL']) bySymbol['mSOL'] = bySymbol['SOL'].mul(1.09);
+  if (!bySymbol['dSOL']) bySymbol['dSOL'] = bySymbol['SOL'].mul(1.12);
+  if (!bySymbol['pSOL']) bySymbol['pSOL'] = bySymbol['SOL'];
+  if (!bySymbol['KMNO']) bySymbol['KMNO'] = new Decimal(0.04);
+  if (!bySymbol['USDC']) bySymbol['USDC'] = new Decimal(1);
+  if (!bySymbol['USDT']) bySymbol['USDT'] = new Decimal(1);
+
+  // LSTs not on CoinGecko — estimate from SOL price with staking premiums
+  const lstPremiums: Record<string, number> = {
+    'bSOL': 1.06, 'vSOL': 1.05, 'hSOL': 1.05, 'JSOL': 1.06,
+    'JupSOL': 1.08, 'bbSOL': 1.06, 'hubSOL': 1.05, 'bonkSOL': 1.05,
+    'cgntSOL': 1.05, 'laineSOL': 1.05, 'stakeSOL': 1.05, 'bnSOL': 1.06,
+    'cdcSOL': 1.05, 'strongSOL': 1.05,
+  };
+  for (const [sym, mult] of Object.entries(lstPremiums)) {
+    if (!bySymbol[sym]) bySymbol[sym] = bySymbol['SOL'].mul(mult);
+  }
+
+  // SOL-pegged tokens not on CoinGecko
+  for (const [sym, mult] of Object.entries(SOL_PEGGED_TOKENS)) {
+    if (!bySymbol[sym]) bySymbol[sym] = bySymbol['SOL'].mul(mult);
+  }
+
+  return {
+    sol: bySymbol['SOL'],
+    jitoSol: bySymbol['JitoSOL'],
+    kmno: bySymbol['KMNO'],
+    bySymbol,
+  };
+}
+
+/** Build reverse lookup: mint address → symbol */
+function buildMintToSymbol(): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const [symbol, mint] of Object.entries(TOKEN_MINTS)) {
+    map[mint] = symbol;
+  }
+  return map;
+}
+
+const MINT_TO_SYMBOL = buildMintToSymbol();
+
+/** Scan all SPL token accounts and return balances keyed by symbol */
+async function getAllTokenBalances(
+  connection: Connection,
+  walletPubkey: PublicKey,
+): Promise<Record<string, Decimal>> {
+  const balances: Record<string, Decimal> = {};
+  const TOKEN_PROGRAM = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+
+  try {
+    const tokenAccounts = await connection.getTokenAccountsByOwner(walletPubkey, { programId: TOKEN_PROGRAM });
+    for (const { account } of tokenAccounts.value) {
+      const data = account.data;
+      const mint = new PublicKey(data.slice(0, 32)).toBase58();
+      const rawAmount = data.readBigUInt64LE(64);
+      if (rawAmount === 0n) continue;
+
+      const symbol = MINT_TO_SYMBOL[mint];
+      if (!symbol) continue; // skip unknown tokens
+
+      const decimals = TOKEN_DECIMALS[symbol] ?? 9;
+      const amount = new Decimal(rawAmount.toString()).div(new Decimal(10).pow(decimals));
+      balances[symbol] = (balances[symbol] || new Decimal(0)).plus(amount);
+    }
+  } catch (err) {
+    console.log(`   ⚠️ Failed to scan token accounts: ${(err as Error).message}`);
+  }
+
+  return balances;
 }
 
 function loadHistory(): YieldHistoryEntry[] {
@@ -121,29 +221,32 @@ export class YieldTracker {
     const solLamports = await this.connection.getBalance(this.wallet.publicKey);
     const walletSolBalance = new Decimal(solLamports).div(LAMPORTS_PER_SOL);
 
-    // 2. Get JitoSOL balance (1 RPC call)
-    let idleJitoSol = new Decimal(0);
-    try {
-      const jitosolMint = new PublicKey(TOKEN_MINTS.JitoSOL);
-      const tokenAccounts = await this.connection.getTokenAccountsByOwner(
-        this.wallet.publicKey,
-        { mint: jitosolMint }
-      );
-      for (const { account } of tokenAccounts.value) {
-        const data = account.data;
-        // SPL token amount is at offset 64, 8 bytes LE
-        const amount = data.readBigUInt64LE(64);
-        idleJitoSol = idleJitoSol.plus(new Decimal(amount.toString()).div(1e9));
+    // 2. Get ALL token balances (1 RPC call — getTokenAccountsByOwner with program filter)
+    const allTokenBalances = await getAllTokenBalances(this.connection, this.wallet.publicKey);
+    const idleJitoSol = allTokenBalances['JitoSOL'] || new Decimal(0);
+
+    // 2b. Price all wallet tokens
+    let walletTokenValueUsd = new Decimal(0);
+    const tokenBreakdown: string[] = [];
+    for (const [symbol, amount] of Object.entries(allTokenBalances)) {
+      const price = prices.bySymbol[symbol];
+      if (price && amount.gt(0)) {
+        const val = amount.mul(price);
+        walletTokenValueUsd = walletTokenValueUsd.plus(val);
+        if (val.gte(0.01)) {
+          tokenBreakdown.push(`${symbol}: ${amount.toFixed(symbol === 'BONK' ? 0 : 6)} ($${val.toFixed(2)})`);
+        }
       }
-    } catch (err) {
-      console.log(`   ⚠️ Failed to get JitoSOL balance: ${(err as Error).message}`);
+    }
+    if (tokenBreakdown.length > 0) {
+      console.log(`   Wallet tokens: ${tokenBreakdown.join(', ')}`);
     }
 
     // 3. Get LP positions (batched RPC via Kamino SDK)
     const positions: PositionEntry[] = [];
-    // Calculate total USD using proper per-token prices
-    let totalValueUsd = walletSolBalance.mul(solPrice).plus(idleJitoSol.mul(jitoSolPrice));
-    let totalValueSol = totalValueUsd.div(solPrice); // SOL-equivalent for backwards compat
+    // Total = SOL balance + all token balances
+    let totalValueUsd = walletSolBalance.mul(solPrice).plus(walletTokenValueUsd);
+    let totalValueSol = totalValueUsd.div(solPrice);
     let jitosolToSolRatio = jitoSolPrice.div(solPrice);
 
     try {
@@ -187,26 +290,9 @@ export class YieldTracker {
       console.log(`   ⚠️ Failed to get LP positions: ${(err as Error).message}`);
     }
 
-    // 3b. Get KMNO balance + staking + KLend deposits
+    // 3b. KMNO staking (farm user state) — not captured by token scan
     const kmnoPrice = prices.kmno || new Decimal(0.04);
     try {
-      // KMNO wallet balance
-      const KMNO_MINT = new PublicKey('KMNo3nJsBXfcpJTVhZcXLW7RmTwTt4GVFE7suUBo9sS');
-      const kmnoAccounts = await this.connection.getTokenAccountsByOwner(
-        this.wallet.publicKey, { mint: KMNO_MINT }
-      );
-      let kmnoBalance = new Decimal(0);
-      for (const { account } of kmnoAccounts.value) {
-        const amount = account.data.readBigUInt64LE(64);
-        kmnoBalance = kmnoBalance.plus(new Decimal(amount.toString()).div(1e6));
-      }
-      if (kmnoBalance.gt(0)) {
-        const kmnoUsd = kmnoBalance.mul(kmnoPrice);
-        totalValueUsd = totalValueUsd.plus(kmnoUsd);
-        console.log(`   KMNO wallet: ${kmnoBalance.toFixed(2)} ($${kmnoUsd.toFixed(2)})`);
-      }
-
-      // KMNO staking (farm user state)
       const FARMS_PROGRAM = new PublicKey('FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr');
       const FARM_STATE = new PublicKey('2sFZDpBn4sA42uNbAD6QzQ98rPSmqnPyksYe6SJKVvay');
       const [userStatePDA] = PublicKey.findProgramAddressSync(
@@ -226,10 +312,10 @@ export class YieldTracker {
         }
       }
     } catch (err) {
-      console.log(`   ⚠️ Failed to get KMNO: ${(err as Error).message}`);
+      console.log(`   ⚠️ Failed to get KMNO staking: ${(err as Error).message}`);
     }
 
-    // 3c. Get KLend JitoSOL deposit
+    // 3c. KLend deposits — check obligation if it exists
     try {
       const OBLIGATION_KEY = new PublicKey('7qoM9cQtTpyJK3VRPUU7XUcWZ8XnBjdffEFS58ReLuHw');
       const oblAcct = await this.connection.getAccountInfo(OBLIGATION_KEY);

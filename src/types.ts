@@ -104,8 +104,10 @@ export interface MultiplyPosition {
   obligationAddress: string;
   /** Market the position is in */
   marketAddress: string;
-  /** Collateral token symbol (e.g. JitoSOL) */
+  /** Collateral token symbol (e.g. JitoSOL, pSOL) */
   collateralToken: string;
+  /** Collateral token mint address */
+  collateralMint: string;
   /** Debt token symbol (e.g. SOL) */
   debtToken: string;
   /** Collateral amount in UI units */
@@ -231,6 +233,37 @@ export const TOKEN_MINTS: { [key: string]: string } = {
   'JitoSOL': 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn',
   'mSOL': 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
   'BONK': 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+  // LSTs for multiply strategy
+  'JupSOL': 'jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v',
+  'bSOL': 'bSo13r4TkiE4KumL71LsHTPpL2euBYLFx6h9HP3piy1',
+  'dSOL': 'Dso1bDeDjCQxTrWHqUUi63oBvV7Mdm6WaobLbQ7gnPQ',
+  'vSOL': 'vSoLxydx6akxyMD9XEcPvGYNGq6Nn66oqVb3UkGkei7',
+  'hSOL': 'he1iusmfkpAdwvxLNGV8Y1iSbj4rUy6yMhEA3fotn9A',
+  'JSOL': '7Q2afV64in6N6SeZsAAB81TJzwpeLmb4fCZdjA5S5pyB',
+  'bbSOL': 'Bybit2vBJGhPF52GBdNaQ9UiEYtKEx3SWgEpXvGNbMSq',
+  'hubSOL': 'HUBsveNpjo5pWqNkH57QzxjQASdTVXcSK7bVKTSZtB3X',
+  'bonkSOL': 'BonK1YhkXEGLZzwtcvRTip3gAL9nCeQD7ppZBLXhtTs',
+  'cgntSOL': 'CgnTSoL3DgY9SFHxcLj6CgCgKKoTBr6tp4CPAEWy25DE',
+  'laineSOL': 'LAinEtNLgpmCP9Rvsf5Hn8W6EhNiKLZQpe1cnCVCDqc',
+  'stakeSOL': 'st8QujHLPsX3d6HG9uQg9kJ91jFxUgruwsb1hyYXSNd',
+  'bnSOL': 'BNso1VUJnh4zcfpZa6986Ea66P6TCp59hvtNJ8b1X85',
+  'pSOL': 'pSo1f9nQXWgXibFtKf7NWYxb5enAM4qfP6UJSiXRQfL',
+  // Non-LST tokens
+  'ORCA': 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE',
+  'PYTH': 'HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3',
+  'JUP': 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
+  'RAY': '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
+  'WIF': 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm',
+  'KMNO': 'KMNo3nJsBXfcpJTVhZcXLW7RmTwTt4GVFE7suUBo9sS',
+  'cdcSOL': 'CDCSoLckzozyktpAp9FWT3w92KFJVEUxAU7cNu2Jn3aX',
+  'adraSOL': 'sctmY8fJucsJatwHz6P48RuWBBkdBMNmSMuBYrWFdrw',
+  'nxSOL': 'sctmTAsDn4tLUcemqoqYijfuRkiEfAMPi84PNq2EueR',
+  'lanternSOL': 'LnTRntk2kTfWEY6cVB8K9649pgJbt6dJLS1Ns1GZCWg',
+  'stkeSOL': 'stke7uu3fXHsGqKVVjKnkmj65LRPVrqr4bLG2SJg7rh',
+  'strongSOL': 'strng7mqqc1MBJJV6vMzYbEqnwVGvKKGKedeCvtktWA',
+  'fwdSOL': 'cPQPBN7WubB3zyQDpzTK2ormx1BMdAym9xkrYUJsctm',
+  'picoSOL': 'picobAEvs6w7QEknPce34wAE4gknZA9v5tTonnmHYdX',
+  'dfdvSOL': 'sctmB7GPi5L2Q5G9tUSzXvhZ4YiDMEGcRov9KfArQpx',
 };
 
 export const TOKEN_DECIMALS: { [key: string]: number } = {
@@ -240,6 +273,28 @@ export const TOKEN_DECIMALS: { [key: string]: number } = {
   'JitoSOL': 9,
   'mSOL': 9,
   'BONK': 5,
+  // LSTs for multiply — all 9 decimals
+  'JupSOL': 9,
+  'bSOL': 9,
+  'dSOL': 9,
+  'vSOL': 9,
+  'hSOL': 9,
+  'JSOL': 9,
+  'bbSOL': 9,
+  'hubSOL': 9,
+  'bonkSOL': 9,
+  'cgntSOL': 9,
+  'laineSOL': 9,
+  'stakeSOL': 9,
+  'bnSOL': 9,
+  'pSOL': 9,
+  // Non-LST tokens
+  'ORCA': 6,
+  'PYTH': 6,
+  'JUP': 6,
+  'RAY': 6,
+  'WIF': 6,
+  'KMNO': 6,
 };
 
 export const KNOWN_VAULTS: { [key: string]: string } = {
